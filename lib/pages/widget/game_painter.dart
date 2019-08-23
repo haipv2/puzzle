@@ -53,7 +53,7 @@ class GamePainter extends CustomPainter {
             rect2 = node.rect.shift(Offset(0.0, newY - downY));
           }
         }
-        Rect srcRect = Rect.fromLTRB(0.0, 0.0, node.image.width.toDouble(),
+        Rect srcRect = Rect.fromLTRB(0.0, 0.0, node?.image?.width?.toDouble(),
             node.image.height.toDouble());
         canvas.drawImageRect(nodes[i].image, srcRect, rect2, Paint());
       }

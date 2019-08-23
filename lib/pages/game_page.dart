@@ -54,7 +54,7 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
 
     puzzleMagic.init(path, size, levelWidth, levelHeight).then((val) {
       setState(() {
-        nodes = puzzleMagic.doTask();
+        nodes = puzzleMagic.splitImage();
         GameEngine.makeRandom(nodes);
         setState(() {
           gameState = GameState.play;
@@ -121,7 +121,7 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
       nodeMap[node.curIndex] = node;
 
       Rect rect = node.rect;
-      Rect dstRect = puzzleMagic.getOkRectF(
+      Rect dstRect = puzzleMagic.buildImgRect(
           node.curIndex % levelWidth, (node.curIndex / levelWidth).floor());
 
       final double deltX = dstRect.left - rect.left;
@@ -281,7 +281,7 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
     hitNodeList.forEach((node) {
       node.curIndex += v;
       nodeMap[node.curIndex] = node;
-      node.rect = puzzleMagic.getOkRectF(
+      node.rect = puzzleMagic.buildImgRect(
           node.curIndex % levelWidth, (node.curIndex / levelWidth).floor());
     });
     emptyIndex -= v * hitNodeList.length;

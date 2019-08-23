@@ -19,6 +19,7 @@ class PuzzleMagic {
   int levelHeight;
   double eachBitmapWidth;
   double eachBitmapHeight;
+  double paddingHorizontal = 0.0;
 
   Future<ui.Image> init(
       String path, Size size, int levelWidth, int levelHeight) async {
@@ -29,16 +30,16 @@ class PuzzleMagic {
     this.levelHeight = levelHeight;
 
 //    eachWidth = screenSize.width * 0.8 / levelWidth;
-    double paddingHorizontal = screenSize.width*0.1;
-    eachWidth = screenSize.width*0.9/ levelWidth;
-    eachHeight = (screenSize.height-screenSize.width*0.1)/(levelHeight+1);
-    print('eachWidth--- $eachWidth');
-    print('screenSize.width--- ${screenSize.width}');
-    baseX = screenSize.width * 0.05;
-    baseY = screenSize.height * 0.1 + eachHeight;
-
+    paddingHorizontal = screenSize.width * 0.05;
+    eachWidth = screenSize.width * 0.9 / levelWidth;
+    eachHeight =
+        (screenSize.height * 0.9 - paddingHorizontal) / (levelHeight + 1);
     eachBitmapWidth = (image.width / levelWidth);
     eachBitmapHeight = (image.height / levelHeight);
+    print('screenSize----$screenSize');
+    print('eachBitmapHeight----$eachBitmapHeight');
+    baseX = screenSize.width * 0.05;
+    baseY = eachHeight + paddingHorizontal * 2;
     return image;
   }
 
@@ -50,13 +51,16 @@ class PuzzleMagic {
     return image;
   }
 
-  List<ImageNode> doTask() {
+  List<ImageNode> splitImage() {
     List<ImageNode> list = [];
+    ImageNode node = ImageNode();
+    buildEmptyCell(paddingHorizontal);
+
     for (int j = 0; j < levelWidth; j++) {
       for (int i = 0; i < levelHeight; i++) {
 //        if (j * levelWidth + i < levelWidth * levelHeight - 1) {
-        ImageNode node = ImageNode();
-        node.rect = getOkRectF(i, j);
+        node = ImageNode();
+        node.rect = buildImgRect(i, j);
         node.index = j * levelWidth + i;
         makeBitmap(node);
         list.add(node);
@@ -66,32 +70,49 @@ class PuzzleMagic {
     return list;
   }
 
-  Rect getOkRectF(int i, int j) {
+  Rect buildImgRect(int i, int j) {
     return Rect.fromLTWH(
         baseX + eachWidth * i, baseY + eachHeight * j, eachWidth, eachHeight);
   }
 
   void makeBitmap(ImageNode node) async {
-    int i = node.getXIndex(levelWidth);
-    int j = node.getYIndex(levelWidth);
+    int width = node.getXIndex(levelWidth);
+    int height = node.getYIndex(levelHeight);
 
-    Rect rect = getShapeRect(i, j, eachBitmapWidth);
-    rect = rect.shift(
-        Offset(eachBitmapWidth.toDouble() * i, eachBitmapWidth.toDouble() * j));
+    Rect rect = getShapeRect(width, height, eachBitmapWidth, eachBitmapHeight);
+    rect = rect.shift(Offset(eachBitmapWidth.toDouble() * width,
+        eachBitmapHeight.toDouble() * height));
 
     PictureRecorder recorder = PictureRecorder();
     double ww = eachBitmapWidth.toDouble();
-    Canvas canvas = Canvas(recorder, Rect.fromLTWH(0.0, 0.0, ww, ww));
+    double wh = eachBitmapHeight.toDouble();
+    Canvas canvas = Canvas(recorder, Rect.fromLTWH(0.0, 0.0, ww, wh));
 
     Rect rect2 = Rect.fromLTRB(0.0, 0.0, rect.width, rect.height);
 
     Paint paint = Paint();
     canvas.drawImageRect(image, rect, rect2, paint);
-    node.image = await recorder.endRecording().toImage(ww.floor(), ww.floor());
-    node.rect = getOkRectF(i, j);
+    node.image = await recorder.endRecording().toImage(ww.floor(), wh.floor());
+    node.rect = buildImgRect(width, height);
   }
 
-  Rect getShapeRect(int i, int j, double width) {
-    return Rect.fromLTRB(0.0, 0.0, width, width);
+  Rect getShapeRect(int i, int j, double width, double height) {
+    return Rect.fromLTRB(0.0, 0.0, width, height);
+  }
+
+  ImageNode buildEmptyCell(double paddingHorizontal) {
+    ImageNode node = ImageNode();
+    PictureRecorder recorder = PictureRecorder();
+    Paint paint = Paint();
+    double ww = eachBitmapWidth.toDouble();
+    double wh = eachBitmapHeight.toDouble();
+    Rect rect = Rect.fromLTWH(0.0, paddingHorizontal*2, eachWidth, eachHeight);
+//    node.image = recorder.endRecording().to
+    recorder.endRecording().toImage(ww.floor(), wh.floor());
+//    PictureRecorder recorder = PictureRecorder();
+//    double ww = eachBitmapWidth.toDouble();
+//    double wh = eachBitmapHeight.toDouble();
+//    Canvas canvas = Canvas(recorder, Rect.fromLTWH(0.0, 0.0, ww, wh));
+//    canvas.drawRect(rect, paint);
   }
 }

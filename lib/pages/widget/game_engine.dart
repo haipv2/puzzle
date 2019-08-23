@@ -3,15 +3,15 @@ import 'package:puzzle/model/ImageNode.dart';
 
 class GameEngine {
   static void makeRandom(List<ImageNode> list) {
-    List<int> srcArr = [];
-    for (int i = 0; i < srcArr.length; i++) {
-      srcArr.add(i);
-    }
+//    List<int> srcArr = [];
+//    for (int i = 0; i < srcArr.length; i++) {
+//      srcArr.add(i);
+//    }
 
     List<int> arr = [];
     do {
       arr.clear();
-      list.shuffle();
+//      list.shuffle();
       for (int i = 0; i < list.length; i++) {
         list[i].curIndex = i;
         arr.add(list[i].index);
