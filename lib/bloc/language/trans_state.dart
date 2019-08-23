@@ -1,4 +1,5 @@
-import 'package:flt_rest/blocs/bloc_helper/bloc_event_state.dart';
+
+import 'package:puzzle/bloc/bloc_helper/bloc_event_state.dart';
 
 class TransState extends BlocState {
 
