@@ -65,10 +65,7 @@ class GamePainter extends CustomPainter {
             nodes[i].image,
             srcRect,
             rect2,
-            Paint()
-              ..style = PaintingStyle.stroke
-              ..strokeCap=StrokeCap.square
-              ..color = Colors.red);
+            Paint());
       }
 
       for (int i = 0; i < nodes.length; ++i) {
