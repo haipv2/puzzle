@@ -20,6 +20,7 @@ class PuzzleMagic {
   double eachBitmapWidth;
   double eachBitmapHeight;
   double paddingHorizontal = 0.0;
+  Rect extRect;
 
   Future<ui.Image> init(
       String path, Size size, int levelWidth, int levelHeight) async {
@@ -36,10 +37,10 @@ class PuzzleMagic {
         (screenSize.height * 0.9 - paddingHorizontal) / (levelHeight + 1);
     eachBitmapWidth = (image.width / levelWidth);
     eachBitmapHeight = (image.height / levelHeight);
-    print('screenSize----$screenSize');
-    print('eachBitmapHeight----$eachBitmapHeight');
     baseX = screenSize.width * 0.05;
     baseY = eachHeight + paddingHorizontal * 2;
+    extRect =
+        Rect.fromLTWH(baseX, paddingHorizontal * 2, eachWidth, eachHeight);
     return image;
   }
 
@@ -54,17 +55,14 @@ class PuzzleMagic {
   List<ImageNode> splitImage() {
     List<ImageNode> list = [];
     ImageNode node = ImageNode();
-    buildEmptyCell(paddingHorizontal);
 
     for (int j = 0; j < levelWidth; j++) {
       for (int i = 0; i < levelHeight; i++) {
-//        if (j * levelWidth + i < levelWidth * levelHeight - 1) {
         node = ImageNode();
         node.rect = buildImgRect(i, j);
         node.index = j * levelWidth + i;
         makeBitmap(node);
         list.add(node);
-//        }
       }
     }
     return list;
@@ -100,19 +98,4 @@ class PuzzleMagic {
     return Rect.fromLTRB(0.0, 0.0, width, height);
   }
 
-  ImageNode buildEmptyCell(double paddingHorizontal) {
-    ImageNode node = ImageNode();
-    PictureRecorder recorder = PictureRecorder();
-    Paint paint = Paint();
-    double ww = eachBitmapWidth.toDouble();
-    double wh = eachBitmapHeight.toDouble();
-    Rect rect = Rect.fromLTWH(0.0, paddingHorizontal*2, eachWidth, eachHeight);
-//    node.image = recorder.endRecording().to
-    recorder.endRecording().toImage(ww.floor(), wh.floor());
-//    PictureRecorder recorder = PictureRecorder();
-//    double ww = eachBitmapWidth.toDouble();
-//    double wh = eachBitmapHeight.toDouble();
-//    Canvas canvas = Canvas(recorder, Rect.fromLTWH(0.0, 0.0, ww, wh));
-//    canvas.drawRect(rect, paint);
-  }
 }

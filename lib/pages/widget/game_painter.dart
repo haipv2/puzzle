@@ -17,6 +17,7 @@ class GamePainter extends CustomPainter {
   final double downX, downY, newX, newY;
   final List<ImageNode> hitNodeList;
   Direction direction;
+  Rect extRect;
 
   GamePainter(
       this.nodes,
@@ -28,7 +29,8 @@ class GamePainter extends CustomPainter {
       this.downY,
       this.newX,
       this.newY,
-      this.needdraw) {
+      this.needdraw,
+      this.extRect) {
     mypaint = Paint();
     mypaint.style = PaintingStyle.stroke;
     mypaint.strokeWidth = 1.0;
@@ -40,9 +42,13 @@ class GamePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (nodes != null) {
+      Paint paint = Paint();
+      paint.color = Colors.white;
+      paint.style = PaintingStyle.fill;
+      canvas.drawRect(extRect, paint);
+
       for (int i = 0; i < nodes.length; ++i) {
         ImageNode node = nodes[i];
-
         Rect rect2 = Rect.fromLTRB(
             node.rect.left, node.rect.top, node.rect.right, node.rect.bottom);
         if (hitNodeList != null && hitNodeList.contains(node)) {
@@ -54,18 +60,27 @@ class GamePainter extends CustomPainter {
           }
         }
         Rect srcRect = Rect.fromLTRB(0.0, 0.0, node?.image?.width?.toDouble(),
-            node.image.height.toDouble());
-        canvas.drawImageRect(nodes[i].image, srcRect, rect2, Paint());
+            node?.image?.height?.toDouble());
+        canvas.drawImageRect(
+            nodes[i].image,
+            srcRect,
+            rect2,
+            Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeCap=StrokeCap.square
+              ..color = Colors.red);
       }
 
       for (int i = 0; i < nodes.length; ++i) {
         ImageNode node = nodes[i];
+
         ParagraphBuilder pb = ParagraphBuilder(ParagraphStyle(
           textAlign: TextAlign.center,
           fontWeight: FontWeight.w300,
           fontStyle: FontStyle.normal,
           fontSize: hitNode == node ? 30.0 : 35.0,
         ));
+
         if (hitNode == node) {
 //          pb.pushStyle(ui.TextStyle(color: Color(0xff00ff00)));
           pb.pushStyle(ui.TextStyle(color: Colors.red));
@@ -92,6 +107,7 @@ class GamePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(GamePainter oldDelegate) {
-    return this.needdraw || oldDelegate.needdraw;
+    var result = this.needdraw || oldDelegate.needdraw;
+    return result;
   }
 }

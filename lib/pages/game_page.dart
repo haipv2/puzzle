@@ -6,7 +6,7 @@ import 'package:puzzle/model/ImageNode.dart';
 
 import 'widget/game_engine.dart';
 import 'widget/game_painter.dart';
-import 'widget/puzzle_knife.dart';
+import 'widget/puzzle_item_builder.dart';
 
 
 class GamePage extends StatefulWidget {
@@ -39,6 +39,7 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
   int levelHeight;
   String path;
   ImageNode hitNode;
+  Rect extRect;
 
   double downX, downY, newX, newY;
   int emptyIndex;
@@ -50,11 +51,12 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
 
   GamePageState(this.size, this.path, this.levelWidth, this.levelHeight) {
     puzzleMagic = PuzzleMagic();
-    emptyIndex = levelWidth * levelWidth - 1;
+    emptyIndex = levelWidth * levelHeight - 1;
 
     puzzleMagic.init(path, size, levelWidth, levelHeight).then((val) {
       setState(() {
         nodes = puzzleMagic.splitImage();
+        extRect = puzzleMagic.extRect;
         GameEngine.makeRandom(nodes);
         setState(() {
           gameState = GameState.play;
@@ -88,7 +90,7 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
           GestureDetector(
             child: CustomPaint(
                 painter: GamePainter(nodes, levelWidth, hitNode, hitNodeList,
-                    direction, downX, downY, newX, newY, needdraw),
+                    direction, downX, downY, newX, newY, needdraw, extRect),
                 size: Size.infinite),
             onPanDown: onPanDown,
             onPanUpdate: onPanUpdate,
@@ -159,11 +161,10 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
       ImageNode node = nodes[i];
       if (node.rect.contains(localPosition)) {
         hitNode = node;
-        direction = isBetween(hitNode, emptyIndex);
+        direction = determindDirection(hitNode, emptyIndex);
         if (direction != Direction.none) {
           newX = downX = localPosition.dx;
           newY = downY = localPosition.dy;
-
           nodes.remove(hitNode);
           nodes.add(hitNode);
         }
@@ -227,13 +228,13 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
       }
     });
     if (isComplete) {
-      gameState = GameState.complete;
+//      gameState = GameState.complete;
     }
 
     setState(() {});
   }
 
-  Direction isBetween(ImageNode node, int emptyIndex) {
+  Direction determindDirection(ImageNode node, int emptyIndex) {
     int x = emptyIndex % levelWidth;
     int y = (emptyIndex / levelWidth).floor();
 
