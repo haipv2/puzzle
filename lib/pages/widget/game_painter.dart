@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'dart:ui' as ui show instantiateImageCodec, Codec, Image, TextStyle;
 
 import 'package:flutter/material.dart';
-import 'package:puzzle/model/ImageNode.dart';
+import 'package:puzzle/model/puzzle_tile.dart';
 
 import '../game_page.dart';
 
@@ -10,12 +10,12 @@ class GamePainter extends CustomPainter {
   Paint mypaint;
   Path path;
   final int level;
-  final List<ImageNode> nodes;
-  final ImageNode hitNode;
+  final List<PuzzleTile> nodes;
+  final PuzzleTile hitNode;
   final bool needdraw;
 
   final double downX, downY, newX, newY;
-  final List<ImageNode> hitNodeList;
+  final List<PuzzleTile> hitNodeList;
   Direction direction;
   Rect extRect;
 
@@ -48,15 +48,15 @@ class GamePainter extends CustomPainter {
       canvas.drawRect(extRect, paint);
 
       for (int i = 0; i < nodes.length; ++i) {
-        ImageNode node = nodes[i];
-        Rect rect2 = Rect.fromLTRB(
+        PuzzleTile node = nodes[i];
+        Rect rectDest = Rect.fromLTRB(
             node.rect.left, node.rect.top, node.rect.right, node.rect.bottom);
         if (hitNodeList != null && hitNodeList.contains(node)) {
           if (direction == Direction.left || direction == Direction.right) {
-            rect2 = node.rect.shift(Offset(newX - downX, 0.0));
+            rectDest = node.rect.shift(Offset(newX - downX, 0.0));
           } else if (direction == Direction.top ||
               direction == Direction.bottom) {
-            rect2 = node.rect.shift(Offset(0.0, newY - downY));
+            rectDest = node.rect.shift(Offset(0.0, newY - downY));
           }
         }
         Rect srcRect = Rect.fromLTRB(0.0, 0.0, node?.image?.width?.toDouble(),
@@ -64,12 +64,14 @@ class GamePainter extends CustomPainter {
         canvas.drawImageRect(
             nodes[i].image,
             srcRect,
-            rect2,
-            Paint());
+            rectDest,
+            Paint()
+              ..style = PaintingStyle.stroke
+              ..color = Colors.red..strokeCap=StrokeCap.round);
       }
 
       for (int i = 0; i < nodes.length; ++i) {
-        ImageNode node = nodes[i];
+        PuzzleTile node = nodes[i];
 
         ParagraphBuilder pb = ParagraphBuilder(ParagraphStyle(
           textAlign: TextAlign.center,

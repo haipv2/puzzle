@@ -1,7 +1,7 @@
 import 'dart:ui' as ui show Image;
 import 'dart:ui';
 
-class ImageNode {
+class PuzzleTile {
   int curIndex;
   int index;
   Path path;

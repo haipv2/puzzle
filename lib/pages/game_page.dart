@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:puzzle/model/ImageNode.dart';
+import 'package:puzzle/model/puzzle_tile.dart';
 
 import 'widget/game_engine.dart';
 import 'widget/game_painter.dart';
-import 'widget/puzzle_item_builder.dart';
+import 'widget/puzzle_builder.dart';
 
 
 class GamePage extends StatefulWidget {
@@ -28,35 +28,38 @@ enum GameState { loading, play, complete }
 class GamePageState extends State<GamePage> with TickerProviderStateMixin {
   final Size size;
   var image;
-  PuzzleMagic puzzleMagic;
-  List<ImageNode> nodes;
+  PuzzleBuilder puzzleBuilder;
+  List<PuzzleTile> nodes;
 
   Animation<int> alpha;
   AnimationController controller;
-  Map<int, ImageNode> nodeMap = Map();
+  Map<int, PuzzleTile> nodeMap = Map();
 
   int levelWidth;
   int levelHeight;
   String path;
-  ImageNode hitNode;
+  PuzzleTile hitNode;
   Rect extRect;
 
   double downX, downY, newX, newY;
   int emptyIndex;
   Direction direction;
   bool needdraw = true;
-  List<ImageNode> hitNodeList = [];
+  List<PuzzleTile> hitNodeList = [];
 
   GameState gameState = GameState.loading;
 
   GamePageState(this.size, this.path, this.levelWidth, this.levelHeight) {
-    puzzleMagic = PuzzleMagic();
+    puzzleBuilder = PuzzleBuilder();
+
+
+
     emptyIndex = levelWidth * levelHeight - 1;
 
-    puzzleMagic.init(path, size, levelWidth, levelHeight).then((val) {
+    puzzleBuilder.init(path, size, levelWidth, levelHeight).then((val) {
       setState(() {
-        nodes = puzzleMagic.splitImage();
-        extRect = puzzleMagic.extRect;
+        nodes = puzzleBuilder.splitImage();
+        extRect = puzzleBuilder.extRect;
         GameEngine.makeRandom(nodes);
         setState(() {
           gameState = GameState.play;
@@ -123,7 +126,7 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
       nodeMap[node.curIndex] = node;
 
       Rect rect = node.rect;
-      Rect dstRect = puzzleMagic.buildImgRect(
+      Rect dstRect = puzzleBuilder.buildImgRect(
           node.curIndex % levelWidth, (node.curIndex / levelWidth).floor());
 
       final double deltX = dstRect.left - rect.left;
@@ -146,7 +149,7 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
         needdraw = false;
       }
     });
-    controller.forward();
+//    controller.forward();
   }
 
   void onPanDown(DragDownDetails details) {
@@ -158,7 +161,7 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
     RenderBox referenceBox = context.findRenderObject();
     Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
     for (int i = 0; i < nodes.length; i++) {
-      ImageNode node = nodes[i];
+      PuzzleTile node = nodes[i];
       if (node.rect.contains(localPosition)) {
         hitNode = node;
         direction = determindDirection(hitNode, emptyIndex);
@@ -234,7 +237,7 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
     setState(() {});
   }
 
-  Direction determindDirection(ImageNode node, int emptyIndex) {
+  Direction determindDirection(PuzzleTile node, int emptyIndex) {
     int x = emptyIndex % levelWidth;
     int y = (emptyIndex / levelWidth).floor();
 
@@ -282,7 +285,7 @@ class GamePageState extends State<GamePage> with TickerProviderStateMixin {
     hitNodeList.forEach((node) {
       node.curIndex += v;
       nodeMap[node.curIndex] = node;
-      node.rect = puzzleMagic.buildImgRect(
+      node.rect = puzzleBuilder.buildImgRect(
           node.curIndex % levelWidth, (node.curIndex / levelWidth).floor());
     });
     emptyIndex -= v * hitNodeList.length;

@@ -5,9 +5,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:puzzle/model/ImageNode.dart';
+import 'package:puzzle/model/puzzle_tile.dart';
 
-class PuzzleMagic {
+class PuzzleBuilder {
   ui.Image image;
   double eachWidth;
   double eachHeight;
@@ -52,13 +52,13 @@ class PuzzleMagic {
     return image;
   }
 
-  List<ImageNode> splitImage() {
-    List<ImageNode> list = [];
-    ImageNode node = ImageNode();
+  List<PuzzleTile> splitImage() {
+    List<PuzzleTile> list = [];
+    PuzzleTile node = PuzzleTile();
 
     for (int j = 0; j < levelWidth; j++) {
       for (int i = 0; i < levelHeight; i++) {
-        node = ImageNode();
+        node = PuzzleTile();
         node.rect = buildImgRect(i, j);
         node.index = j * levelWidth + i;
         makeBitmap(node);
@@ -73,7 +73,7 @@ class PuzzleMagic {
         baseX + eachWidth * i, baseY + eachHeight * j, eachWidth, eachHeight);
   }
 
-  void makeBitmap(ImageNode node) async {
+  void makeBitmap(PuzzleTile node) async {
     int width = node.getXIndex(levelWidth);
     int height = node.getYIndex(levelHeight);
 
@@ -86,12 +86,12 @@ class PuzzleMagic {
     double wh = eachBitmapHeight.toDouble();
     Canvas canvas = Canvas(recorder, Rect.fromLTWH(0.0, 0.0, ww, wh));
 
-    Rect rect2 = Rect.fromLTRB(0.0, 0.0, rect.width, rect.height);
+    Rect rectDest = Rect.fromLTRB(0.0, 0.0, rect.width, rect.height);
 
     Paint paint = Paint();
-    canvas.drawImageRect(image, rect, rect2, paint);
+    canvas.drawImageRect(image, rect, rectDest, paint);
     node.image = await recorder.endRecording().toImage(ww.floor(), wh.floor());
-    node.rect = buildImgRect(width, height);
+//    node.rect = buildImgRect(width, height);
   }
 
   Rect getShapeRect(int i, int j, double width, double height) {

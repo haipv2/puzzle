@@ -1,8 +1,8 @@
 
-import 'package:puzzle/model/ImageNode.dart';
+import 'package:puzzle/model/puzzle_tile.dart';
 
 class GameEngine {
-  static void makeRandom(List<ImageNode> list) {
+  static void makeRandom(List<PuzzleTile> list) {
 //    List<int> srcArr = [];
 //    for (int i = 0; i < srcArr.length; i++) {
 //      srcArr.add(i);
