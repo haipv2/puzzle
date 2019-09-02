@@ -21,7 +21,7 @@ class LanguageSettingWidget extends StatelessWidget with AppUtils {
     return Container(
         child: BlocEventStateBuilder<TransState>(
             bloc: transBloc,
-            builder: (BuildContext contexxt, TransState state) {
+            builder: (BuildContext context, TransState state) {
               if (state.changing) {
                 return PendingPage();
               }

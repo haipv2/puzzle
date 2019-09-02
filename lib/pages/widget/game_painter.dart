@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
 
 import '../game_page.dart';
+import '../game_page1.dart';
 
 class GamePainter extends CustomPainter {
   Paint mypaint;
@@ -35,7 +36,6 @@ class GamePainter extends CustomPainter {
     mypaint.style = PaintingStyle.stroke;
     mypaint.strokeWidth = 1.0;
     mypaint.color = Color(0xa0dddddd);
-
     path = Path();
   }
 

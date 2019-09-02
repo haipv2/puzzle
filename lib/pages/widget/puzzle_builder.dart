@@ -9,17 +9,17 @@ import 'package:puzzle/model/puzzle_tile.dart';
 
 class PuzzleBuilder {
   ui.Image image;
-  double eachWidth;
-  double eachHeight;
+  double screenImageWidth;
+  double screenImageHeight;
   Size screenSize;
   double baseX;
   double baseY;
 
   int levelWidth;
   int levelHeight;
-  double eachBitmapWidth;
-  double eachBitmapHeight;
-  double paddingHorizontal = 0.0;
+  double eachImageWidth;
+  double eachImageHeight;
+  double paddingWidth = 0.0;
   Rect extRect;
 
   Future<ui.Image> init(
@@ -31,16 +31,17 @@ class PuzzleBuilder {
     this.levelHeight = levelHeight;
 
 //    eachWidth = screenSize.width * 0.8 / levelWidth;
-    paddingHorizontal = screenSize.width * 0.05;
-    eachWidth = screenSize.width * 0.9 / levelWidth;
-    eachHeight =
-        (screenSize.height * 0.9 - paddingHorizontal) / (levelHeight + 1);
-    eachBitmapWidth = (image.width / levelWidth);
-    eachBitmapHeight = (image.height / levelHeight);
-    baseX = screenSize.width * 0.05;
-    baseY = eachHeight + paddingHorizontal * 2;
-    extRect =
-        Rect.fromLTWH(baseX, paddingHorizontal * 2, eachWidth, eachHeight);
+    paddingWidth = screenSize.width * 0.05;
+    screenImageWidth = screenSize.width * 0.9 / levelWidth;
+    screenImageHeight = (screenSize.height - paddingWidth*2) / levelHeight;
+    eachImageWidth = (image.width / levelWidth);
+    eachImageHeight = (image.height / levelHeight);
+
+    baseX = paddingWidth;
+//    baseY = screenImageHeight + paddingWidth * 2;
+    baseY = baseX;
+    extRect = Rect.fromLTWH(
+        baseX, paddingWidth, screenImageWidth, screenImageHeight);
     return image;
   }
 
@@ -69,21 +70,21 @@ class PuzzleBuilder {
   }
 
   Rect buildImgRect(int i, int j) {
-    return Rect.fromLTWH(
-        baseX + eachWidth * i, baseY + eachHeight * j, eachWidth, eachHeight);
+    return Rect.fromLTWH(baseX + screenImageWidth * i,
+        baseY + screenImageHeight * j, screenImageWidth, screenImageHeight);
   }
 
   void makeBitmap(PuzzleTile node) async {
     int width = node.getXIndex(levelWidth);
     int height = node.getYIndex(levelHeight);
 
-    Rect rect = getShapeRect(width, height, eachBitmapWidth, eachBitmapHeight);
-    rect = rect.shift(Offset(eachBitmapWidth.toDouble() * width,
-        eachBitmapHeight.toDouble() * height));
+    Rect rect = getShapeRect(width, height, eachImageWidth, eachImageHeight);
+    rect = rect.shift(Offset(eachImageWidth.toDouble() * width,
+        eachImageHeight.toDouble() * height));
 
     PictureRecorder recorder = PictureRecorder();
-    double ww = eachBitmapWidth.toDouble();
-    double wh = eachBitmapHeight.toDouble();
+    double ww = eachImageWidth.toDouble();
+    double wh = eachImageHeight.toDouble();
     Canvas canvas = Canvas(recorder, Rect.fromLTWH(0.0, 0.0, ww, wh));
 
     Rect rectDest = Rect.fromLTRB(0.0, 0.0, rect.width, rect.height);
@@ -97,5 +98,4 @@ class PuzzleBuilder {
   Rect getShapeRect(int i, int j, double width, double height) {
     return Rect.fromLTRB(0.0, 0.0, width, height);
   }
-
 }
