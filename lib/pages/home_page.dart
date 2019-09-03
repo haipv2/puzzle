@@ -14,26 +14,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  GameBloc bloc;
+
   @override
   void initState() {
-    bloc = BlocProvider.of<GameBloc>(context);
-    bloc.addEvent(GameEvent());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-
+    print('build home_page');
     return Scaffold(
-      body: BlocEventStateBuilder<GameState>(
-          bloc: bloc, builder: (BuildContext context, GameState state) {
-            if (state.loading){
-              return PendingPage();
-            }
-            return MenuPage();
-
-      }),
+      body: MenuPage(),
     );
   }
 }

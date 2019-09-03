@@ -29,7 +29,7 @@ abstract class BlocEventStateBase<BlocEvent, BlocState> implements BlocBase {
   ///
   /// external processing of the event
   ///
-  Stream<BlocState> eventhandler(BlocEvent event, BlocState currentState);
+  Stream<BlocState> eventHandler(BlocEvent event, BlocState currentState);
 
   ///
   /// initial state
@@ -44,7 +44,7 @@ abstract class BlocEventStateBase<BlocEvent, BlocState> implements BlocBase {
     // when received event, invoke eventhandler and emit result new State
     _eventController.listen((BlocEvent event) {
       BlocState currentState = lastState ?? initState;
-      eventhandler(event, currentState).forEach((BlocState newState) {
+      eventHandler(event, currentState).forEach((BlocState newState) {
         _stateController.sink.add(newState);
       });
     });
@@ -53,7 +53,7 @@ abstract class BlocEventStateBase<BlocEvent, BlocState> implements BlocBase {
   ///
   @override
   void dispose() {
-//    _eventController?.close();
-//    _stateController?.close();
+    _eventController?.close();
+    _stateController?.close();
   }
 }

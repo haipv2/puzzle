@@ -4,6 +4,9 @@ import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/bloc/game_event.dart';
 
 import 'game_page.dart';
+import 'dart:ui' as ui show Image;
+
+import 'pending_page.dart';
 
 class MenuPage extends StatefulWidget {
   @override
@@ -17,39 +20,54 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   void initState() {
-    bloc = BlocProvider.of<GameBloc>(context);
     super.initState();
+    bloc = BlocProvider.of<GameBloc>(context);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('menu_page');
+
     return BlocProvider<GameBloc>(
       bloc: bloc,
-      child: GridView.builder(
-          itemCount: 1,
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-          itemBuilder: (context, index) {
-            imgPath = 'assets/images/level$index.jpg';
-            image = Image(
-              image: AssetImage(imgPath),
-              fit: BoxFit.cover,
-            );
-            return GestureDetector(
-              onTap: () {
-                selectItem(image);
-                bloc.addEvent(GameEvent.playing());
-              },
-              child: image,
-            );
+      child: StreamBuilder<Object>(
+          stream: bloc.image,
+          builder: (context, snapshot) {
+            if (snapshot.data == null) {
+              imgPath = 'assets/images/level0.jpg';
+              image = Image(
+                image: AssetImage(imgPath),
+                fit: BoxFit.cover,
+              );
+              bloc.imageAdd(image);
+            }
+            return snapshot.data == null
+                ? PendingPage()
+                : GridView.builder(
+                    itemCount: 1,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2),
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          selectItem(context, image);
+                        },
+                        child: image,
+                      );
+                    });
           }),
     );
   }
 
-  void selectItem(Image imgPath) {
+  void selectItem(BuildContext context, Image image) {
+    Size size= MediaQuery.of(context).size;
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-//      return GamePage(MediaQuery.of(context).size, 'assets/images/level0.jpg', 2,2);
-      return PuzzleGame(image);
+      return PuzzleGame(imgPath,size,3,2);
     }));
   }
 }

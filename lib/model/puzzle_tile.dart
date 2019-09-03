@@ -7,6 +7,7 @@ class PuzzleTile {
   Path path;
   Rect rect;
   ui.Image image;
+  Offset offset;
 
   int getXIndex(int level) {
     return index % level;

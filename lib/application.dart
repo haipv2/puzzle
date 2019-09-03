@@ -8,6 +8,7 @@ import 'pages/home_page.dart';
 class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('application_page');
     return BlocProvider<GameBloc>(
       bloc: GameBloc(),
       child: MaterialApp(

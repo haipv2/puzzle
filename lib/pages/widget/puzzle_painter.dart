@@ -1,17 +1,28 @@
 import 'dart:ui';
+import 'dart:ui' as ui show Image;
 
 import 'package:flutter/material.dart';
+import 'package:puzzle/model/puzzle_tile.dart';
 
 class PuzzlePainter extends CustomPainter {
+  final double x,y;
+  final List<PuzzleTile> puzzles;
+
+  PuzzlePainter({this.x, this.y,this.puzzles});
+
   @override
   void paint(Canvas canvas, Size size) {
-    Rect rect = Rect.fromLTWH(0, 0, double.infinity, double.infinity);
-    canvas.drawRect(rect, Paint()..color = Colors.red);
+    puzzles.forEach((item){
+      Rect srcRect = Rect.fromLTWH(0, 0, 100, 100);
+      Rect destRect = Rect.fromLTWH(0, 0, 200, 200);
+      canvas.drawImageRect(item.image, srcRect, destRect, Paint());
+    });
+
+
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    // TODO: implement shouldRepaint
     return false;
   }
 }

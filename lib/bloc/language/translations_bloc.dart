@@ -37,7 +37,7 @@ class TransBloc extends BlocEventStateBase<TransEvent, TransState> {
   }
 
   @override
-  Stream<TransState> eventhandler(
+  Stream<TransState> eventHandler(
       TransEvent event, TransState currentState) async* {
     yield TransState.progressing(0);
 
