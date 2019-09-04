@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:puzzle/model/puzzle_tile.dart';
 
 import 'bloc_helper/bloc_event_state.dart';
 import 'game_event.dart';
@@ -6,12 +7,15 @@ import 'game_state.dart';
 import 'package:rxdart/rxdart.dart';
 class GameBloc extends BlocEventStateBase<GameEvent, GameState> {
   //controller
-  BehaviorSubject<Image> controller = BehaviorSubject<Image>();
+  BehaviorSubject<Image> imageController = BehaviorSubject<Image>();
   //stream
-  Observable<Image> get image => controller.stream;
+  Observable<Image> get image => imageController.stream;
   //sink
-  Function(Image) get imageAdd => controller.sink.add;
+  Function(Image) get imageAdd => imageController.sink.add;
 
+  BehaviorSubject<List<PuzzleTile>> puzzlesController = BehaviorSubject<List<PuzzleTile>>();
+  Observable<List<PuzzleTile>> get puzzles => puzzlesController.stream;
+  Function(List<PuzzleTile>) get puzzlesAdd => puzzlesController.sink.add;
 
 
   GameBloc() : super(initState: GameState.loading());

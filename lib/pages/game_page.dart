@@ -29,30 +29,74 @@ class PuzzleGame extends StatefulWidget {
   double gameActiveWidth;
   double gameActiveHeight;
   double paddingX, paddingY;
+  int coutner = 0;
 
-  PuzzleGame(this.imgPath, this.size, this.gameLevelWidth,this.gameLevelHeight) {
+  GameBloc bloc;
+
+  PuzzleGame(
+      this.imgPath, this.size, this.gameLevelWidth, this.gameLevelHeight) {
     paddingX = paddingY = size.width * 0.05;
     gameActiveWidth = size.width * 0.9;
     gameActiveHeight = size.height - paddingY * 2;
 
     init(imgPath).then((image) {
-      imageSizeWidth = image.width;
-      imageSizeHeight = image.height;
-      imageScreenWidth = gameActiveWidth / gameLevelWidth;
-      imageScreenHeight = gameActiveHeight / gameLevelHeight;
-      imageEachHeight = image.height / gameLevelHeight;
-      imageEachWidth = image.width / gameLevelWidth;
-      puzzles = buildPuzzles();
+      print('loaded image');
+//      setPuzzles();
     });
   }
+
+
 
   @override
   _PuzzleGameState createState() => _PuzzleGameState();
 
   Future<ui.Image> init(String imgPath) async {
     image = await getImage(imgPath);
-    print(image);
+    imageSizeWidth = image.width;
+    imageSizeHeight = image.height;
+    imageScreenWidth = gameActiveWidth / gameLevelWidth;
+    imageScreenHeight = gameActiveHeight / gameLevelHeight;
+    imageEachHeight = image.height / gameLevelHeight;
+    imageEachWidth = image.width / gameLevelWidth;
+    await setPuzzles();
+    bloc.puzzlesAdd(puzzles);
     return image;
+  }
+
+
+
+  Future<List<PuzzleTile>> buildPuzzles() async {
+    List<PuzzleTile> result = [];
+    for (int i = 0; i < gameLevelHeight; i++) {
+      for (int j = 0; j < gameLevelWidth; j++) {
+        coutner++;
+        Rect rectImage = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
+            imageEachWidth, imageEachHeight);
+        Rect rectScreen = Rect.fromLTWH(
+            paddingX + j * imageScreenWidth,
+            paddingY + i * imageScreenHeight,
+            imageScreenWidth * 0.996,
+            imageScreenHeight * 0.996);
+
+        PictureRecorder pictureRecorder = PictureRecorder();
+        Canvas canvas = Canvas(pictureRecorder, Rect.fromLTWH(0, 0, imageEachWidth, imageEachHeight));
+        canvas.drawImageRect(image, rectImage, rectScreen, Paint());
+        ui.Image imageExtract = await pictureRecorder.endRecording().toImage(imageEachWidth.floor(), imageEachHeight.floor());
+        result.add(PuzzleTile()
+          ..index = coutner
+          ..image = imageExtract
+          ..rectImage = rectImage
+          ..rectScreen = rectScreen);
+      }
+    }
+
+    return result;
+  }
+
+  Future<void> setPuzzles()async{
+    print('Begin setPuzzle');
+    puzzles = await buildPuzzles();
+    print('End setPuzzle');
   }
 
   Future<ui.Image> getImage(String path) async {
@@ -63,23 +107,16 @@ class PuzzleGame extends StatefulWidget {
     return image;
   }
 
-  List<PuzzleTile> buildPuzzles() {
-    List<PuzzleTile> result = [];
-    result.add(PuzzleTile()
-      ..image = image
-      ..offset = Offset(paddingX, paddingY));
-    return result;
-  }
 }
 
 class _PuzzleGameState extends State<PuzzleGame> {
-  GameBloc bloc;
 
   @override
   void initState() {
     super.initState();
-    bloc = BlocProvider.of<GameBloc>(context);
+    widget.bloc = BlocProvider.of<GameBloc>(context);
   }
+
 
   @override
   void dispose() {
@@ -89,9 +126,12 @@ class _PuzzleGameState extends State<PuzzleGame> {
   @override
   Widget build(BuildContext context) {
     print('game_page');
-    return StreamBuilder<Image>(
-        stream: bloc.image,
+    return StreamBuilder<List<PuzzleTile>>(
+        stream: widget.bloc.puzzles,
         builder: (context, snapshot) {
+          if (snapshot.data == null){
+            return PendingPage();
+          }
           return GestureDetector(
             child: CustomPaint(
               painter: PuzzlePainter(
@@ -102,4 +142,5 @@ class _PuzzleGameState extends State<PuzzleGame> {
           );
         });
   }
+
 }
