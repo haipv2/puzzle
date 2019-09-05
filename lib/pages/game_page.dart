@@ -45,8 +45,6 @@ class PuzzleGame extends StatefulWidget {
     });
   }
 
-
-
   @override
   _PuzzleGameState createState() => _PuzzleGameState();
 
@@ -63,8 +61,6 @@ class PuzzleGame extends StatefulWidget {
     return image;
   }
 
-
-
   Future<List<PuzzleTile>> buildPuzzles() async {
     List<PuzzleTile> result = [];
     for (int i = 0; i < gameLevelHeight; i++) {
@@ -79,9 +75,25 @@ class PuzzleGame extends StatefulWidget {
             imageScreenHeight * 0.996);
 
         PictureRecorder pictureRecorder = PictureRecorder();
-        Canvas canvas = Canvas(pictureRecorder, Rect.fromLTWH(0, 0, imageEachWidth, imageEachHeight));
-        canvas.drawImageRect(image, rectImage, rectScreen, Paint());
-        ui.Image imageExtract = await pictureRecorder.endRecording().toImage(imageEachWidth.floor(), imageEachHeight.floor());
+        Canvas canvas = Canvas(
+            pictureRecorder,
+            Rect.fromLTWH(
+                0,
+                0,
+                imageEachWidth,
+                imageEachHeight));
+
+
+        Rect rect1 = Rect.fromLTWH(imageEachWidth*j, imageEachHeight*i,
+            image.width.toDouble(), image.height.toDouble());
+        Rect rect2= Rect.fromLTWH(paddingX + j * imageScreenWidth,
+            paddingY + i * imageScreenHeight,
+            rect1.width, rect1.height);
+
+        canvas.drawImageRect(image, rect1, rect2, Paint());
+        ui.Image imageExtract = await pictureRecorder
+            .endRecording()
+            .toImage(imageEachWidth.floor(), imageEachHeight.floor());
         result.add(PuzzleTile()
           ..index = coutner
           ..image = imageExtract
@@ -93,7 +105,7 @@ class PuzzleGame extends StatefulWidget {
     return result;
   }
 
-  Future<void> setPuzzles()async{
+  Future<void> setPuzzles() async {
     print('Begin setPuzzle');
     puzzles = await buildPuzzles();
     print('End setPuzzle');
@@ -106,17 +118,14 @@ class PuzzleGame extends StatefulWidget {
     image = frameInfo.image;
     return image;
   }
-
 }
 
 class _PuzzleGameState extends State<PuzzleGame> {
-
   @override
   void initState() {
     super.initState();
     widget.bloc = BlocProvider.of<GameBloc>(context);
   }
-
 
   @override
   void dispose() {
@@ -129,7 +138,7 @@ class _PuzzleGameState extends State<PuzzleGame> {
     return StreamBuilder<List<PuzzleTile>>(
         stream: widget.bloc.puzzles,
         builder: (context, snapshot) {
-          if (snapshot.data == null){
+          if (snapshot.data == null) {
             return PendingPage();
           }
           return GestureDetector(
@@ -142,5 +151,4 @@ class _PuzzleGameState extends State<PuzzleGame> {
           );
         });
   }
-
 }
