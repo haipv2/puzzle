@@ -14,21 +14,30 @@ class PuzzlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+
     if (puzzles != null) {
+      puzzles.shuffle();
+
       for (int i = 0; i < puzzles.length; i++) {
         PuzzleTile item = puzzles[i];
-        if (i==1) {
-          canvas.drawImage(item.image, Offset(0,0), Paint());
-//          canvas.drawImageRect(
-//              item.image, item.rectImage, item.rectScreen, Paint()..color=Colors.red);
+        if (i ==i) {
+//          canvas.drawImage(item.image,
+//              Offset(item.rectScreen.left, item.rectScreen.top), Paint());
+          Rect rect =
+              Rect.fromLTWH(0, 0, item.image.width.toDouble(), item.image.height.toDouble());
+          Rect rect1 = Rect.fromLTWH(
+              (16 + item.rectScreen.width*(i%2)).toDouble(), (16 + item.rectScreen.height * (i~/2)).toDouble(), item.rectScreen.width, item.rectScreen.height);
+          canvas.drawImageRect(
+              item.image, rect, rect1, Paint()..color = Colors.red);
         }
-//        textSpan = new TextSpan(
-//            text: '${item.index}', style: TextStyle(color: Colors.red));
-//        textPainter =
-//            new TextPainter(text: textSpan, textDirection: TextDirection.ltr);
-//        textPainter.layout(minWidth: 30, maxWidth: 50);
-//        textPainter.paint(
-//            canvas, Offset(item.rectScreen.left, item.rectScreen.top));
+        textSpan = new TextSpan(
+            text: '${item.rectScreen.left}-${item.rectScreen.top}',
+            style: TextStyle(color: Colors.red));
+        textPainter =
+            new TextPainter(text: textSpan, textDirection: TextDirection.ltr);
+        textPainter.layout(minWidth: 30, maxWidth: 50);
+        textPainter.paint(
+            canvas, Offset(item.rectScreen.left, item.rectScreen.top));
       }
     }
   }

@@ -83,21 +83,26 @@ class PuzzleGame extends StatefulWidget {
                 imageEachWidth,
                 imageEachHeight));
 
-
-        Rect rect1 = Rect.fromLTWH(imageEachWidth*j, imageEachHeight*i,
-            image.width.toDouble(), image.height.toDouble());
+        Rect rect1 = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
+            imageEachWidth, imageEachHeight);
         Rect rect2= Rect.fromLTWH(paddingX + j * imageScreenWidth,
             paddingY + i * imageScreenHeight,
-            rect1.width, rect1.height);
+            imageScreenWidth, imageScreenHeight);
 
-        canvas.drawImageRect(image, rect1, rect2, Paint());
+        Rect rect3 = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
+            imageEachWidth, imageEachHeight);
+        Rect rect4= Rect.fromLTWH(paddingX,
+            paddingY,
+            rect3.width, rect3.height);
+
+        canvas.drawImageRect(image, rect3, rect4, Paint());
         ui.Image imageExtract = await pictureRecorder
             .endRecording()
             .toImage(imageEachWidth.floor(), imageEachHeight.floor());
         result.add(PuzzleTile()
           ..index = coutner
           ..image = imageExtract
-          ..rectImage = rectImage
+          ..rectImage = Rect.fromLTWH(0,0,image.width.toDouble(),image.height.toDouble())
           ..rectScreen = rectScreen);
       }
     }
