@@ -91,8 +91,8 @@ class PuzzleGame extends StatefulWidget {
 
         Rect rect3 = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
             imageEachWidth, imageEachHeight);
-        Rect rect4= Rect.fromLTWH(paddingX,
-            paddingY,
+        Rect rect4= Rect.fromLTWH(0,
+            0,
             rect3.width, rect3.height);
 
         canvas.drawImageRect(image, rect3, rect4, Paint());
