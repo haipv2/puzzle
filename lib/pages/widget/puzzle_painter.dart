@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:ui' as ui show Image;
 
 import 'package:flutter/material.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
@@ -9,9 +10,9 @@ class PuzzlePainter extends CustomPainter {
   TextSpan textSpan;
   TextPainter textPainter;
   Rect rectExt;
-  bool reDraw;
 
-  PuzzlePainter({this.paddingX, this.paddingY, this.puzzles, this.rectExt, this.reDraw: false});
+  PuzzlePainter({this.paddingX, this.paddingY, this.puzzles, this.rectExt}) {
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -49,6 +50,6 @@ class PuzzlePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    return reDraw;
+    return false;
   }
 }
