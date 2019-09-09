@@ -15,30 +15,35 @@ class PuzzlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (puzzles != null) {
-      canvas.drawRect(rectExt, Paint()..color = Colors.white);
-      puzzles.shuffle();
-      for (int i = 0; i < puzzles.length; i++) {
-        PuzzleTile item = puzzles[i];
-        Rect rect = Rect.fromLTWH(
-            0, 0, item.image.width.toDouble(), item.image.height.toDouble());
-        Rect rect1 = Rect.fromLTWH(
-            (paddingX + item.rectScreen.width * (i % 2)).toDouble(),
-            (paddingY + item.rectScreen.height * (i ~/ 2)).toDouble(),
-            item.rectScreen.width,
-            item.rectScreen.height);
-        canvas.drawImageRect(
-            item.image, rect, rect1, Paint()..color = Colors.red);
-        textSpan = new TextSpan(
-//            text: '${item.rectScreen.left}-${item.rectScreen.top}',
-            text: '${item.index}',
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
-        textPainter =
-            new TextPainter(text: textSpan, textDirection: TextDirection.ltr);
-        textPainter.layout(minWidth: 40, maxWidth: 80);
-        textPainter.paint(
-            canvas, Offset(item.rectScreen.left, item.rectScreen.top));
-      }
+    canvas.drawRect(rectExt, Paint()..color = Colors.white);
+
+    for (int i = 0; i < puzzles.length; i++) {
+      PuzzleTile item = puzzles[i];
+      Rect rect = Rect.fromLTWH(
+          0, 0, item.image.width.toDouble(), item.image.height.toDouble());
+      Rect rect1 = Rect.fromLTWH(
+          (paddingX + item.rectScreen.width * (i % 2)).toDouble(),
+          (paddingY + item.rectScreen.height * (i ~/ 2)).toDouble(),
+          item.rectScreen.width,
+          item.rectScreen.height);
+      canvas.drawImageRect(
+          item.image, rect, rect1, Paint()..color = Colors.red);
+    }
+
+    for (int i = 0; i < puzzles.length; i++) {
+      PuzzleTile item = puzzles[i];
+      textSpan = new TextSpan(
+          text: '${item.index}',
+          style: TextStyle(color: Colors.red, fontSize: 20));
+      textPainter =
+          new TextPainter(text: textSpan, textDirection: TextDirection.ltr);
+      textPainter.layout(minWidth: 50, maxWidth: 80);
+      Rect rect1 = Rect.fromLTWH(
+          (paddingX + item.rectScreen.width * (i % 2)).toDouble(),
+          (paddingY + item.rectScreen.height * (i ~/ 2)).toDouble(),
+          item.rectScreen.width,
+          item.rectScreen.height);
+      textPainter.paint(canvas, rect1.topLeft);
     }
   }
 

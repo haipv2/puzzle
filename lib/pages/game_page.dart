@@ -57,9 +57,19 @@ class PuzzleGame extends StatefulWidget {
     image = await getImage(imgPath);
     imageSizeWidth = image.width;
     imageSizeHeight = image.height;
+    imageScreenWidth = gameActiveWidth / gameLevelWidth;
 
+    imageScreenHeight = gameActiveHeight / gameLevelHeight;
+
+    gameActiveHeight = gameActiveHeight - imageScreenHeight;
+    imageScreenHeight = gameActiveHeight / gameLevelHeight;
+    rectExt = Rect.fromLTWH(paddingX, paddingY*3, imageScreenWidth, imageScreenHeight);
+    paddingY = paddingY*3+imageScreenHeight;
     imageEachHeight = image.height / gameLevelHeight;
     imageEachWidth = image.width / gameLevelWidth;
+
+
+
     await setPuzzles();
     bloc.puzzlesAdd(puzzles);
     return image;
@@ -69,7 +79,6 @@ class PuzzleGame extends StatefulWidget {
     List<PuzzleTile> result = [];
     for (int i = 0; i < gameLevelHeight; i++) {
       for (int j = 0; j < gameLevelWidth; j++) {
-        coutner++;
         Rect rectScreen = Rect.fromLTWH(
             paddingX + j * imageScreenWidth,
             paddingY + i * imageScreenHeight,
@@ -87,16 +96,14 @@ class PuzzleGame extends StatefulWidget {
         canvas.drawImageRect(image, rect3, rect4, Paint());
         ui.Image imageExtract = await pictureRecorder
             .endRecording()
-            .toImage(imageEachWidth.floor(), imageEachHeight.floor()).then((item){
-              print(coutner);
-        });
+            .toImage(imageEachWidth.floor(), imageEachHeight.floor());
         result.add(PuzzleTile()
           ..index = imageIndex
           ..image = imageExtract
           ..rectScreen = rectScreen);
       }
     }
-
+    result.shuffle();
     return result;
   }
 
@@ -142,7 +149,19 @@ class _PuzzleGameState extends State<PuzzleGame> {
                   rectExt: widget.rectExt,
                   reDraw: widget.reDraw),
             ),
+            onPanDown: onPanDown,
+            onPanUpdate: onPanUpdate,
+            onPanEnd: onPanEnd,
           );
         });
+  }
+
+  void onPanDown(DragDownDetails details) {
+  }
+
+  void onPanUpdate(DragUpdateDetails details) {
+  }
+
+  void onPanEnd(DragEndDetails details) {
   }
 }
