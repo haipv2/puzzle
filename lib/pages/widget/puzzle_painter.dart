@@ -10,14 +10,13 @@ class PuzzlePainter extends CustomPainter {
   TextSpan textSpan;
   TextPainter textPainter;
   Rect rectExt;
-
+  bool reDraw;
   PuzzlePainter({this.paddingX, this.paddingY, this.puzzles, this.rectExt}) {
   }
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawRect(rectExt, Paint()..color = Colors.white);
-
     for (int i = 0; i < puzzles.length; i++) {
       PuzzleTile item = puzzles[i];
       Rect rect = Rect.fromLTWH(
@@ -50,6 +49,6 @@ class PuzzlePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
+    return reDraw;
   }
 }

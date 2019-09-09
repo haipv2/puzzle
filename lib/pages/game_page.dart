@@ -1,14 +1,11 @@
 import 'dart:ui';
+import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:puzzle/bloc/bloc_provider.dart';
-import 'package:puzzle/bloc/bloc_widget/bloc_state_builder.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
-import 'package:puzzle/bloc/game_event.dart';
-import 'package:puzzle/bloc/game_state.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
-import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
+
 import 'pending_page.dart';
 import 'widget/puzzle_painter.dart';
 
@@ -33,9 +30,9 @@ class PuzzleGame extends StatefulWidget {
 
   GameBloc bloc;
 
-  PuzzleGame(
-      this.imgPath, this.size, this.gameLevelWidth, this.gameLevelHeight, GameBloc bloc) {
-    this.bloc=bloc;
+  PuzzleGame(this.imgPath, this.size, this.gameLevelWidth, this.gameLevelHeight,
+      GameBloc bloc) {
+    this.bloc = bloc;
     paddingX = paddingY = size.width * 0.05;
     gameActiveWidth = size.width * 0.9;
     gameActiveHeight = size.height - paddingY * 4;
@@ -51,17 +48,15 @@ class PuzzleGame extends StatefulWidget {
     imageSizeWidth = image.width;
     imageSizeHeight = image.height;
     imageScreenWidth = gameActiveWidth / gameLevelWidth;
-
     imageScreenHeight = gameActiveHeight / gameLevelHeight;
 
     gameActiveHeight = gameActiveHeight - imageScreenHeight;
     imageScreenHeight = gameActiveHeight / gameLevelHeight;
-    rextExt = Rect.fromLTWH(paddingX, paddingY*3, imageScreenWidth, imageScreenHeight);
-    paddingY = paddingY*3+imageScreenHeight;
+    rextExt = Rect.fromLTWH(
+        paddingX, paddingY * 3, imageScreenWidth, imageScreenHeight);
+    paddingY = paddingY * 3 + imageScreenHeight;
     imageEachHeight = image.height / gameLevelHeight;
     imageEachWidth = image.width / gameLevelWidth;
-
-
 
     await setPuzzles();
     bloc.puzzlesAdd(puzzles);
@@ -79,21 +74,13 @@ class PuzzleGame extends StatefulWidget {
             imageScreenHeight * 0.996);
 
         PictureRecorder pictureRecorder = PictureRecorder();
-        Canvas canvas = Canvas(
-            pictureRecorder,
-            Rect.fromLTWH(
-                0,
-                0,
-                imageEachWidth,
-                imageEachHeight));
-
+        Canvas canvas = Canvas(pictureRecorder,
+            Rect.fromLTWH(0, 0, imageEachWidth, imageEachHeight));
 
         Rect rect3 = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
             imageEachWidth, imageEachHeight);
-        Rect rect4= Rect.fromLTWH(0,
-            0,
-            rect3.width, rect3.height);
-        var imageIndex = i*gameLevelWidth+j;
+        Rect rect4 = Rect.fromLTWH(0, 0, rect3.width, rect3.height);
+        var imageIndex = i * gameLevelWidth + j;
 
         canvas.drawImageRect(image, rect3, rect4, Paint());
         ui.Image imageExtract = await pictureRecorder
@@ -111,9 +98,7 @@ class PuzzleGame extends StatefulWidget {
   }
 
   Future<void> setPuzzles() async {
-    print('Begin setPuzzle');
     puzzles = await buildPuzzles();
-    print('End setPuzzle');
   }
 
   Future<ui.Image> getImage(String path) async {
@@ -145,27 +130,42 @@ class _PuzzleGameState extends State<PuzzleGame> {
           if (snapshot.data == null) {
             return PendingPage();
           }
-          return GestureDetector(
-            child: CustomPaint(
-              painter: PuzzlePainter(
-                  paddingX: widget.paddingX,
-                  paddingY: widget.paddingY,
-                  puzzles: widget.puzzles,
-                  rectExt: widget.rextExt),
-            ),
-            onPanDown: onPanDown,
-            onPanUpdate: onPanUpdate,
-            onPanEnd: onPanEnd,
-          );
+          return StreamBuilder<bool>(
+              stream: widget.bloc.reDraw,
+              builder: (context, snapshot) {
+                return GestureDetector(
+                  child: CustomPaint(
+                    painter: PuzzlePainter(
+                        paddingX: widget.paddingX,
+                        paddingY: widget.paddingY,
+                        puzzles: widget.puzzles,
+                        rectExt: widget.rextExt)
+                      ..reDraw = snapshot.data ?? false,
+                  ),
+                  onPanDown: onPanDown,
+                  onPanUpdate: onPanUpdate,
+                  onPanEnd: onPanEnd,
+                );
+              });
         });
   }
 
   void onPanDown(DragDownDetails details) {
+    widget.bloc.reDrawAdd(true);
+    RenderBox referenceBox = context.findRenderObject();
+    Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
+    print('---------${localPosition.toString()}');
   }
 
   void onPanUpdate(DragUpdateDetails details) {
+    print('onPanUpdate');
+    RenderBox referenceBox = context.findRenderObject();
+    Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
+    print('-update-${localPosition.toString()}');
+
   }
 
   void onPanEnd(DragEndDetails details) {
+    print('onPanEnd');
   }
 }
