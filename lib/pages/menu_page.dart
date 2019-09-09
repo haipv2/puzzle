@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/bloc_provider.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
-import 'package:puzzle/bloc/game_event.dart';
 
 import 'game_page.dart';
-import 'dart:ui' as ui show Image;
-
 import 'pending_page.dart';
 
 class MenuPage extends StatefulWidget {
@@ -17,6 +14,7 @@ class _MenuPageState extends State<MenuPage> {
   String imgPath = '';
   Image image;
   GameBloc bloc;
+  bool reDraw;
 
   @override
   void initState() {
@@ -65,9 +63,35 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   void selectItem(BuildContext context, Image image) {
-    Size size= MediaQuery.of(context).size;
+    Size size = MediaQuery.of(context).size;
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return PuzzleGame(imgPath,size,2,3);
+      return StreamBuilder<bool>(
+          stream: bloc.reDraw,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData){
+              reDraw = false;
+            }else {
+              reDraw = snapshot.data;
+            }
+            return GestureDetector(
+              child: PuzzleGame(imgPath, size, 2, 3, reDraw, bloc),
+              onPanDown: onPanDown,
+              onPanUpdate: onPanUpdate,
+              onPanEnd: onPanEnd,
+            );
+          });
     }));
   }
+
+  void onPanDown(DragDownDetails details) {
+//    bloc.reDrawAdd(true);
+  RenderBox renderBox = context.findRenderObject();
+  Offset localPosition = renderBox.globalToLocal(details.globalPosition);
+  print(localPosition);
+
+  }
+
+  void onPanUpdate(DragUpdateDetails details) {}
+
+  void onPanEnd(DragEndDetails details) {}
 }

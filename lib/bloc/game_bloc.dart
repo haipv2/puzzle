@@ -13,9 +13,15 @@ class GameBloc extends BlocEventStateBase<GameEvent, GameState> {
   //sink
   Function(Image) get imageAdd => imageController.sink.add;
 
+  //List puzzle
   BehaviorSubject<List<PuzzleTile>> puzzlesController = BehaviorSubject<List<PuzzleTile>>();
   Observable<List<PuzzleTile>> get puzzles => puzzlesController.stream;
   Function(List<PuzzleTile>) get puzzlesAdd => puzzlesController.sink.add;
+
+  //Draw patiner flag
+  BehaviorSubject<bool> painterController = BehaviorSubject<bool>();
+  Observable<bool> get reDraw => painterController.stream;
+  Function(bool) get reDrawAdd => painterController.sink.add;
 
 
   GameBloc() : super(initState: GameState.loading());

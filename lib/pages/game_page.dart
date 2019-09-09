@@ -1,14 +1,12 @@
 import 'dart:ui';
+import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:puzzle/bloc/bloc_provider.dart';
-import 'package:puzzle/bloc/bloc_widget/bloc_state_builder.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
-import 'package:puzzle/bloc/game_event.dart';
-import 'package:puzzle/bloc/game_state.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
-import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
+
 import 'pending_page.dart';
 import 'widget/puzzle_painter.dart';
 
@@ -30,15 +28,22 @@ class PuzzleGame extends StatefulWidget {
   double gameActiveHeight;
   double paddingX, paddingY;
   int coutner = 0;
-
+  Rect rectExt;
+  bool reDraw;
   GameBloc bloc;
 
-  PuzzleGame(
-      this.imgPath, this.size, this.gameLevelWidth, this.gameLevelHeight) {
+  PuzzleGame(this.imgPath, this.size, this.gameLevelWidth, this.gameLevelHeight,
+      this.reDraw, GameBloc bloc) {
+    this.bloc = bloc;
     paddingX = paddingY = size.width * 0.05;
     gameActiveWidth = size.width * 0.9;
-    gameActiveHeight = size.height - paddingY * 2;
-
+    gameActiveHeight = size.height - paddingY * 4;
+    imageScreenWidth = gameActiveWidth / gameLevelWidth;
+    imageScreenHeight = gameActiveHeight / (gameLevelHeight + 1);
+    gameActiveHeight = gameActiveHeight - imageScreenHeight - paddingY;
+    rectExt = Rect.fromLTWH(
+        paddingX, paddingY * 3, imageScreenWidth, imageScreenHeight);
+    paddingY = paddingY * 3 + imageScreenHeight;
     init(imgPath).then((image) {
       print('loaded image');
 //      setPuzzles();
@@ -52,8 +57,7 @@ class PuzzleGame extends StatefulWidget {
     image = await getImage(imgPath);
     imageSizeWidth = image.width;
     imageSizeHeight = image.height;
-    imageScreenWidth = gameActiveWidth / gameLevelWidth;
-    imageScreenHeight = gameActiveHeight / gameLevelHeight;
+
     imageEachHeight = image.height / gameLevelHeight;
     imageEachWidth = image.width / gameLevelWidth;
     await setPuzzles();
@@ -66,43 +70,29 @@ class PuzzleGame extends StatefulWidget {
     for (int i = 0; i < gameLevelHeight; i++) {
       for (int j = 0; j < gameLevelWidth; j++) {
         coutner++;
-        Rect rectImage = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
-            imageEachWidth, imageEachHeight);
         Rect rectScreen = Rect.fromLTWH(
             paddingX + j * imageScreenWidth,
             paddingY + i * imageScreenHeight,
             imageScreenWidth * 0.996,
             imageScreenHeight * 0.996);
+        var imageIndex = i*gameLevelWidth+j;
 
         PictureRecorder pictureRecorder = PictureRecorder();
-        Canvas canvas = Canvas(
-            pictureRecorder,
-            Rect.fromLTWH(
-                0,
-                0,
-                imageEachWidth,
-                imageEachHeight));
-
-        Rect rect1 = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
-            imageEachWidth, imageEachHeight);
-        Rect rect2= Rect.fromLTWH(paddingX + j * imageScreenWidth,
-            paddingY + i * imageScreenHeight,
-            imageScreenWidth, imageScreenHeight);
-
+        Canvas canvas = Canvas(pictureRecorder,
+            Rect.fromLTWH(0, 0, imageEachWidth, imageEachHeight));
         Rect rect3 = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
             imageEachWidth, imageEachHeight);
-        Rect rect4= Rect.fromLTWH(paddingX,
-            paddingY,
-            rect3.width, rect3.height);
+        Rect rect4 = Rect.fromLTWH(0, 0, rect3.width, rect3.height);
 
         canvas.drawImageRect(image, rect3, rect4, Paint());
         ui.Image imageExtract = await pictureRecorder
             .endRecording()
-            .toImage(imageEachWidth.floor(), imageEachHeight.floor());
+            .toImage(imageEachWidth.floor(), imageEachHeight.floor()).then((item){
+              print(coutner);
+        });
         result.add(PuzzleTile()
-          ..index = coutner
+          ..index = imageIndex
           ..image = imageExtract
-          ..rectImage = Rect.fromLTWH(0,0,image.width.toDouble(),image.height.toDouble())
           ..rectScreen = rectScreen);
       }
     }
@@ -111,9 +101,7 @@ class PuzzleGame extends StatefulWidget {
   }
 
   Future<void> setPuzzles() async {
-    print('Begin setPuzzle');
     puzzles = await buildPuzzles();
-    print('End setPuzzle');
   }
 
   Future<ui.Image> getImage(String path) async {
@@ -129,7 +117,6 @@ class _PuzzleGameState extends State<PuzzleGame> {
   @override
   void initState() {
     super.initState();
-    widget.bloc = BlocProvider.of<GameBloc>(context);
   }
 
   @override
@@ -149,9 +136,11 @@ class _PuzzleGameState extends State<PuzzleGame> {
           return GestureDetector(
             child: CustomPaint(
               painter: PuzzlePainter(
-                  x: widget.paddingX,
-                  y: widget.paddingY,
-                  puzzles: widget.puzzles),
+                  paddingX: widget.paddingX,
+                  paddingY: widget.paddingY,
+                  puzzles: widget.puzzles,
+                  rectExt: widget.rectExt,
+                  reDraw: widget.reDraw),
             ),
           );
         });
