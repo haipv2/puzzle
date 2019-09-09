@@ -29,20 +29,18 @@ class PuzzleGame extends StatefulWidget {
   double gameActiveWidth;
   double gameActiveHeight;
   double paddingX, paddingY;
-  int coutner = 0;
+  Rect rextExt;
 
   GameBloc bloc;
 
   PuzzleGame(
-      this.imgPath, this.size, this.gameLevelWidth, this.gameLevelHeight) {
+      this.imgPath, this.size, this.gameLevelWidth, this.gameLevelHeight, GameBloc bloc) {
+    this.bloc=bloc;
     paddingX = paddingY = size.width * 0.05;
     gameActiveWidth = size.width * 0.9;
-    gameActiveHeight = size.height - paddingY * 2;
+    gameActiveHeight = size.height - paddingY * 4;
 
-    init(imgPath).then((image) {
-      print('loaded image');
-//      setPuzzles();
-    });
+    init(imgPath);
   }
 
   @override
@@ -53,9 +51,18 @@ class PuzzleGame extends StatefulWidget {
     imageSizeWidth = image.width;
     imageSizeHeight = image.height;
     imageScreenWidth = gameActiveWidth / gameLevelWidth;
+
     imageScreenHeight = gameActiveHeight / gameLevelHeight;
+
+    gameActiveHeight = gameActiveHeight - imageScreenHeight;
+    imageScreenHeight = gameActiveHeight / gameLevelHeight;
+    rextExt = Rect.fromLTWH(paddingX, paddingY*3, imageScreenWidth, imageScreenHeight);
+    paddingY = paddingY*3+imageScreenHeight;
     imageEachHeight = image.height / gameLevelHeight;
     imageEachWidth = image.width / gameLevelWidth;
+
+
+
     await setPuzzles();
     bloc.puzzlesAdd(puzzles);
     return image;
@@ -65,9 +72,6 @@ class PuzzleGame extends StatefulWidget {
     List<PuzzleTile> result = [];
     for (int i = 0; i < gameLevelHeight; i++) {
       for (int j = 0; j < gameLevelWidth; j++) {
-        coutner++;
-        Rect rectImage = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
-            imageEachWidth, imageEachHeight);
         Rect rectScreen = Rect.fromLTWH(
             paddingX + j * imageScreenWidth,
             paddingY + i * imageScreenHeight,
@@ -83,30 +87,26 @@ class PuzzleGame extends StatefulWidget {
                 imageEachWidth,
                 imageEachHeight));
 
-        Rect rect1 = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
-            imageEachWidth, imageEachHeight);
-        Rect rect2= Rect.fromLTWH(paddingX + j * imageScreenWidth,
-            paddingY + i * imageScreenHeight,
-            imageScreenWidth, imageScreenHeight);
 
         Rect rect3 = Rect.fromLTWH(j * imageEachWidth, i * imageEachHeight,
             imageEachWidth, imageEachHeight);
         Rect rect4= Rect.fromLTWH(0,
             0,
             rect3.width, rect3.height);
+        var imageIndex = i*gameLevelWidth+j;
 
         canvas.drawImageRect(image, rect3, rect4, Paint());
         ui.Image imageExtract = await pictureRecorder
             .endRecording()
             .toImage(imageEachWidth.floor(), imageEachHeight.floor());
         result.add(PuzzleTile()
-          ..index = coutner
+          ..index = imageIndex
           ..image = imageExtract
           ..rectImage = Rect.fromLTWH(0,0,image.width.toDouble(),image.height.toDouble())
           ..rectScreen = rectScreen);
       }
     }
-
+    result.shuffle();
     return result;
   }
 
@@ -129,7 +129,6 @@ class _PuzzleGameState extends State<PuzzleGame> {
   @override
   void initState() {
     super.initState();
-    widget.bloc = BlocProvider.of<GameBloc>(context);
   }
 
   @override
@@ -149,11 +148,24 @@ class _PuzzleGameState extends State<PuzzleGame> {
           return GestureDetector(
             child: CustomPaint(
               painter: PuzzlePainter(
-                  x: widget.paddingX,
-                  y: widget.paddingY,
-                  puzzles: widget.puzzles),
+                  paddingX: widget.paddingX,
+                  paddingY: widget.paddingY,
+                  puzzles: widget.puzzles,
+                  rectExt: widget.rextExt),
             ),
+            onPanDown: onPanDown,
+            onPanUpdate: onPanUpdate,
+            onPanEnd: onPanEnd,
           );
         });
+  }
+
+  void onPanDown(DragDownDetails details) {
+  }
+
+  void onPanUpdate(DragUpdateDetails details) {
+  }
+
+  void onPanEnd(DragEndDetails details) {
   }
 }
