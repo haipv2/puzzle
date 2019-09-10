@@ -9,6 +9,7 @@ class PuzzleTile {
   ui.Image image;
   Offset offset;
   Rect rectScreen;
+  bool isEmpty;
 
   int getXIndex(int level) {
     return index % level;

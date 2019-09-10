@@ -67,7 +67,7 @@ class _MenuPageState extends State<MenuPage> {
   void selectItem(BuildContext context, Image image) {
     Size size= MediaQuery.of(context).size;
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return PuzzleGame(imgPath,size,1,2,bloc);
+      return PuzzleGame(imgPath,size,3,4,bloc);
     }));
   }
 }
