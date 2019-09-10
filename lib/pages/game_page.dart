@@ -190,8 +190,8 @@ class _PuzzleGameState extends State<PuzzleGame> {
       return;
     }
     widget.selectedPuzzle = getSelectedPuzzle(currentItemX, currentItemY);
-    print('${widget.selectedPuzzle.index}');
 
+//    print('${widget.selectedPuzzle.index}');
   }
 
   void onPanUpdate(DragUpdateDetails details) {
@@ -203,10 +203,15 @@ class _PuzzleGameState extends State<PuzzleGame> {
     Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
     widget.newX = localPosition.dx;
     widget.newY = localPosition.dy;
-//    direction = defectDirection(
-//        currentItemX, currentItemY, newX, newY);
+    direction = defectDirection(
+        currentItemX, currentItemY, widget.newX, widget.newY);
+//    widget.puzzles.replaceRange(
+//        widget.selectedPuzzle.index, widget.selectedPuzzle.index + 1, [
+//      PuzzleTile()
+//        ..isEmpty = true
+//        ..rectEmpty = widget.selectedPuzzle.rectScreen
+//    ]);
     widget.bloc.reDrawAdd(true);
-
   }
 
   void onPanEnd(DragEndDetails details) {
@@ -221,17 +226,30 @@ class _PuzzleGameState extends State<PuzzleGame> {
 
   Direction defectDirection(
       double currentItemX, double currentItemY, double newX, double newY) {
-    if (widget.rectTemp.left < currentItemX) {
-      return Direction.left;
-    } else if (widget.rectTemp.left > currentItemX) {
-      return Direction.right;
-    } else if (widget.rectTemp.top < currentItemY) {
-      return Direction.top;
-    } else if (widget.rectTemp.top > currentItemY) {
-      return Direction.bottom;
-    } else {
-      return Direction.none;
+    int currentIndexX =
+        ((currentItemX - widget.paddingX) / widget.imageScreenWidth).floor();
+    int currentIndexY =
+        ((currentItemY - widget.paddingYExt) / widget.imageScreenHeight).floor();
+    print('X-${currentIndexX}');
+    print('Y-${currentIndexY}');
+    int newIndexX = (newX / widget.imageScreenWidth).floor();
+    int newIndexY = (newY / widget.imageScreenHeight).floor();
+    print('newIndexX--${newIndexX}');
+    print('newIndexY--${newIndexY}');
+    if (currentIndexX == newIndexX) {
+      if (newIndexY > currentIndexY) {
+        return Direction.bottom;
+      } else if (newIndexY < currentIndexY) {
+        return Direction.top;
+      }
+    } else if (currentIndexY == newIndexY) {
+      if (newIndexX > currentIndexX) {
+        return Direction.right;
+      } else if (newIndexX < currentIndexX) {
+        return Direction.left;
+      }
     }
+    return Direction.none;
   }
 
   bool isSelectedExtPuzzle(
@@ -245,7 +263,7 @@ class _PuzzleGameState extends State<PuzzleGame> {
     return false;
   }
 
-  bool moveToPuzzleExt(double newX,double newY){
+  bool moveToPuzzleExt(double newX, double newY) {
     if (newX > widget.puzzleExt.rectScreen.left &&
         newX < widget.puzzleExt.rectScreen.right &&
         newY > widget.puzzleExt.rectScreen.top &&
@@ -256,11 +274,17 @@ class _PuzzleGameState extends State<PuzzleGame> {
   }
 
   PuzzleTile getSelectedPuzzle(double currentItemX, double currentItemY) {
-    PuzzleTile result = widget.puzzles.firstWhere((item) =>
-        (item.rectScreen.left < currentItemX &&
-            item.rectScreen.right > currentItemX &&
-            item.rectScreen.top < currentItemY &&
-            item.rectScreen.bottom > currentItemY));
+    PuzzleTile result;
+    try {
+      result = widget.puzzles.firstWhere(
+          (item) => (item.rectScreen.left < currentItemX &&
+              item.rectScreen.right > currentItemX &&
+              item.rectScreen.top < currentItemY &&
+              item.rectScreen.bottom > currentItemY),
+          orElse: () => null);
+    } catch (e) {
+      print(e);
+    }
     return result;
   }
 }

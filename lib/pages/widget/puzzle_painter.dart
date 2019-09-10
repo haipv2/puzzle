@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'dart:ui' as ui show Image;
 
 import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/game_state.dart';
@@ -31,6 +30,10 @@ class PuzzlePainter extends CustomPainter {
     if (puzzles != null) {
       for (int i = 0; i < puzzles.length; i++) {
         PuzzleTile item = puzzles[i];
+        if (item.isEmpty) {
+          canvas.drawRect(item.rectEmpty, Paint()..color = Colors.white);
+          continue;
+        }
         Rect rect = Rect.fromLTWH(
             0, 0, item.image.width.toDouble(), item.image.height.toDouble());
         Rect rect1 = Rect.fromLTWH(
