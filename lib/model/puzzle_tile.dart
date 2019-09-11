@@ -9,6 +9,7 @@ class PuzzleTile {
   Offset offset;
   Rect rectScreen;
   Rect rectEmpty;
+  Rect rectPaint;
   bool isEmpty;
 
   int getXIndex(int level) {
