@@ -47,7 +47,7 @@ class PuzzlePainter extends CustomPainter {
       for (int i = 0; i < puzzles.length; i++) {
         PuzzleTile item = puzzles[i];
         if (item.isEmpty) {
-          canvas.drawRect(item.rectEmpty, Paint()..color = Colors.white);
+          canvas.drawRect(item.rectScreen, Paint()..color = Colors.white);
           continue;
         }
         Rect rect = Rect.fromLTWH(

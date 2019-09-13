@@ -32,7 +32,7 @@ class PuzzleGame extends StatefulWidget {
   Rect rectTemp;
   GameState gameState;
   int selectedIndex;
-  PuzzleTile selectedPuzzle;
+  PuzzleTile selectedPuzzle, puzzleTmp;
   PuzzleTile puzzleEmpty;
   double newX;
   double newY;
@@ -72,6 +72,7 @@ class PuzzleGame extends StatefulWidget {
     offsetBottomRight = Offset(size.width - paddingX, size.height - paddingX);
     puzzleEmpty = new PuzzleTile();
     puzzleEmpty.rectScreen = rectEmpty;
+    puzzleEmpty.isEmpty = true;
     rectTemp = rectEmpty;
     paddingY = paddingYExt + imageScreenHeight;
     offsetMainLeft = Offset(paddingX, paddingY);
@@ -134,11 +135,11 @@ class PuzzleGame extends StatefulWidget {
 
 class _PuzzleGameState extends State<PuzzleGame> {
   Direction direction;
-  double currentItemX;
-  double currentItemY;
+  double selectedItemX;
+  double selectedItemY;
   double newItemX;
   double newItemY;
-  double minY,minX,maxX,maxY;
+  double minY, minX, maxX, maxY;
 
   @override
   void initState() {
@@ -183,109 +184,84 @@ class _PuzzleGameState extends State<PuzzleGame> {
         });
   }
 
+  double distanceTop;
+  double distanceBottom;
+  double originTopX, originTopY;
+  double selectedTopX, selectedTopY;
+
   void onPanDown(DragDownDetails details) {
 //    widget.bloc.reDrawAdd(true);
     RenderBox referenceBox = context.findRenderObject();
     Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
-    currentItemX = localPosition.dx;
-    currentItemY = localPosition.dy;
-    if (isSelectedExtPuzzle(currentItemX, currentItemY, widget.puzzles)) {
+    widget.newX = selectedItemX = localPosition.dx;
+    widget.newY = selectedItemY = localPosition.dy;
+
+    if (isSelectedExtPuzzle(selectedItemX, selectedItemY, widget.puzzles)) {
       print('selected empty puzzle onPanDown');
       return;
     }
-    widget.selectedPuzzle = getSelectedPuzzle(currentItemX, currentItemY);
-    widget.indexOnScreen = getActualIndexOnScreen(currentItemX, currentItemY);
-    direction = defectDirection(currentItemX, currentItemY);
+    widget.selectedPuzzle = getSelectedPuzzle(selectedItemX, selectedItemY);
+    selectedTopX = widget.selectedPuzzle.rectScreen.left;
+    selectedTopY = widget.selectedPuzzle.rectScreen.top;
+    widget.indexOnScreen = getActualIndexOnScreen(selectedItemX, selectedItemY);
+    direction = defectDirection(selectedItemX, selectedItemY);
+    widget.puzzleTmp = widget.selectedPuzzle;
+
+    if (direction == Direction.top) {
+      distanceTop = selectedItemY - widget.selectedPuzzle.rectScreen.top;
+      distanceBottom = widget.offsetBottomRight.dy - selectedItemY;
+    }
 
     print('direction --- ${direction}');
-
-//    print('widget.selectedPuzzle.index --- ${widget.selectedPuzzle.index}');
-//    print('widget.indexOnScreen----${widget.indexOnScreen}');
   }
 
   List xs = [];
   List ys = [];
 
   void onPanUpdate(DragUpdateDetails details) {
-//    widget.bloc.reDrawAdd(true);
-//    if (isSelectedExtPuzzle(currentItemX, currentItemY, widget.puzzles)) {
-//      print('selected empty puzzle onPanUpdate');
-//      return;
-//    }
     widget.gameState = GameState.playing;
     RenderBox referenceBox = context.findRenderObject();
     Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
     widget.newX = localPosition.dx;
     widget.newY = localPosition.dy;
-    xs.add(widget.newX);
-    ys.add(widget.newY);
+//    widget.puzzles.removeAt(widget.selectedPuzzle.index);
 
-    int velocity = 5;
     if (direction == Direction.top) {
       PuzzleTile newPuzzle = widget.selectedPuzzle;
+      if (widget.newY - distanceTop < widget.puzzleEmpty.rectScreen.top ||
+          widget.newY + distanceBottom > widget.offsetBottomRight.dy) {
+        return;
+      }
       newPuzzle.rectScreen = Rect.fromLTWH(
-          widget.selectedPuzzle.rectScreen.left,
-          widget.newY,
-          widget.selectedPuzzle.rectScreen.width,
-          widget.selectedPuzzle.rectScreen.height);
-      print('----${newPuzzle.rectScreen}');
-      widget.puzzles.replaceRange(
-          widget.indexOnScreen, widget.indexOnScreen + 1, [newPuzzle]);
-      widget.bloc.reDrawAdd(true);
-    } else if (direction == Direction.bottom) {
-      PuzzleTile newPuzzle = widget.selectedPuzzle;
-      newPuzzle.rectScreen = Rect.fromLTWH(
-          widget.selectedPuzzle.rectScreen.left,
-          widget.selectedPuzzle.rectScreen.top + velocity,
-          widget.selectedPuzzle.rectScreen.width,
-          widget.selectedPuzzle.rectScreen.height);
-      print('----${newPuzzle.rectScreen}');
-      widget.puzzles.replaceRange(
-          widget.indexOnScreen, widget.indexOnScreen + 1, [newPuzzle]);
-      widget.bloc.reDrawAdd(true);
-    } else if (direction == Direction.left) {
-      PuzzleTile newPuzzle = widget.selectedPuzzle;
-      newPuzzle.rectScreen = Rect.fromLTWH(
-          widget.selectedPuzzle.rectScreen.left - velocity,
-          widget.selectedPuzzle.rectScreen.top,
-          widget.selectedPuzzle.rectScreen.width,
-          widget.selectedPuzzle.rectScreen.height);
-      print('----${newPuzzle.rectScreen}');
-      widget.puzzles.replaceRange(
-          widget.indexOnScreen, widget.indexOnScreen + 1, [newPuzzle]);
-      widget.bloc.reDrawAdd(true);
-    } else if (direction == Direction.right) {
-      PuzzleTile newPuzzle = widget.selectedPuzzle;
-      newPuzzle.rectScreen = Rect.fromLTWH(
-          widget.selectedPuzzle.rectScreen.left + velocity,
-          widget.selectedPuzzle.rectScreen.top,
-          widget.selectedPuzzle.rectScreen.width,
-          widget.selectedPuzzle.rectScreen.height);
-      print('----${newPuzzle.rectScreen}');
-      widget.puzzles.replaceRange(
-          widget.indexOnScreen, widget.indexOnScreen + 1, [newPuzzle]);
-      widget.bloc.reDrawAdd(true);
+          newPuzzle.rectScreen.left,
+          widget.newY - distanceTop,
+          newPuzzle.rectScreen.width,
+          newPuzzle.rectScreen.height);
     }
+
+    widget.bloc.reDrawAdd(true);
   }
 
   void onPanEnd(DragEndDetails details) {
-//    if (isSelectedExtPuzzle(currentItemX, currentItemY, widget.puzzles)) {
-//      print('selected empty puzzle onPanEnd');
-//      return;
-//    }
-//    details = DragEndDetails(velocity: Velocity(pixelsPerSecond: Offset(0, 0)), primaryVelocity: 300.0);
     if (direction == Direction.top) {
-      widget.puzzleEmpty = widget.selectedPuzzle;
-      widget.puzzles.replaceRange(
-          widget.selectedPuzzle.index, widget.selectedPuzzle.index + 1, [
-        PuzzleTile()
-          ..isEmpty = true
-          ..rectEmpty = widget.selectedPuzzle.rectScreen
-      ]);
+      if (selectedItemY - widget.newY > widget.imageScreenHeight / 2) {
+        widget.selectedPuzzle.rectScreen = Rect.fromLTWH(
+            widget.selectedPuzzle.rectScreen.left,
+            widget.puzzleEmpty.rectScreen.top,
+            widget.selectedPuzzle.rectScreen.width,
+            widget.selectedPuzzle.rectScreen.height);
+      } else {
+        widget.selectedPuzzle.rectScreen = Rect.fromLTWH(
+            selectedTopX,
+            selectedTopY,
+            widget.selectedPuzzle.rectScreen.width,
+            widget.selectedPuzzle.rectScreen.height);
+      }
     }
-//    widget.bloc.reDrawAdd(true);
-
-//    widget.puzzles.remove(value)
+    widget.puzzleTmp = null;
+    widget.newY = 0.0;
+    widget.newX = 0.0;
+    widget.bloc.reDrawAdd(true);
   }
 
   Direction defectDirection(double currentItemX, double currentItemY) {
