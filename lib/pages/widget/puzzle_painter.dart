@@ -33,7 +33,7 @@ class PuzzlePainter extends CustomPainter {
       Rect rect = Rect.fromLTWH(0, 0, puzzleTileEmpty.image.width.toDouble(),
           puzzleTileEmpty.image.height.toDouble());
       Rect rect1 = Rect.fromLTWH(paddingX, paddingYExt,
-          puzzleTileEmpty.rectScreen.width, puzzleTileEmpty.rectScreen.height);
+          puzzleTileEmpty.rectPaint.width, puzzleTileEmpty.rectPaint.height);
       canvas.drawImageRect(puzzleTileEmpty.image, rect, rect1, Paint());
       textSpan = new TextSpan(
           text: '${puzzleTileEmpty.index}',
@@ -54,8 +54,8 @@ class PuzzlePainter extends CustomPainter {
             0, 0, item.image.width.toDouble(), item.image.height.toDouble());
         Rect rect1;
         if (gameState == GameState.playing) {
-          rect1 = Rect.fromLTWH(item.rectScreen.left, item.rectScreen.top,
-              item.rectScreen.width, item.rectScreen.height);
+          rect1 = Rect.fromLTWH(item.rectPaint.left, item.rectPaint.top,
+              item.rectPaint.width, item.rectPaint.height);
         } else {
           rect1 = Rect.fromLTWH(
               (paddingX + item.rectScreen.width * (i % gameLevelWidth))
