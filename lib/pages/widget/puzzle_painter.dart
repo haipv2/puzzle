@@ -9,7 +9,7 @@ class PuzzlePainter extends CustomPainter {
   final List<PuzzleTile> puzzles;
   TextSpan textSpan;
   TextPainter textPainter;
-  PuzzleTile puzzleTileExt;
+  PuzzleTile puzzleTileEmpty;
   Rect rectTemp;
   bool reDraw;
   int gameLevelWidth;
@@ -19,7 +19,7 @@ class PuzzlePainter extends CustomPainter {
       {this.paddingX,
       this.paddingY,
       this.puzzles,
-      this.puzzleTileExt,
+      this.puzzleTileEmpty,
       this.gameLevelWidth,
       this.rectTemp,
       this.gameState,
@@ -27,16 +27,16 @@ class PuzzlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (puzzleTileExt.image == null) {
-      canvas.drawRect(puzzleTileExt.rectScreen, Paint()..color = Colors.white);
+    if (puzzleTileEmpty.image == null) {
+      canvas.drawRect(puzzleTileEmpty.rectScreen, Paint()..color = Colors.white);
     } else {
-      Rect rect = Rect.fromLTWH(0, 0, puzzleTileExt.image.width.toDouble(),
-          puzzleTileExt.image.height.toDouble());
+      Rect rect = Rect.fromLTWH(0, 0, puzzleTileEmpty.image.width.toDouble(),
+          puzzleTileEmpty.image.height.toDouble());
       Rect rect1 = Rect.fromLTWH(paddingX, paddingYExt,
-          puzzleTileExt.rectScreen.width, puzzleTileExt.rectScreen.height);
-      canvas.drawImageRect(puzzleTileExt.image, rect, rect1, Paint());
+          puzzleTileEmpty.rectScreen.width, puzzleTileEmpty.rectScreen.height);
+      canvas.drawImageRect(puzzleTileEmpty.image, rect, rect1, Paint());
       textSpan = new TextSpan(
-          text: '${puzzleTileExt.index}',
+          text: '${puzzleTileEmpty.index}',
           style: TextStyle(color: Colors.red, fontSize: 20));
       textPainter =
           new TextPainter(text: textSpan, textDirection: TextDirection.ltr);
