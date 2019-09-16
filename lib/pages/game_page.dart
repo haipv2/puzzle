@@ -72,7 +72,7 @@ class PuzzleGame extends StatefulWidget {
     offsetTopLeft = rectEmpty.topLeft;
     offsetBottomRight = Offset(size.width - paddingX, size.height - paddingX);
     puzzleEmpty = new PuzzleTile();
-    puzzleEmpty.rectScreen = rectEmpty;
+    puzzleEmpty.rectPaint = rectEmpty;
     puzzleEmpty.isEmpty = true;
     rectTemp = rectEmpty;
     paddingY = paddingYExt + imageScreenHeight;
@@ -207,9 +207,9 @@ class _PuzzleGameState extends State<PuzzleGame> {
 //      return;
 //    }
     widget.selectedPuzzle = getSelectedPuzzle(selectedItemX, selectedItemY);
-    selectedTopX = widget.selectedPuzzle.rectScreen.left;
-    selectedTopY = widget.selectedPuzzle.rectScreen.top;
-    emptyTopY = widget.puzzleEmpty.rectScreen.top;
+    selectedTopX = widget.selectedPuzzle.rectPaint.left;
+    selectedTopY = widget.selectedPuzzle.rectPaint.top;
+    emptyTopY = widget.puzzleEmpty.rectPaint.top;
     widget.indexOnScreen = getActualIndexOnScreen(selectedItemX, selectedItemY);
     direction = defectDirection(selectedItemX, selectedItemY);
     widget.puzzleTmp = widget.selectedPuzzle;
@@ -219,12 +219,14 @@ class _PuzzleGameState extends State<PuzzleGame> {
       distanceBottom = widget.offsetBottomRight.dy - selectedItemY;
     }
     double distanceEmptyTop = widget.selectedPuzzle.rectScreen.top -
-        widget.puzzleEmpty.rectScreen.top;
+        widget.puzzleEmpty.rectPaint.top;
     List<PuzzleTile> movingPuzzleArr = [];
     if (distanceEmptyTop > widget.imageScreenHeight) {
       movingPuzzleArr =
           getListItemInColumn(distanceEmptyTop, widget.selectedPuzzle.index);
     }
+
+    print ('direction -- ${direction}');
   }
 
   void onPanUpdate(DragUpdateDetails details) {
@@ -410,8 +412,6 @@ class _PuzzleGameState extends State<PuzzleGame> {
   }
 
   List<PuzzleTile> getListItemInColumn(double distanceEmptyTop, int index) {
-    print('distanceEmptyTop${distanceEmptyTop}');
-    print('distanceEmptyTop${widget.selectedPuzzle}');
     List<PuzzleTile> subList=[];
     for (index; index >= 0;) {
       subList.add(widget.puzzles[index]);
