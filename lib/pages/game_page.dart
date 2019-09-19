@@ -144,6 +144,7 @@ class _PuzzleGameState extends State<PuzzleGame> {
   double newItemX;
   double newItemY;
   double minY, minX, maxX, maxY;
+  double distanceEmptyTopY, distanceEmptyTopX;
 
   @override
   void initState() {
@@ -192,7 +193,6 @@ class _PuzzleGameState extends State<PuzzleGame> {
   double distanceBottom;
   double originTopX, originTopY;
   double selectedTopX, selectedTopY, emptyTopY;
-  double distanceEmptyTopY, distanceEmptyTopX;
   List<PuzzleTile> movingPuzzleArr = [];
 
   void onPanDown(DragDownDetails details) {
@@ -221,15 +221,20 @@ class _PuzzleGameState extends State<PuzzleGame> {
       distanceTop = selectedItemY - widget.selectedPuzzle.rectPaint.top;
       distanceBottom = widget.offsetBottomRight.dy - selectedItemY;
     }
-
-    if (distanceEmptyTopY != null) {
-      movingPuzzleArr =
-          getListItemInColumn(distanceEmptyTopY, widget.selectedPuzzle.index);
+    if (direction == Direction.top) {
+      if (selectedTopY - widget.puzzleEmpty.rectPaint.top >
+          widget.imageScreenHeight) {
+        distanceEmptyTopY = selectedItemY;
+        movingPuzzleArr =
+            getListItemInColumn(distanceEmptyTopY, widget.selectedPuzzle.index);
+      }
     }
 
     print('direction -- ${direction}');
+    print('movingPuzzleArr -- ${movingPuzzleArr}');
   }
 
+  ///process holding
   void onPanUpdate(DragUpdateDetails details) {
     widget.gameState = GameState.playing;
     RenderBox referenceBox = context.findRenderObject();
@@ -243,11 +248,22 @@ class _PuzzleGameState extends State<PuzzleGame> {
           widget.newY + distanceBottom > widget.offsetBottomRight.dy) {
         return;
       }
-      widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
-          widget.selectedPuzzle.rectPaint.left,
-          widget.newY - distanceTop,
-          widget.selectedPuzzle.rectPaint.width,
-          widget.selectedPuzzle.rectPaint.height);
+      if (movingPuzzleArr.length == 0) {
+        widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
+            widget.selectedPuzzle.rectPaint.left,
+            widget.newY - distanceTop,
+            widget.selectedPuzzle.rectPaint.width,
+            widget.selectedPuzzle.rectPaint.height);
+      } else {
+        for (var i = 0; i < movingPuzzleArr.length; i++) {
+          PuzzleTile puzzleTile = movingPuzzleArr[i];
+          puzzleTile.rectPaint = Rect.fromLTWH(
+              widget.selectedPuzzle.rectPaint.left,
+              widget.newY - widget.imageScreenHeight * i - distanceTop,
+              widget.selectedPuzzle.rectPaint.width,
+              widget.selectedPuzzle.rectPaint.height);
+        }
+      }
     } else if (direction == Direction.bottom) {
       // restrict drag item over screen.
       if (widget.newY - distanceTop > widget.puzzleEmpty.rectPaint.top) {
@@ -264,25 +280,56 @@ class _PuzzleGameState extends State<PuzzleGame> {
     widget.bloc.reDrawAdd(true);
   }
 
+  /// process touch up
+  ///
   void onPanEnd(DragEndDetails details) {
     if (direction == Direction.top) {
-      if (selectedItemY - widget.newY > widget.imageScreenHeight / 2) {
-        widget.puzzleEmpty.rectPaint = Rect.fromLTWH(
-            widget.selectedPuzzle.rectPaint.left,
-            selectedTopY,
-            widget.selectedPuzzle.rectPaint.width,
-            widget.selectedPuzzle.rectPaint.height);
-        widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
-            widget.selectedPuzzle.rectPaint.left,
-            emptyTopY,
-            widget.selectedPuzzle.rectPaint.width,
-            widget.selectedPuzzle.rectPaint.height);
+      if (movingPuzzleArr.length == 0) {
+        if (selectedItemY - widget.newY > widget.imageScreenHeight / 2) {
+          widget.puzzleEmpty.rectPaint = Rect.fromLTWH(
+              widget.selectedPuzzle.rectPaint.left,
+              selectedTopY,
+              widget.selectedPuzzle.rectPaint.width,
+              widget.selectedPuzzle.rectPaint.height);
+          widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
+              widget.selectedPuzzle.rectPaint.left,
+              emptyTopY,
+              widget.selectedPuzzle.rectPaint.width,
+              widget.selectedPuzzle.rectPaint.height);
+        } else {
+          widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
+              selectedTopX,
+              selectedTopY,
+              widget.selectedPuzzle.rectPaint.width,
+              widget.selectedPuzzle.rectPaint.height);
+        }
       } else {
-        widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
-            selectedTopX,
-            selectedTopY,
-            widget.selectedPuzzle.rectPaint.width,
-            widget.selectedPuzzle.rectPaint.height);
+          movingPuzzleArr
+              .sort((a, b) => a.rectPaint.top.compareTo(b.rectPaint.top));
+        if (selectedItemY - widget.newY > widget.imageScreenHeight / 2) {
+          widget.puzzleEmpty.rectPaint = Rect.fromLTWH(
+              widget.selectedPuzzle.rectPaint.left,
+              selectedTopY,
+              widget.selectedPuzzle.rectPaint.width,
+              widget.selectedPuzzle.rectPaint.height);
+          for (var i = 0; i < movingPuzzleArr.length; i++) {
+            PuzzleTile puzzleTile = movingPuzzleArr[i];
+            puzzleTile.rectPaint = Rect.fromLTWH(
+                widget.selectedPuzzle.rectPaint.left,
+                emptyTopY + widget.imageScreenHeight * i,
+                widget.selectedPuzzle.rectPaint.width,
+                widget.selectedPuzzle.rectPaint.height);
+          }
+        } else {
+          for (var i = 0; i < movingPuzzleArr.length; i++) {
+            PuzzleTile puzzleTile = movingPuzzleArr[i];
+            puzzleTile.rectPaint = Rect.fromLTWH(
+                selectedTopX,
+                selectedTopY + widget.imageScreenHeight * i,
+                widget.selectedPuzzle.rectPaint.width,
+                widget.selectedPuzzle.rectPaint.height);
+          }
+        }
       }
     } else if (direction == Direction.bottom) {
       if (widget.newY - selectedItemY > widget.imageScreenHeight / 2) {
@@ -310,6 +357,9 @@ class _PuzzleGameState extends State<PuzzleGame> {
     widget.bloc.reDrawAdd(true);
   }
 
+  ///
+  /// defect direction
+  ///
   Direction defectDirection(double currentItemX, double currentItemY) {
     int currentIndexX =
         ((currentItemX - widget.paddingX) / widget.imageScreenWidth).floor();
@@ -327,13 +377,13 @@ class _PuzzleGameState extends State<PuzzleGame> {
       if (emptyIndexY > currentIndexY) {
         return Direction.bottom;
       } else if (emptyIndexY < currentIndexY) {
-        if (widget.selectedPuzzle.rectPaint.top -
-                widget.puzzleEmpty.rectPaint.top >
-            widget.imageScreenHeight) {
-          distanceEmptyTopY = widget.selectedPuzzle.rectPaint.top -
-              widget.puzzleEmpty.rectPaint.top;
-          distanceEmptyTopX = currentItemX;
-        }
+//        if (widget.selectedPuzzle.rectPaint.top -
+//                widget.puzzleEmpty.rectPaint.top >
+//            widget.imageScreenHeight) {
+//          distanceEmptyTopY = widget.selectedPuzzle.rectPaint.top -
+//              widget.puzzleEmpty.rectPaint.top;
+//          distanceEmptyTopX = currentItemX;
+//        }
         return Direction.top;
       }
     } else if (currentIndexY == emptyIndexY) {
@@ -370,6 +420,8 @@ class _PuzzleGameState extends State<PuzzleGame> {
 
   PuzzleTile getSelectedPuzzle(double currentItemX, double currentItemY) {
     PuzzleTile result;
+    print('currentItemX--${currentItemX}');
+    print('currentItemY--${currentItemY}');
     try {
       result = widget.puzzles.firstWhere(
           (item) => (item.rectPaint.left < currentItemX &&
@@ -409,10 +461,13 @@ class _PuzzleGameState extends State<PuzzleGame> {
     subList.add(widget.puzzles.firstWhere((item) => item.index == index));
     do {
       distanceEmptyTop = distanceEmptyTop - widget.imageScreenHeight;
-      subList.add(getSelectedPuzzle(distanceEmptyTopX, distanceEmptyTopY));
+      PuzzleTile selectedPuzzle =
+          getSelectedPuzzle(selectedItemX, distanceEmptyTop);
+      if (selectedPuzzle.index != null) subList.add(selectedPuzzle);
     } while (distanceEmptyTop > widget.imageScreenHeight);
-    subList.forEach((item) {
-      print(item.index);
-    });
+//    subList.forEach((item) {
+//      print(item.index);
+//    });
+    return subList;
   }
 }
