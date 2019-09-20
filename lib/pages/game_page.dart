@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
@@ -95,8 +96,8 @@ class PuzzleGame extends StatefulWidget {
         Rect rectScreen = Rect.fromLTWH(
             paddingX + j * imageScreenWidth,
             paddingY + i * imageScreenHeight,
-            imageScreenWidth * 0.996,
-            imageScreenHeight * 0.996);
+            imageScreenWidth,
+            imageScreenHeight);
 
         PictureRecorder pictureRecorder = PictureRecorder();
         Canvas canvas = Canvas(pictureRecorder,
@@ -204,14 +205,14 @@ class _PuzzleGameState extends State<PuzzleGame> {
     widget.newX = selectedItemX = localPosition.dx;
     widget.newY = selectedItemY = localPosition.dy;
 
-//    if (isSelectedExtPuzzle(selectedItemX, selectedItemY, widget.puzzles)) {
-//      print('selected empty puzzle onPanDown');
-//      return;
-//    }
     widget.selectedPuzzle = getSelectedPuzzle(selectedItemX, selectedItemY);
-    print('widget.selectedPuzzle --- ${widget.selectedPuzzle.index}');
+    if (widget.selectedPuzzle.isEmpty) {
+      return;
+    }
     selectedTopX = widget.selectedPuzzle.rectPaint.left;
     selectedTopY = widget.selectedPuzzle.rectPaint.top;
+    print('selectedTopX---${selectedTopX}');
+    print('selectedTopY---${selectedTopY}');
     emptyTopY = widget.puzzleEmpty.rectPaint.top;
     widget.indexOnScreen = getActualIndexOnScreen(selectedItemX, selectedItemY);
     direction = defectDirection(selectedItemX, selectedItemY);
@@ -221,17 +222,18 @@ class _PuzzleGameState extends State<PuzzleGame> {
       distanceTop = selectedItemY - widget.selectedPuzzle.rectPaint.top;
       distanceBottom = widget.offsetBottomRight.dy - selectedItemY;
     }
-    if (direction == Direction.top) {
-      if (selectedTopY - widget.puzzleEmpty.rectPaint.top >
-          widget.imageScreenHeight) {
-        distanceEmptyTopY = selectedItemY;
-        movingPuzzleArr =
-            getListItemInColumn(distanceEmptyTopY, widget.selectedPuzzle.index);
-      }
-    }
-
+    //move top over tile
+//    if (direction == Direction.top) {
+//      if (selectedTopY - widget.puzzleEmpty.rectPaint.top >
+//          widget.imageScreenHeight) {
+    distanceEmptyTopY = selectedItemY;
+    movingPuzzleArr = getListItemInColumn(
+        selectedItemY, widget.selectedPuzzle.index, direction);
+//      }
+    //move bottom over tile
+//    }
     print('direction -- ${direction}');
-    print('movingPuzzleArr -- ${movingPuzzleArr}');
+//    print('movingPuzzleArr -- ${movingPuzzleArr}');
   }
 
   ///process holding
@@ -248,21 +250,21 @@ class _PuzzleGameState extends State<PuzzleGame> {
           widget.newY + distanceBottom > widget.offsetBottomRight.dy) {
         return;
       }
-      if (movingPuzzleArr.length == 0) {
-        widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
+//      if (movingPuzzleArr.length == 0) {
+//        widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
+//            widget.selectedPuzzle.rectPaint.left,
+//            widget.newY - distanceTop,
+//            widget.selectedPuzzle.rectPaint.width,
+//            widget.selectedPuzzle.rectPaint.height);
+//      } else {
+      for (var i = 0; i < movingPuzzleArr.length; i++) {
+        PuzzleTile puzzleTile = movingPuzzleArr[i];
+        puzzleTile.rectPaint = Rect.fromLTWH(
             widget.selectedPuzzle.rectPaint.left,
-            widget.newY - distanceTop,
+            widget.newY - widget.imageScreenHeight * i - distanceTop,
             widget.selectedPuzzle.rectPaint.width,
             widget.selectedPuzzle.rectPaint.height);
-      } else {
-        for (var i = 0; i < movingPuzzleArr.length; i++) {
-          PuzzleTile puzzleTile = movingPuzzleArr[i];
-          puzzleTile.rectPaint = Rect.fromLTWH(
-              widget.selectedPuzzle.rectPaint.left,
-              widget.newY - widget.imageScreenHeight * i - distanceTop,
-              widget.selectedPuzzle.rectPaint.width,
-              widget.selectedPuzzle.rectPaint.height);
-        }
+//        }
       }
     } else if (direction == Direction.bottom) {
       // restrict drag item over screen.
@@ -284,51 +286,30 @@ class _PuzzleGameState extends State<PuzzleGame> {
   ///
   void onPanEnd(DragEndDetails details) {
     if (direction == Direction.top) {
-      if (movingPuzzleArr.length == 0) {
-        if (selectedItemY - widget.newY > widget.imageScreenHeight / 2) {
-          widget.puzzleEmpty.rectPaint = Rect.fromLTWH(
+      movingPuzzleArr
+          .sort((a, b) => a.rectPaint.top.compareTo(b.rectPaint.top));
+      if (selectedItemY - widget.newY > widget.imageScreenHeight / 2) {
+        widget.puzzleEmpty.rectPaint = Rect.fromLTWH(
+            widget.selectedPuzzle.rectPaint.left,
+            selectedTopY,
+            widget.selectedPuzzle.rectPaint.width,
+            widget.selectedPuzzle.rectPaint.height);
+        for (var i = 0; i < movingPuzzleArr.length; i++) {
+          PuzzleTile puzzleTile = movingPuzzleArr[i];
+          puzzleTile.rectPaint = Rect.fromLTWH(
               widget.selectedPuzzle.rectPaint.left,
-              selectedTopY,
-              widget.selectedPuzzle.rectPaint.width,
-              widget.selectedPuzzle.rectPaint.height);
-          widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
-              widget.selectedPuzzle.rectPaint.left,
-              emptyTopY,
-              widget.selectedPuzzle.rectPaint.width,
-              widget.selectedPuzzle.rectPaint.height);
-        } else {
-          widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
-              selectedTopX,
-              selectedTopY,
+              emptyTopY + widget.imageScreenHeight * i,
               widget.selectedPuzzle.rectPaint.width,
               widget.selectedPuzzle.rectPaint.height);
         }
       } else {
-          movingPuzzleArr
-              .sort((a, b) => a.rectPaint.top.compareTo(b.rectPaint.top));
-        if (selectedItemY - widget.newY > widget.imageScreenHeight / 2) {
-          widget.puzzleEmpty.rectPaint = Rect.fromLTWH(
-              widget.selectedPuzzle.rectPaint.left,
-              selectedTopY,
+        for (var i = 0; i < movingPuzzleArr.length; i++) {
+          PuzzleTile puzzleTile = movingPuzzleArr[i];
+          puzzleTile.rectPaint = Rect.fromLTWH(
+              selectedTopX,
+              minY + widget.imageScreenHeight * i,
               widget.selectedPuzzle.rectPaint.width,
               widget.selectedPuzzle.rectPaint.height);
-          for (var i = 0; i < movingPuzzleArr.length; i++) {
-            PuzzleTile puzzleTile = movingPuzzleArr[i];
-            puzzleTile.rectPaint = Rect.fromLTWH(
-                widget.selectedPuzzle.rectPaint.left,
-                emptyTopY + widget.imageScreenHeight * i,
-                widget.selectedPuzzle.rectPaint.width,
-                widget.selectedPuzzle.rectPaint.height);
-          }
-        } else {
-          for (var i = 0; i < movingPuzzleArr.length; i++) {
-            PuzzleTile puzzleTile = movingPuzzleArr[i];
-            puzzleTile.rectPaint = Rect.fromLTWH(
-                selectedTopX,
-                selectedTopY + widget.imageScreenHeight * i,
-                widget.selectedPuzzle.rectPaint.width,
-                widget.selectedPuzzle.rectPaint.height);
-          }
         }
       }
     } else if (direction == Direction.bottom) {
@@ -351,9 +332,8 @@ class _PuzzleGameState extends State<PuzzleGame> {
             widget.selectedPuzzle.rectPaint.height);
       }
     }
-//    widget.puzzleTmp = null;
-//    widget.newY = 0.0;
-//    widget.newX = 0.0;
+    movingPuzzleArr = [];
+    direction = null;
     widget.bloc.reDrawAdd(true);
   }
 
@@ -361,29 +341,28 @@ class _PuzzleGameState extends State<PuzzleGame> {
   /// defect direction
   ///
   Direction defectDirection(double currentItemX, double currentItemY) {
-    int currentIndexX =
-        ((currentItemX - widget.paddingX) / widget.imageScreenWidth).floor();
-    var temp = (currentItemY - widget.paddingYExt) / widget.imageScreenHeight;
-    int currentIndexY = (temp).floor();
-
     int emptyIndexX = ((widget.puzzleEmpty.rectPaint.left - widget.paddingX) /
             widget.imageScreenWidth)
         .floor();
-    int emptyIndexY = ((widget.puzzleEmpty.rectPaint.top - widget.paddingYExt) /
-            widget.imageScreenHeight)
-        .floor();
+    print(
+        'widget.puzzleEmpty.rectPaint.top --${widget.puzzleEmpty.rectPaint.top}');
+    var paddingYTmp = (widget.puzzleEmpty.rectPaint.top - widget.paddingYExt);
+    int emptyIndexY = (paddingYTmp / widget.imageScreenHeight).floor();
 
+    int currentIndexX =
+        ((currentItemX - widget.paddingX) / widget.imageScreenWidth).floor();
+    var temp = (currentItemY - widget.paddingYExt) / widget.imageScreenHeight;
+
+    int currentIndexY = (temp).floor();
+
+    print('emptyIndexX---${emptyIndexX}');
+    print('emptyIndexY---${emptyIndexY}');
+    print('currentIndexX---${currentIndexX}');
+    print('currentIndexY---${currentIndexY}');
     if (currentIndexX == emptyIndexX) {
       if (emptyIndexY > currentIndexY) {
         return Direction.bottom;
       } else if (emptyIndexY < currentIndexY) {
-//        if (widget.selectedPuzzle.rectPaint.top -
-//                widget.puzzleEmpty.rectPaint.top >
-//            widget.imageScreenHeight) {
-//          distanceEmptyTopY = widget.selectedPuzzle.rectPaint.top -
-//              widget.puzzleEmpty.rectPaint.top;
-//          distanceEmptyTopX = currentItemX;
-//        }
         return Direction.top;
       }
     } else if (currentIndexY == emptyIndexY) {
@@ -420,8 +399,8 @@ class _PuzzleGameState extends State<PuzzleGame> {
 
   PuzzleTile getSelectedPuzzle(double currentItemX, double currentItemY) {
     PuzzleTile result;
-    print('currentItemX--${currentItemX}');
-    print('currentItemY--${currentItemY}');
+//    print('currentItemX--${currentItemX}');
+//    print('currentItemY--${currentItemY}');
     try {
       result = widget.puzzles.firstWhere(
           (item) => (item.rectPaint.left < currentItemX &&
@@ -456,18 +435,28 @@ class _PuzzleGameState extends State<PuzzleGame> {
     return false;
   }
 
-  List<PuzzleTile> getListItemInColumn(double distanceEmptyTop, int index) {
+  List<PuzzleTile> getListItemInColumn(
+      double distanceEmptyTop, int index, Direction direction) {
     List<PuzzleTile> subList = [];
     subList.add(widget.puzzles.firstWhere((item) => item.index == index));
+    minY = widget.selectedPuzzle.rectPaint.top;
     do {
-      distanceEmptyTop = distanceEmptyTop - widget.imageScreenHeight;
+      if (direction == Direction.top) {
+        distanceEmptyTop = distanceEmptyTop - widget.imageScreenHeight;
+        if (distanceEmptyTop < widget.offsetMainLeft.dy) break;
+      }
       PuzzleTile selectedPuzzle =
           getSelectedPuzzle(selectedItemX, distanceEmptyTop);
-      if (selectedPuzzle.index != null) subList.add(selectedPuzzle);
+
+      if (selectedPuzzle.index != null && !selectedPuzzle.isEmpty) {
+        minY = selectedPuzzle.rectPaint.top;
+        subList.add(selectedPuzzle);
+      }
     } while (distanceEmptyTop > widget.imageScreenHeight);
-//    subList.forEach((item) {
-//      print(item.index);
-//    });
+    print('minY---${minY}');
+    subList.forEach((item) {
+      print(item.index);
+    });
     return subList;
   }
 }
