@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
@@ -228,7 +227,7 @@ class _PuzzleGameState extends State<PuzzleGame> {
 //          widget.imageScreenHeight) {
     distanceEmptyTopY = selectedItemY;
     movingPuzzleArr = getListItemInColumn(
-        selectedItemY, widget.selectedPuzzle.index, direction);
+        selectedItemX, selectedItemY, widget.selectedPuzzle.index, direction);
 //      }
     //move bottom over tile
 //    }
@@ -272,11 +271,15 @@ class _PuzzleGameState extends State<PuzzleGame> {
         return;
       }
 
-      widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
-          widget.selectedPuzzle.rectPaint.left,
-          widget.newY - distanceTop,
-          widget.selectedPuzzle.rectPaint.width,
-          widget.selectedPuzzle.rectPaint.height);
+      for (var i = 0; i < movingPuzzleArr.length; i++) {
+        PuzzleTile puzzleTile = movingPuzzleArr[i];
+        puzzleTile.rectPaint = Rect.fromLTWH(
+            widget.selectedPuzzle.rectPaint.left,
+            widget.newY + widget.imageScreenHeight * i - distanceTop,
+            widget.selectedPuzzle.rectPaint.width,
+            widget.selectedPuzzle.rectPaint.height);
+//        }
+      }
     }
 
     widget.bloc.reDrawAdd(true);
@@ -313,25 +316,35 @@ class _PuzzleGameState extends State<PuzzleGame> {
         }
       }
     } else if (direction == Direction.bottom) {
+      movingPuzzleArr
+          .sort((a, b) => a.rectPaint.top.compareTo(b.rectPaint.top));
       if (widget.newY - selectedItemY > widget.imageScreenHeight / 2) {
         widget.puzzleEmpty.rectPaint = Rect.fromLTWH(
             widget.selectedPuzzle.rectPaint.left,
             selectedTopY,
             widget.selectedPuzzle.rectPaint.width,
             widget.selectedPuzzle.rectPaint.height);
-        widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
-            widget.selectedPuzzle.rectPaint.left,
-            emptyTopY,
-            widget.selectedPuzzle.rectPaint.width,
-            widget.selectedPuzzle.rectPaint.height);
+        for (var i = 0; i < movingPuzzleArr.length; i++) {
+          PuzzleTile puzzleTile = movingPuzzleArr[i];
+          puzzleTile.rectPaint = Rect.fromLTWH(
+              widget.selectedPuzzle.rectPaint.left,
+              minY + widget.imageScreenHeight * i,
+              widget.selectedPuzzle.rectPaint.width,
+              widget.selectedPuzzle.rectPaint.height);
+        }
       } else {
-        widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
-            selectedTopX,
-            selectedTopY,
-            widget.selectedPuzzle.rectPaint.width,
-            widget.selectedPuzzle.rectPaint.height);
+        for (var i = 0; i < movingPuzzleArr.length; i++) {
+          PuzzleTile puzzleTile = movingPuzzleArr[i];
+          puzzleTile.rectPaint = Rect.fromLTWH(
+              selectedTopX,
+              minY + widget.imageScreenHeight * i,
+              widget.selectedPuzzle.rectPaint.width,
+              widget.selectedPuzzle.rectPaint.height);
+        }
       }
     }
+
+    print ('FINAL EMPTY TOP-- ${widget.puzzleEmpty.rectPaint.top}');
     movingPuzzleArr = [];
     direction = null;
     widget.bloc.reDrawAdd(true);
@@ -344,8 +357,6 @@ class _PuzzleGameState extends State<PuzzleGame> {
     int emptyIndexX = ((widget.puzzleEmpty.rectPaint.left - widget.paddingX) /
             widget.imageScreenWidth)
         .floor();
-    print(
-        'widget.puzzleEmpty.rectPaint.top --${widget.puzzleEmpty.rectPaint.top}');
     var paddingYTmp = (widget.puzzleEmpty.rectPaint.top - widget.paddingYExt);
     int emptyIndexY = (paddingYTmp / widget.imageScreenHeight).floor();
 
@@ -435,28 +446,51 @@ class _PuzzleGameState extends State<PuzzleGame> {
     return false;
   }
 
-  List<PuzzleTile> getListItemInColumn(
-      double distanceEmptyTop, int index, Direction direction) {
+  ///
+  /// get all puzzle in line which will be moved.
+  ///
+  List<PuzzleTile> getListItemInColumn(double selectedItemX,
+      double selectedItemY, int index, Direction direction) {
     List<PuzzleTile> subList = [];
     subList.add(widget.puzzles.firstWhere((item) => item.index == index));
     minY = widget.selectedPuzzle.rectPaint.top;
-    do {
-      if (direction == Direction.top) {
-        distanceEmptyTop = distanceEmptyTop - widget.imageScreenHeight;
-        if (distanceEmptyTop < widget.offsetMainLeft.dy) break;
-      }
-      PuzzleTile selectedPuzzle =
-          getSelectedPuzzle(selectedItemX, distanceEmptyTop);
 
-      if (selectedPuzzle.index != null && !selectedPuzzle.isEmpty) {
+    PuzzleTile selectedPuzzle;
+    if (direction == Direction.top) {
+      do {
+        if (selectedItemY - widget.puzzleEmpty.rectPaint.top <
+            widget.imageScreenHeight * 2) break;
+        selectedItemY = selectedItemY - widget.imageScreenHeight;
+        selectedPuzzle = getSelectedPuzzle(selectedItemX, selectedItemY);
+        if (selectedPuzzle.isEmpty) break;
         minY = selectedPuzzle.rectPaint.top;
         subList.add(selectedPuzzle);
-      }
-    } while (distanceEmptyTop > widget.imageScreenHeight);
+      } while (selectedItemY > widget.imageScreenHeight);
+    } else if (direction == Direction.bottom) {
+      print(
+          'widget.puzzleEmpty.rectPaint.top---${widget.puzzleEmpty.rectPaint.top}');
+      do {
+        selectedItemY = selectedItemY + widget.imageScreenHeight;
+        selectedPuzzle = getSelectedPuzzle(selectedItemX, selectedItemY);
+        if (selectedPuzzle.isEmpty) break;
+        subList.add(selectedPuzzle);
+      } while (selectedItemY < widget.puzzleEmpty.rectPaint.top);
+    }
+//        if (isInPuzzleEmpty(selectedItemX, selectedItemY)) break;
     print('minY---${minY}');
     subList.forEach((item) {
       print(item.index);
     });
     return subList;
+  }
+
+  bool isInPuzzleEmpty(double selectedItemX, double selectedItemY) {
+    if (selectedItemX > widget.puzzleEmpty.rectPaint.left &&
+        selectedItemX < widget.puzzleEmpty.rectPaint.right &&
+        selectedItemY > widget.puzzleEmpty.rectPaint.top &&
+        selectedItemY < widget.puzzleEmpty.rectPaint.bottom) {
+      return true;
+    }
+    return false;
   }
 }
