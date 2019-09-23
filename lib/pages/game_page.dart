@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
@@ -7,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/commons/enums.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
+import 'package:puzzle/utils/game_engine.dart';
 
 import 'pending_page.dart';
 import 'widget/puzzle_painter.dart';
@@ -91,6 +91,7 @@ class PuzzleGame extends StatefulWidget {
 
   Future<List<PuzzleTile>> buildPuzzles() async {
     PuzzleTile firstPuzzle;
+    PuzzleTile lastPuzzle;
     List<PuzzleTile> resultTmp = [];
     for (int i = 0; i < gameLevelHeight; i++) {
       for (int j = 0; j < gameLevelWidth; j++) {
@@ -120,7 +121,16 @@ class PuzzleGame extends StatefulWidget {
             ..image = imageExtract
 //          ..rectImage = Rect.fromLTWH(0,0,image.width.toDouble(),image.height.toDouble())
             ..rectScreen = rectScreen;
-        } else {
+        }
+//        else if (i == gameLevelHeight - 1 && j == gameLevelWidth - 1) {
+//          lastPuzzle = PuzzleTile()
+//            ..isEmpty = false
+//            ..index = imageIndex
+//            ..image = imageExtract
+////          ..rectImage = Rect.fromLTWH(0,0,image.width.toDouble(),image.height.toDouble())
+//            ..rectScreen = rectScreen;
+//        }
+        else {
           resultTmp.add(PuzzleTile()
             ..isEmpty = false
             ..index = imageIndex
@@ -131,8 +141,12 @@ class PuzzleGame extends StatefulWidget {
       }
     }
 
-    resultTmp.shuffle(Random(1));
-    List<PuzzleTile> result = []..add(firstPuzzle)..addAll(resultTmp);
+//    resultTmp.shuffle();
+    GameEngine.makeRandom(resultTmp);
+    List<PuzzleTile> result = []
+      ..add(firstPuzzle)
+      ..addAll(resultTmp);
+//      ..add(lastPuzzle);
     return result;
   }
 
@@ -222,8 +236,8 @@ class _PuzzleGameState extends State<PuzzleGame> {
     }
     selectedTopX = widget.selectedPuzzle.rectPaint.left;
     selectedTopY = widget.selectedPuzzle.rectPaint.top;
-    print('selectedTopX---${selectedTopX}');
-    print('selectedTopY---${selectedTopY}');
+//    print('selectedTopX---${selectedTopX}');
+//    print('selectedTopY---${selectedTopY}');
     emptyTopY = widget.puzzleEmpty.rectPaint.top;
     emptyTopX = widget.puzzleEmpty.rectPaint.left;
     widget.indexOnScreen = getActualIndexOnScreen(selectedItemX, selectedItemY);
@@ -456,15 +470,18 @@ class _PuzzleGameState extends State<PuzzleGame> {
   /// defect direction
   ///
   Direction defectDirection(double currentItemX, double currentItemY) {
-    int emptyIndexX = ((widget.puzzleEmpty.rectPaint.left - widget.paddingX) /
-            widget.imageScreenWidth)
-        .floor();
-    var paddingYTmp = (widget.puzzleEmpty.rectPaint.top - widget.paddingYExt);
+    var emptyTmpX =
+        ((widget.puzzleEmpty.rectPaint.left) / widget.imageScreenWidth);
+    int emptyIndexX = emptyTmpX.floor();
+    var paddingYTmp = (widget.puzzleEmpty.rectPaint.top);
     int emptyIndexY = (paddingYTmp / widget.imageScreenHeight).floor();
 
     int currentIndexX =
-        ((currentItemX - widget.paddingX) / widget.imageScreenWidth).floor();
-    var temp = (currentItemY - widget.paddingYExt) / widget.imageScreenHeight;
+        ((widget.selectedPuzzle.rectPaint.left) / widget.imageScreenWidth)
+            .floor();
+    var currentItemYTmp = (widget.selectedPuzzle.rectPaint.top);
+
+    var temp = currentItemYTmp / widget.imageScreenHeight;
 
     int currentIndexY = (temp).floor();
 
@@ -600,11 +617,11 @@ class _PuzzleGameState extends State<PuzzleGame> {
       } while (selectedItemX < widget.puzzleEmpty.rectPaint.right);
     }
 //        if (isInPuzzleEmpty(selectedItemX, selectedItemY)) break;
-    print('minY---${minY}');
-    print('minX---${minX}');
-    subList.forEach((item) {
-      print(item.index);
-    });
+//    print('minY---${minY}');
+//    print('minX---${minX}');
+//    subList.forEach((item) {
+//      print(item.index);
+//    });
     return subList;
   }
 
