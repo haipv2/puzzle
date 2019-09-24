@@ -119,34 +119,21 @@ class PuzzleGame extends StatefulWidget {
             ..isEmpty = false
             ..index = imageIndex
             ..image = imageExtract
-//          ..rectImage = Rect.fromLTWH(0,0,image.width.toDouble(),image.height.toDouble())
             ..rectScreen = rectScreen;
-        }
-//        else if (i == gameLevelHeight - 1 && j == gameLevelWidth - 1) {
-//          lastPuzzle = PuzzleTile()
-//            ..isEmpty = false
-//            ..index = imageIndex
-//            ..image = imageExtract
-////          ..rectImage = Rect.fromLTWH(0,0,image.width.toDouble(),image.height.toDouble())
-//            ..rectScreen = rectScreen;
-//        }
-        else {
+        } else {
           resultTmp.add(PuzzleTile()
             ..isEmpty = false
             ..index = imageIndex
             ..image = imageExtract
-//          ..rectImage = Rect.fromLTWH(0,0,image.width.toDouble(),image.height.toDouble())
             ..rectScreen = rectScreen);
         }
       }
     }
 
-//    resultTmp.shuffle();
     GameEngine.makeRandom(resultTmp);
     List<PuzzleTile> result = []
       ..add(firstPuzzle)
       ..addAll(resultTmp);
-//      ..add(lastPuzzle);
     return result;
   }
 
@@ -164,7 +151,7 @@ class PuzzleGame extends StatefulWidget {
   }
 }
 
-class _PuzzleGameState extends State<PuzzleGame> {
+class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   Direction direction;
   double selectedItemX;
   double selectedItemY;
@@ -172,14 +159,18 @@ class _PuzzleGameState extends State<PuzzleGame> {
   double newItemY;
   double minY, minX, maxX, maxY;
   double distanceEmptyTopY, distanceEmptyTopX;
+  AnimationController controller;
+  Animation<int> animation;
 
   @override
   void initState() {
     super.initState();
+//    startAnimation();
   }
 
   @override
   void dispose() {
+    controller.dispose();
     super.dispose();
   }
 
@@ -633,5 +624,27 @@ class _PuzzleGameState extends State<PuzzleGame> {
       return true;
     }
     return false;
+  }
+
+  Future<void> startAnimation() async {
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    animation = IntTween(begin: 0, end: 100).animate(controller);
+    await widget.puzzles.forEach((item) {
+      Rect rect = item.rectPaint;
+      animation.addListener(() {
+        rect = Rect.fromLTWH(rect.left * animation.value / 100,
+            rect.top * animation.value / 100, rect.width, rect.height);
+        widget.bloc.reDrawAdd(true);
+      });
+    });
+    animation.addStatusListener((AnimationStatus val) {
+      if (val == AnimationStatus.completed) {
+        widget.bloc.reDrawAdd(false);
+      }
+    });
+    controller.forward();
   }
 }

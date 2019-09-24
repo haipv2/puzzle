@@ -15,10 +15,10 @@ class GameEngine {
         list[i].curIndex = i;
         arr.add(list[i].index);
       }
-    } while (InversePairs(arr) % 2 != 0);
+    } while (inversePairs(arr) % 2 != 0);
   }
 
-  static int InversePairs(List<int> array) {
+  static int inversePairs(List<int> array) {
     if (array.length == 0) {
       return 0;
     }
