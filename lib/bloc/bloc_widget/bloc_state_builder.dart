@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/bloc_helper/bloc_event_state.dart';
-import 'package:rxdart/rxdart.dart';
 
 typedef Widget AsyncBlocStateBuilder<BlocState>(
     BuildContext context, BlocState state);

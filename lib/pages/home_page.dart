@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:puzzle/bloc/bloc_provider.dart';
-import 'package:puzzle/bloc/bloc_widget/bloc_state_builder.dart';
-import 'package:puzzle/bloc/game_bloc.dart';
-import 'package:puzzle/bloc/game_event.dart';
-import 'package:puzzle/bloc/game_state.dart';
 
 import 'menu_page.dart';
-import 'pending_page.dart';
 
 class HomePage extends StatefulWidget {
   @override

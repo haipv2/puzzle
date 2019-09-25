@@ -91,7 +91,6 @@ class PuzzleGame extends StatefulWidget {
 
   Future<List<PuzzleTile>> buildPuzzles() async {
     PuzzleTile firstPuzzle;
-    PuzzleTile lastPuzzle;
     List<PuzzleTile> resultTmp = [];
     for (int i = 0; i < gameLevelHeight; i++) {
       for (int j = 0; j < gameLevelWidth; j++) {
@@ -165,7 +164,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-//    startAnimation();
+    startAnimation();
   }
 
   @override
@@ -227,8 +226,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     }
     selectedTopX = widget.selectedPuzzle.rectPaint.left;
     selectedTopY = widget.selectedPuzzle.rectPaint.top;
-//    print('selectedTopX---${selectedTopX}');
-//    print('selectedTopY---${selectedTopY}');
     emptyTopY = widget.puzzleEmpty.rectPaint.top;
     emptyTopX = widget.puzzleEmpty.rectPaint.left;
     widget.indexOnScreen = getActualIndexOnScreen(selectedItemX, selectedItemY);
@@ -242,18 +239,9 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       distanceLeft = selectedItemX - widget.selectedPuzzle.rectPaint.left;
       distanceRight = widget.selectedPuzzle.rectPaint.right - selectedItemX;
     }
-    //move top over tile
-//    if (direction == Direction.top) {
-//      if (selectedTopY - widget.puzzleEmpty.rectPaint.top >
-//          widget.imageScreenHeight) {
     distanceEmptyTopY = selectedItemY;
     movingPuzzleArr = getListItemMove(
         selectedItemX, selectedItemY, widget.selectedPuzzle.index, direction);
-//      }
-    //move bottom over tile
-//    }
-    print('direction -- ${direction}');
-//    print('movingPuzzleArr -- ${movingPuzzleArr}');
   }
 
   ///process holding
@@ -270,13 +258,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
           widget.newY + distanceBottom > widget.offsetBottomRight.dy) {
         return;
       }
-//      if (movingPuzzleArr.length == 0) {
-//        widget.selectedPuzzle.rectPaint = Rect.fromLTWH(
-//            widget.selectedPuzzle.rectPaint.left,
-//            widget.newY - distanceTop,
-//            widget.selectedPuzzle.rectPaint.width,
-//            widget.selectedPuzzle.rectPaint.height);
-//      } else {
       for (var i = 0; i < movingPuzzleArr.length; i++) {
         PuzzleTile puzzleTile = movingPuzzleArr[i];
         puzzleTile.rectPaint = Rect.fromLTWH(
@@ -448,10 +429,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         }
       }
     }
-
-    print('FINAL EMPTY TOP-- ${widget.puzzleEmpty.rectPaint.top}');
-    print('FINAL EMPTY LEFT-- ${widget.puzzleEmpty.rectPaint.left}');
-    print('FINAL EMPTY RIGHT-- ${widget.puzzleEmpty.rectPaint.right}');
     movingPuzzleArr = [];
     direction = null;
     widget.bloc.reDrawAdd(true);
@@ -476,10 +453,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
 
     int currentIndexY = (temp).floor();
 
-//    print('emptyIndexX---${emptyIndexX}');
-//    print('emptyIndexY---${emptyIndexY}');
-//    print('currentIndexX---${currentIndexX}');
-//    print('currentIndexY---${currentIndexY}');
     if (currentIndexX == emptyIndexX) {
       if (emptyIndexY > currentIndexY) {
         return Direction.bottom;
@@ -496,17 +469,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return Direction.none;
   }
 
-//
-//  bool isSelectedExtPuzzle(
-//      double currentItemX, double currentItemY, List<PuzzleTile> puzzles) {
-//    if (currentItemX > widget.paddingX &&
-//        currentItemX < widget.rectTemp.right &&
-//        currentItemY > widget.paddingYExt &&
-//        currentItemY < widget.rectTemp.bottom) {
-//      return true;
-//    }
-//    return false;
-//  }
 
   bool moveToPuzzleExt(double newX, double newY) {
     if (newX > widget.puzzleEmpty.rectScreen.left &&
@@ -520,8 +482,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
 
   PuzzleTile getSelectedPuzzle(double currentItemX, double currentItemY) {
     PuzzleTile result;
-//    print('currentItemX--${currentItemX}');
-//    print('currentItemY--${currentItemY}');
     try {
       result = widget.puzzles.firstWhere(
           (item) => (item.rectPaint.left < currentItemX &&
@@ -607,12 +567,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         subList.add(selectedPuzzle);
       } while (selectedItemX < widget.puzzleEmpty.rectPaint.right);
     }
-//        if (isInPuzzleEmpty(selectedItemX, selectedItemY)) break;
-//    print('minY---${minY}');
-//    print('minX---${minX}');
-//    subList.forEach((item) {
-//      print(item.index);
-//    });
     return subList;
   }
 
@@ -626,13 +580,13 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return false;
   }
 
-  Future<void> startAnimation() async {
+  void startAnimation() {
     controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
     animation = IntTween(begin: 0, end: 100).animate(controller);
-    await widget.puzzles.forEach((item) {
+    widget.puzzles.forEach((item) {
       Rect rect = item.rectPaint;
       animation.addListener(() {
         rect = Rect.fromLTWH(rect.left * animation.value / 100,

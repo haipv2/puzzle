@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/bloc_provider.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
-import 'package:puzzle/bloc/game_event.dart';
 
 import 'game_page.dart';
-import 'dart:ui' as ui show Image;
 
 import 'pending_page.dart';
 

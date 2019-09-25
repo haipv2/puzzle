@@ -34,4 +34,12 @@ class GameBloc extends BlocEventStateBase<GameEvent, GameState> {
       yield GameState.done();
     }
   }
+
+  @override
+  void dispose() {
+    imageController?.close();
+    puzzlesController?.close();
+    painterController?.close();
+    super.dispose();
+  }
 }
