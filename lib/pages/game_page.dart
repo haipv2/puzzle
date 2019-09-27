@@ -57,7 +57,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   int selectedIndex;
   PuzzleTile selectedPuzzle;
   double minY, minX, maxX, maxY;
-  PuzzleTile puzzleTmp;
   PuzzleTile puzzleEmpty;
   double newX;
   double newY;
@@ -153,6 +152,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   double originTopX, originTopY;
   double selectedTopX, selectedTopY, emptyTopY, emptyTopX;
   List<PuzzleTile> movingPuzzleArr = [];
+  double movingY;
+  double movingX;
 
   void onPanDown(DragDownDetails details) {
     if (clickOutSideActiveScreen(details)) {
@@ -173,7 +174,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     emptyTopX = puzzleEmpty.rectPaint.left;
     indexOnScreen = getActualIndexOnScreen(selectedItemX, selectedItemY);
     direction = defectDirection(selectedItemX, selectedItemY);
-    puzzleTmp = selectedPuzzle;
 
     if (direction == Direction.top || direction == Direction.bottom) {
       distanceTop = selectedItemY - selectedPuzzle.rectPaint.top;
@@ -185,6 +185,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     distanceEmptyTopY = selectedItemY;
     movingPuzzleArr = getListItemMove(
         selectedItemX, selectedItemY, selectedPuzzle.index, direction);
+    print('minX-- ${minX}');
+    print('maxX-- ${maxX}');
   }
 
   ///process holding
@@ -196,11 +198,16 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     newY = localPosition.dy;
 
     if (direction == Direction.top) {
+      print('selectedItemY -${selectedItemY}');
+      print('newY -${newY}');
       // restrict drag item over screen.
+      movingY = selectedItemY - newY;
       if (newY - distanceTop < puzzleEmpty.rectPaint.top ||
-          newY + distanceBottom > offsetBottomRight.dy) {
+          newY + distanceBottom > offsetBottomRight.dy ||
+          minY - movingY < puzzleEmpty.rectPaint.top) {
         return;
       }
+
       for (var i = 0; i < movingPuzzleArr.length; i++) {
         PuzzleTile puzzleTile = movingPuzzleArr[i];
         puzzleTile.rectPaint = Rect.fromLTWH(
@@ -210,17 +217,16 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
             selectedPuzzle.rectPaint.height);
       }
     } else if (direction == Direction.bottom) {
+      print('${distanceTop}');
+      movingY = newY - selectedItemY;
       // restrict drag item over screen.
       if (newY - distanceTop < paddingYExt ||
-          newY - distanceTop < selectedTopY) {
-        return;
-      } else if (selectedPuzzle.rectPaint.top < offsetTopLeft.dy ||
+          newY - distanceTop < selectedTopY ||
+          selectedPuzzle.rectPaint.top < offsetTopLeft.dy ||
           newY - distanceTop > puzzleEmpty.rectPaint.top) {
         return;
       } else if (movingPuzzleArr.length > 1) {
-        print('maxY--${maxY}');
-        print('puzzleEmpty.rectPaint.top--${puzzleEmpty.rectPaint.top}');
-        if (maxY > puzzleEmpty.rectPaint.top) {
+        if (maxY + movingY > puzzleEmpty.rectPaint.bottom) {
           return;
         }
       }
@@ -234,8 +240,11 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
             selectedPuzzle.rectPaint.height);
       }
     } else if (direction == Direction.left) {
+      movingX = selectedItemX - newX;
       if (newX - distanceLeft < puzzleEmpty.rectPaint.left ||
-          newX + distanceRight > offsetBottomRight.dx) {
+          newX + distanceRight > offsetBottomRight.dx ||
+          movingX < 0 ||
+          minX - movingX < puzzleEmpty.rectPaint.left) {
         return;
       }
 
@@ -248,8 +257,12 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
             selectedPuzzle.rectPaint.height);
       }
     } else if (direction == Direction.right) {
+      movingX = newX - selectedItemX;
+
       if (newX - distanceLeft < selectedPuzzle.rectPaint.left ||
-          newX + distanceRight > puzzleEmpty.rectPaint.right) {
+          newX + distanceRight > puzzleEmpty.rectPaint.right ||
+          movingX < 0 ||
+          maxX + movingX > puzzleEmpty.rectPaint.right) {
         return;
       }
 
@@ -309,7 +322,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
           PuzzleTile puzzleTile = movingPuzzleArr[i];
           puzzleTile.rectPaint = Rect.fromLTWH(
               selectedPuzzle.rectPaint.left,
-              maxY + imageScreenHeight * i,
+              minY + imageScreenHeight + imageScreenHeight * i,
               selectedPuzzle.rectPaint.width,
               selectedPuzzle.rectPaint.height);
         }
@@ -362,7 +375,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         for (var i = 0; i < movingPuzzleArr.length; i++) {
           PuzzleTile puzzleTile = movingPuzzleArr[i];
           puzzleTile.rectPaint = Rect.fromLTWH(
-              maxX + imageScreenWidth * i,
+              minX + imageScreenWidth + imageScreenWidth * i,
               selectedPuzzle.rectPaint.top,
               selectedPuzzle.rectPaint.width,
               selectedPuzzle.rectPaint.height);
@@ -384,6 +397,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     distanceTop = 0;
     distanceBottom = 0;
     maxY = minY = maxX = minX = 0;
+    movingY = movingX = 0;
   }
 
   ///
@@ -473,6 +487,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     subList.add(puzzles.firstWhere((item) => item.index == index));
     minY = selectedPuzzle.rectPaint.top;
     minX = selectedPuzzle.rectPaint.left;
+    maxY = selectedPuzzle.rectPaint.bottom;
+    maxX = selectedPuzzle.rectPaint.right;
 
     PuzzleTile selectedPuzzleTmp;
     if (direction == Direction.top) {
@@ -487,7 +503,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       } while (selectedItemY > imageScreenHeight);
     } else if (direction == Direction.bottom) {
       do {
-        maxY = selectedPuzzle.rectPaint.bottom;
+        print('maxY-${maxY}');
         selectedItemY = selectedItemY + imageScreenHeight;
         selectedPuzzleTmp = getSelectedPuzzle(selectedItemX, selectedItemY);
         if (selectedPuzzleTmp.isEmpty) break;
@@ -507,7 +523,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       } while (selectedItemX > imageScreenWidth);
     } else if (direction == Direction.right) {
       do {
-        maxX = selectedPuzzle.rectPaint.right;
         selectedItemX = selectedItemX + imageScreenWidth;
         selectedPuzzleTmp = getSelectedPuzzle(selectedItemX, selectedItemY);
         if (selectedPuzzleTmp.isEmpty) break;
