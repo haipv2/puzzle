@@ -2,7 +2,7 @@
 import 'package:puzzle/model/puzzle_tile.dart';
 
 class GameEngine {
-  static void makeRandom(List<PuzzleTile> list) {
+  static void shufflePuzzleTile(List<PuzzleTile> list) {
     List<int> srcArr = [];
     for (int i = 0; i < srcArr.length; i++) {
       srcArr.add(i);

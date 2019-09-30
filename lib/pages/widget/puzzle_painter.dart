@@ -81,13 +81,6 @@ class PuzzlePainter extends CustomPainter {
         textPainter =
             new TextPainter(text: textSpan, textDirection: TextDirection.ltr);
         textPainter.layout(minWidth: 50, maxWidth: 80);
-//        Rect rect1 = Rect.fromLTWH(
-//            (paddingX + item.rectScreen.width * (i % gameLevelWidth))
-//                .toDouble(),
-//            (paddingY + item.rectScreen.height * (i ~/ gameLevelWidth))
-//                .toDouble(),
-//            item.rectScreen.width,
-//            item.rectScreen.height);
         Rect rect1 = item.rectPaint;
         textPainter.paint(canvas, rect1.topLeft);
       }

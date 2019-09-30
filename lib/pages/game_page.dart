@@ -10,6 +10,7 @@ import 'package:puzzle/utils/game_engine.dart';
 
 import 'pending_page.dart';
 import 'widget/puzzle_painter.dart';
+import 'package:collection/collection.dart';
 
 class PuzzleGame extends StatefulWidget {
   final String imgPath;
@@ -19,6 +20,7 @@ class PuzzleGame extends StatefulWidget {
   double paddingX, paddingY;
   int gameLevelWidth;
   int gameLevelHeight;
+  int totalPuzzleTile;
 
   GameBloc bloc;
 
@@ -28,6 +30,7 @@ class PuzzleGame extends StatefulWidget {
     paddingX = paddingY = size.width * 0.05;
     gameActiveWidth = size.width * 0.9;
     gameActiveHeight = size.height - paddingY * 4;
+    totalPuzzleTile = gameLevelWidth * gameLevelHeight;
   }
 
   @override
@@ -99,6 +102,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     offsetMainLeft = Offset(widget.paddingX, widget.paddingY);
     imageEachHeight = image.height / widget.gameLevelHeight;
     imageEachWidth = image.width / widget.gameLevelWidth;
+
     offsetDisableTop =
         Offset(widget.paddingX + imageScreenWidth, widget.paddingY);
     offsetDisableBottom = Offset(widget.paddingX + widget.gameActiveWidth,
@@ -111,13 +115,12 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    controller.dispose();
+    controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print('game_page');
     return StreamBuilder<List<PuzzleTile>>(
         stream: widget.bloc.puzzles,
         builder: (context, snapshot) {
@@ -172,7 +175,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     selectedTopY = selectedPuzzle.rectPaint.top;
     emptyTopY = puzzleEmpty.rectPaint.top;
     emptyTopX = puzzleEmpty.rectPaint.left;
-    indexOnScreen = getActualIndexOnScreen(selectedItemX, selectedItemY);
+//    indexOnScreen = getActualIndexOnScreen(selectedItemX, selectedItemY);
     direction = defectDirection(selectedItemX, selectedItemY);
 
     if (direction == Direction.top || direction == Direction.bottom) {
@@ -185,8 +188,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     distanceEmptyTopY = selectedItemY;
     movingPuzzleArr = getListItemMove(
         selectedItemX, selectedItemY, selectedPuzzle.index, direction);
-    print('minX-- ${minX}');
-    print('maxX-- ${maxX}');
   }
 
   ///process holding
@@ -198,8 +199,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     newY = localPosition.dy;
 
     if (direction == Direction.top) {
-      print('selectedItemY -${selectedItemY}');
-      print('newY -${newY}');
       // restrict drag item over screen.
       movingY = selectedItemY - newY;
       if (newY - distanceTop < puzzleEmpty.rectPaint.top ||
@@ -217,7 +216,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
             selectedPuzzle.rectPaint.height);
       }
     } else if (direction == Direction.bottom) {
-      print('${distanceTop}');
       movingY = newY - selectedItemY;
       // restrict drag item over screen.
       if (newY - distanceTop < paddingYExt ||
@@ -391,6 +389,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         }
       }
     }
+    puzzles;
     movingPuzzleArr = [];
     direction = null;
     widget.bloc.reDrawAdd(true);
@@ -398,6 +397,11 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     distanceBottom = 0;
     maxY = minY = maxX = minX = 0;
     movingY = movingX = 0;
+    if (isCompletedGame()) {
+      print('game done!');
+    } else {
+      print('game NOT DONE!');
+    }
   }
 
   ///
@@ -433,16 +437,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return Direction.none;
   }
 
-  bool moveToPuzzleExt(double newX, double newY) {
-    if (newX > puzzleEmpty.rectScreen.left &&
-        newX < puzzleEmpty.rectScreen.right &&
-        newY > puzzleEmpty.rectScreen.top &&
-        newY < puzzleEmpty.rectScreen.bottom) {
-      return true;
-    }
-    return false;
-  }
-
   PuzzleTile getSelectedPuzzle(double currentItemX, double currentItemY) {
     PuzzleTile result;
     try {
@@ -458,9 +452,11 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return result;
   }
 
-  int getActualIndexOnScreen(double currentItemX, double currentItemY) {
-    var result = ((currentItemX - widget.paddingX) ~/ imageScreenWidth) +
-        ((currentItemY - paddingYExt - imageScreenHeight) ~/ imageScreenHeight);
+  int getActualIndexOnScreen(double dX, double dY, int index) {
+    print('dx--${dX}. dy-- ${dY}--index ${index}');
+    var x = (dX - widget.paddingX);
+    var y = (dY - paddingYExt - imageScreenHeight);
+    var result = (x ~/ imageScreenWidth) + (y ~/ imageScreenHeight);
     return result;
   }
 
@@ -503,7 +499,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       } while (selectedItemY > imageScreenHeight);
     } else if (direction == Direction.bottom) {
       do {
-        print('maxY-${maxY}');
         selectedItemY = selectedItemY + imageScreenHeight;
         selectedPuzzleTmp = getSelectedPuzzle(selectedItemX, selectedItemY);
         if (selectedPuzzleTmp.isEmpty) break;
@@ -533,16 +528,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return subList;
   }
 
-  bool isInPuzzleEmpty(double selectedItemX, double selectedItemY) {
-    if (selectedItemX > puzzleEmpty.rectPaint.left &&
-        selectedItemX < puzzleEmpty.rectPaint.right &&
-        selectedItemY > puzzleEmpty.rectPaint.top &&
-        selectedItemY < puzzleEmpty.rectPaint.bottom) {
-      return true;
-    }
-    return false;
-  }
-
   void startAnimation() {
     controller = AnimationController(
       vsync: this,
@@ -564,6 +549,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     });
     controller.forward();
   }
+
+  List<PuzzleTile> orgList = [];
 
   Future<List<PuzzleTile>> buildPuzzles() async {
     PuzzleTile firstPuzzle;
@@ -605,10 +592,14 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       }
     }
 
-    GameEngine.makeRandom(resultTmp);
+    orgList
+      ..add(firstPuzzle)
+      ..addAll(resultTmp);
+    GameEngine.shufflePuzzleTile(resultTmp);
     List<PuzzleTile> result = []
       ..add(firstPuzzle)
       ..addAll(resultTmp);
+
     return result;
   }
 
@@ -625,14 +616,51 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return image;
   }
 
-  ///
-  /// Check movable
-  ///
-  bool isMovable(Direction direction) {
-    if (direction == Direction.bottom) {
-      print('selectedPuzzle.rectPaint.top-- ${selectedPuzzle.rectPaint.top}');
-      if (selectedTopY > selectedPuzzle.rectPaint.top) return false;
+  bool isCompletedGame() {
+    if (puzzles[0].rectPaint.top == paddingYExt) {
+      return false;
+    }
+    for (int i = 0; i < puzzles.length; i++) {
+//      if (orgList[i].rectPaint.left == puzzles[i].rectPaint.left) {
+//        continue;
+//      } else {
+//        return false;
+//      }
+//    print ('-${i}---${puzzles[i].rectPaint.left}');
+//    print ('-${i}---${orgList[i].rectPaint.left}');
+      print('i= ${i}. ${puzzles[i]}');
+
+      if (isCorrectPos(i)) {
+        continue;
+      } else {
+        return false;
+      }
     }
     return true;
+  }
+
+  bool isCorrectPos(int i) {
+    PuzzleTile puzzleTile = puzzles[i];
+    if (puzzleTile.index < widget.gameLevelWidth) {
+      if (puzzleTile.rectPaint.left ==
+              imageScreenWidth * puzzleTile.index + widget.paddingX &&
+          puzzleTile.rectPaint.top == imageScreenHeight + paddingYExt) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (puzzleTile.rectPaint.left ==
+              imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
+                  widget.paddingX &&
+          puzzleTile.rectPaint.top ==
+              imageScreenHeight * (puzzleTile.index ~/ widget.gameLevelWidth) +
+                  paddingYExt +
+                  imageScreenHeight) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 }

@@ -19,4 +19,9 @@ class PuzzleTile {
   int getYIndex(int level) {
     return (index / level).floor();
   }
+
+  @override
+  String toString() {
+    return 'index:${index}. RectPaint: L-${rectPaint.left}. T-${rectPaint.top}';
+  }
 }
