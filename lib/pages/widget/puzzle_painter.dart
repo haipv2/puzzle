@@ -27,21 +27,10 @@ class PuzzlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+
+    // paint image
     if (puzzleTileEmpty.image == null) {
       canvas.drawRect(puzzleTileEmpty.rectPaint, Paint()..color = Colors.white);
-    } else {
-      Rect rect = Rect.fromLTWH(0, 0, puzzleTileEmpty.image.width.toDouble(),
-          puzzleTileEmpty.image.height.toDouble());
-      Rect rect1 = Rect.fromLTWH(paddingX, paddingYExt,
-          puzzleTileEmpty.rectPaint.width, puzzleTileEmpty.rectPaint.height);
-      canvas.drawImageRect(puzzleTileEmpty.image, rect, rect1, Paint());
-      textSpan = new TextSpan(
-          text: '${puzzleTileEmpty.index}',
-          style: TextStyle(color: Colors.red, fontSize: 20));
-      textPainter =
-          new TextPainter(text: textSpan, textDirection: TextDirection.ltr);
-      textPainter.layout(minWidth: 50, maxWidth: 80);
-      textPainter.paint(canvas, rect1.topLeft);
     }
     if (puzzles != null) {
       for (int i = 0; i < puzzles.length; i++) {
@@ -67,9 +56,10 @@ class PuzzlePainter extends CustomPainter {
         }
         item.rectPaint = rect1;
         canvas.drawImageRect(
-            item.image, rect, rect1, Paint()..color = Colors.red);
+            item.image, rect, rect1, Paint());
       }
 
+      // paint text
       for (int i = 0; i < puzzles.length; i++) {
         PuzzleTile item = puzzles[i];
         if (item.isEmpty) {
