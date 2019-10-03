@@ -75,7 +75,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-//    startAnimation();
     init(widget.imgPath);
   }
 
@@ -526,28 +525,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       } while (selectedItemX < puzzleEmpty.rectPaint.right);
     }
     return subList;
-  }
-
-  void startAnimation() {
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-    animation = IntTween(begin: 0, end: 100).animate(controller);
-    puzzles.forEach((item) {
-      Rect rect = item.rectPaint;
-      animation.addListener(() {
-        rect = Rect.fromLTWH(rect.left * animation.value / 100,
-            rect.top * animation.value / 100, rect.width, rect.height);
-        widget.bloc.reDrawAdd(true);
-      });
-    });
-    animation.addStatusListener((AnimationStatus val) {
-      if (val == AnimationStatus.completed) {
-        widget.bloc.reDrawAdd(false);
-      }
-    });
-    controller.forward();
   }
 
   List<PuzzleTile> orgList = [];

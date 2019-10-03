@@ -16,7 +16,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print('build home_page');
     return Scaffold(
       body: MenuPage(),
     );

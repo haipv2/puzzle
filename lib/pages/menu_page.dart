@@ -29,8 +29,6 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('menu_page');
-
     return BlocProvider<GameBloc>(
       bloc: bloc,
       child: StreamBuilder<Object>(
