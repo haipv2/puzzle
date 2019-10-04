@@ -13,6 +13,13 @@ class GameBloc extends BlocEventStateBase<GameEvent, GameState> {
   //sink
   Function(Image) get imageAdd => imageController.sink.add;
 
+  //controller
+  BehaviorSubject<List<String>> imageControllerURL = BehaviorSubject<List<String>>();
+  //stream
+  Observable<List<String>> get imageNames => imageControllerURL.stream;
+  //sink
+  Function(List<String>) get imageAddName => imageControllerURL.sink.add;
+
   //List puzzle
   BehaviorSubject<List<PuzzleTile>> puzzlesController = BehaviorSubject<List<PuzzleTile>>();
   Observable<List<PuzzleTile>> get puzzles => puzzlesController.stream;
