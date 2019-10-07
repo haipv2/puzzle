@@ -9,24 +9,33 @@ class ImageLoader {
   static List<String> imageUrls = List<String>();
 
   ///
-  static Future<dynamic> init() async {
+  static Future<List<String>> init() async {
+
     QuerySnapshot snapshot =
         await Firestore.instance.collection('images').getDocuments();
     snapshot.documents.forEach((f) {
       fileNames.add(f.data['file_name']);
     });
+    return fileNames;
   }
 
-  static Future<dynamic> buildImageUrl() async {
-    StorageReference ref = FirebaseStorage.instance.ref();
+//  static Future<dynamic> buildImageUrl() {
+  static void buildImageUrl() async {
+    QuerySnapshot snapshot =
+        await Firestore.instance.collection('images').getDocuments();
+    snapshot.documents.forEach((f) {
+      fileNames.add(f.data['file_name']);
+    });
 
-//    fileNames.forEach((item) {
-//      imageUrls.add(getDownloadUrl(ref, item));
-//    });
+    StorageReference ref = FirebaseStorage.instance.ref();
+    for(String imgName in fileNames){
+      getDownloadUrl(ref, imgName);
+    }
     print (imageUrls);
   }
-  static Future<String> getDownloadUrl(StorageReference ref, String item)async{
-    await ref.child('images/$item').getDownloadURL().toString();
-
+  static Future<List<String>> getDownloadUrl(StorageReference ref, String item)async{
+    String imgUrl = await ref.child('images/$item').getDownloadURL().toString();
+    imageUrls.add(imgUrl);
+    return imageUrls;
   }
 }

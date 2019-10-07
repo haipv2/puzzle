@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
@@ -585,12 +586,14 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return puzzles;
   }
 
+  Completer<ImageInfo> completer = Completer();
   Future<ui.Image> getImage(String path) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
-    FrameInfo frameInfo = await codec.getNextFrame();
-    image = frameInfo.image;
-    return image;
+    var img = new NetworkImage(path);
+    img.resolve(ImageConfiguration()).addListener(ImageStreamListener((ImageInfo info,bool _){
+      completer.complete(info);
+    }));
+    ImageInfo imageInfo = await completer.future;
+    return imageInfo.image;
   }
 
   bool isCompletedGame() {
@@ -598,13 +601,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       return false;
     }
     for (int i = 0; i < puzzles.length; i++) {
-//      if (orgList[i].rectPaint.left == puzzles[i].rectPaint.left) {
-//        continue;
-//      } else {
-//        return false;
-//      }
-//    print ('-${i}---${puzzles[i].rectPaint.left}');
-//    print ('-${i}---${orgList[i].rectPaint.left}');
       print('i= ${i}. ${puzzles[i]}');
 
       if (isCorrectPos(i)) {
