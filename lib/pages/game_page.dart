@@ -126,6 +126,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   bool isMove = false;
   int second = 0;
   bool showHelp = false;
+  bool isDone = false;
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +158,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                       ..reDraw = snapshot.data ?? false
                       ..move = move
                       ..second = second
-                      ..showHelp = showHelp,
+                      ..showHelp = showHelp
+                      ..isDone = isDone,
                   ),
                   onPanDown: onPanDown,
                   onPanUpdate: onPanUpdate,
@@ -175,10 +177,10 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   double movingX;
 
   void onPanDown(DragDownDetails details) {
-//    if (clickOutSideActiveScreen(details)) {
-//        return;
-//    }
-    showHelp = !showHelp;
+    if (clickOutSideActiveScreen(details)) {
+      return;
+    }
+//    showHelp = !showHelp;
     RenderBox referenceBox = context.findRenderObject();
     Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
     newX = selectedItemX = localPosition.dx;
@@ -434,6 +436,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       print('game done!');
       move = 0;
       second = 0;
+      isDone = true;
     } else {
       print('game NOT DONE!');
     }
@@ -504,9 +507,9 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         localPosition.dy > offsetBottomRight.dy ||
         (localPosition.dy < offsetDisableBottom.dy &&
             localPosition.dx > offsetDisableTop.dx)) {
-      if (clickShowHelp(details)) {
-        showHelp = !showHelp;
-      }
+//      if (clickShowHelp(details)) {
+//        showHelp = !showHelp;
+//      }
       return true;
     }
     return false;
