@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/commons/enums.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
@@ -11,7 +10,6 @@ import 'package:puzzle/utils/game_engine.dart';
 
 import 'pending_page.dart';
 import 'widget/puzzle_painter.dart';
-import 'package:collection/collection.dart';
 
 class PuzzleGame extends StatefulWidget {
   final String imgPath;
@@ -69,6 +67,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   Offset offsetBottomRight;
   Offset offsetMainLeft;
   Offset offsetDisableTop, offsetDisableBottom;
+  Offset offsetMove;
+  Offset offsetHelp;
 
   AnimationController controller;
   Animation<int> animation;
@@ -77,6 +77,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     init(widget.imgPath);
+    startTimer();
   }
 
   Future<ui.Image> init(String imgPath) async {
@@ -109,6 +110,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         paddingYExt + imageScreenHeight);
 
     await setPuzzles();
+    offsetMove = Offset(widget.paddingX,
+        paddingYExt + (widget.gameLevelHeight + 1) * imageScreenHeight);
     widget.bloc.puzzlesAdd(puzzles);
     return image;
   }
@@ -118,6 +121,11 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     controller?.dispose();
     super.dispose();
   }
+
+  int move = 0;
+  bool isMove = false;
+  int second = 0;
+  bool showHelp = false;
 
   @override
   Widget build(BuildContext context) {
@@ -138,10 +146,18 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                         puzzles: puzzles,
                         puzzleTileEmpty: puzzleEmpty,
                         gameLevelWidth: widget.gameLevelWidth,
+                        gameLevelHeight: widget.gameLevelHeight,
+                        gameActiveWidth: widget.gameActiveWidth,
                         rectTemp: rectTemp,
                         gameState: gameState,
-                        paddingYExt: paddingYExt)
-                      ..reDraw = snapshot.data ?? false,
+                        paddingYExt: paddingYExt,
+                        imageScreenWidth: imageScreenWidth,
+                        imageScreenHeight: imageScreenHeight,
+                        orgImage: image)
+                      ..reDraw = snapshot.data ?? false
+                      ..move = move
+                      ..second = second
+                      ..showHelp = showHelp,
                   ),
                   onPanDown: onPanDown,
                   onPanUpdate: onPanUpdate,
@@ -159,9 +175,10 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   double movingX;
 
   void onPanDown(DragDownDetails details) {
-    if (clickOutSideActiveScreen(details)) {
-      return;
-    }
+//    if (clickOutSideActiveScreen(details)) {
+//        return;
+//    }
+    showHelp = !showHelp;
     RenderBox referenceBox = context.findRenderObject();
     Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
     newX = selectedItemX = localPosition.dx;
@@ -280,6 +297,10 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   /// process touch up
   ///
   void onPanUp(DragEndDetails details) {
+    if (showHelp) {
+      widget.bloc.reDrawAdd(true);
+      return;
+    }
     if (direction == Direction.top) {
       movingPuzzleArr
           .sort((a, b) => a.rectPaint.top.compareTo(b.rectPaint.top));
@@ -297,6 +318,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
               selectedPuzzle.rectPaint.width,
               selectedPuzzle.rectPaint.height);
         }
+        isMove = true;
       } else {
         for (var i = 0; i < movingPuzzleArr.length; i++) {
           PuzzleTile puzzleTile = movingPuzzleArr[i];
@@ -306,6 +328,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
               selectedPuzzle.rectPaint.width,
               selectedPuzzle.rectPaint.height);
         }
+        isMove = false;
       }
     } else if (direction == Direction.bottom) {
       movingPuzzleArr
@@ -324,6 +347,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
               selectedPuzzle.rectPaint.width,
               selectedPuzzle.rectPaint.height);
         }
+        isMove = true;
       } else {
         for (var i = 0; i < movingPuzzleArr.length; i++) {
           PuzzleTile puzzleTile = movingPuzzleArr[i];
@@ -333,6 +357,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
               selectedPuzzle.rectPaint.width,
               selectedPuzzle.rectPaint.height);
         }
+        isMove = false;
       }
     } else if (direction == Direction.left) {
       movingPuzzleArr
@@ -351,6 +376,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
               selectedPuzzle.rectPaint.width,
               selectedPuzzle.rectPaint.height);
         }
+        isMove = true;
       } else {
         for (var i = 0; i < movingPuzzleArr.length; i++) {
           PuzzleTile puzzleTile = movingPuzzleArr[i];
@@ -360,6 +386,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
               selectedPuzzle.rectPaint.width,
               selectedPuzzle.rectPaint.height);
         }
+        isMove = false;
       }
     } else if (direction == Direction.right) {
       movingPuzzleArr
@@ -378,6 +405,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
               selectedPuzzle.rectPaint.width,
               selectedPuzzle.rectPaint.height);
         }
+        isMove = true;
       } else {
         for (var i = 0; i < movingPuzzleArr.length; i++) {
           PuzzleTile puzzleTile = movingPuzzleArr[i];
@@ -387,18 +415,25 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
               selectedPuzzle.rectPaint.width,
               selectedPuzzle.rectPaint.height);
         }
+        isMove = false;
       }
     }
+    if (isMove) {
+      move++;
+    }
+    widget.bloc.reDrawAdd(true);
     puzzles;
     movingPuzzleArr = [];
     direction = null;
-    widget.bloc.reDrawAdd(true);
     distanceTop = 0;
     distanceBottom = 0;
     maxY = minY = maxX = minX = 0;
     movingY = movingX = 0;
+
     if (isCompletedGame()) {
       print('game done!');
+      move = 0;
+      second = 0;
     } else {
       print('game NOT DONE!');
     }
@@ -469,6 +504,9 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         localPosition.dy > offsetBottomRight.dy ||
         (localPosition.dy < offsetDisableBottom.dy &&
             localPosition.dx > offsetDisableTop.dx)) {
+      if (clickShowHelp(details)) {
+        showHelp = !showHelp;
+      }
       return true;
     }
     return false;
@@ -581,15 +619,33 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return result;
   }
 
+  Timer _timer;
+
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(
+        () {
+          second++;
+          widget.bloc.reDrawAdd(true);
+        },
+      ),
+    );
+  }
+
   Future<List<PuzzleTile>> setPuzzles() async {
     puzzles = await buildPuzzles();
     return puzzles;
   }
 
   Completer<ImageInfo> completer = Completer();
+
   Future<ui.Image> getImage(String path) async {
     var img = new NetworkImage(path);
-    img.resolve(ImageConfiguration()).addListener(ImageStreamListener((ImageInfo info,bool _){
+    img
+        .resolve(ImageConfiguration())
+        .addListener(ImageStreamListener((ImageInfo info, bool _) {
       completer.complete(info);
     }));
     ImageInfo imageInfo = await completer.future;
@@ -635,5 +691,12 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         return false;
       }
     }
+  }
+
+  bool clickShowHelp(DragDownDetails details) {
+    RenderBox referenceBox = context.findRenderObject();
+    Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
+
+    return true;
   }
 }

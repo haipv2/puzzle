@@ -9,9 +9,9 @@ import 'repos/image/image_loader.dart';
 void main() async {
 //  await Audio.init();
 
-//  await ImageLoader.init();
+  await ImageLoader.getImageFileName();
 
-  await ImageLoader.buildImageUrl();
+//  await ImageLoader.buildImageUrl();
 
   //remove status bar
   SystemChrome.setEnabledSystemUIOverlays([]);

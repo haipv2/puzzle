@@ -21,14 +21,12 @@ class _MenuPageState extends State<MenuPage> {
   Image image;
   GameBloc bloc;
   List<String> imageNameUrls;
-  FirebaseDatabaseUtil firebaseDatabase;
 
 
   @override
   void initState() {
     super.initState();
     bloc = BlocProvider.of<GameBloc>(context);
-    firebaseDatabase = FirebaseDatabaseUtil();
     imageNameUrls = [];
 
     buildImageUrl();
