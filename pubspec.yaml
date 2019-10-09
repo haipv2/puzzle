@@ -22,6 +22,7 @@ dependencies:
   transparent_image: ^0.1.0
   cloud_firestore: ^0.12.9+4
   cached_network_image: ^1.1.1
+  rflutter_alert: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -33,4 +34,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/level0.jpg
+    - assets/audio/swap.wav
+    - assets/audio/win.wav
+    - assets/locale/locale_en.json
+    - assets/locale/locale_vi.json
 

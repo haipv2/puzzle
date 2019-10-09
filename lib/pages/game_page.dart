@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/commons/enums.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
+import 'package:puzzle/repos/audio/audio.dart';
 import 'package:puzzle/utils/game_engine.dart';
 
 import 'pending_page.dart';
@@ -77,7 +78,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     init(widget.imgPath);
-    startTimer();
+//    startTimer();
   }
 
   Future<ui.Image> init(String imgPath) async {
@@ -119,6 +120,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   @override
   void dispose() {
     controller?.dispose();
+    widget.bloc.dispose();
     super.dispose();
   }
 
@@ -422,6 +424,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     }
     if (isMove) {
       move++;
+
+      playSound(AudioType.swap);
     }
     widget.bloc.reDrawAdd(true);
     puzzles;
@@ -437,6 +441,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       move = 0;
       second = 0;
       isDone = true;
+      widget.bloc.reDrawAdd(false);
     } else {
       print('game NOT DONE!');
     }
@@ -622,20 +627,20 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return result;
   }
 
-  Timer _timer;
-
-  void startTimer() {
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(
-      oneSec,
-      (Timer timer) => setState(
-        () {
-          second++;
-          widget.bloc.reDrawAdd(true);
-        },
-      ),
-    );
-  }
+//  Timer _timer;
+//
+//  void startTimer() {
+//    const oneSec = const Duration(seconds: 1);
+//    _timer = new Timer.periodic(
+//      oneSec,
+//      (Timer timer) => setState(
+//        () {
+//          second++;
+//          widget.bloc.reDrawAdd(true);
+//        },
+//      ),
+//    );
+//  }
 
   Future<List<PuzzleTile>> setPuzzles() async {
     puzzles = await buildPuzzles();
@@ -701,5 +706,10 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
 
     return true;
+  }
+
+  Future<void> playSound(AudioType audioType) async {
+    // Play sound
+    await Audio.playAsset(audioType);
   }
 }
