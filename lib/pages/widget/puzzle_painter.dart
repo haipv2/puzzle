@@ -104,7 +104,7 @@ class PuzzlePainter extends CustomPainter {
         }
       }
 
-      // show move, timmer
+      // show move
       textSpanMove = new TextSpan(
           text: 'Move: ${move}',
           style: TextStyle(color: Colors.red, fontSize: 20));
@@ -116,35 +116,7 @@ class PuzzlePainter extends CustomPainter {
           paddingYExt + (gameLevelHeight + 1) * imageScreenHeight,
           gameActiveWidth / 2,
           30);
-//      Rect rectTextMove = Rect.fromLTWH(offsetMove?.dx,offsetMove?.dy, gameActiveWidth/2, 30);
       textPainter.paint(canvas, rectTextMove.topLeft);
-
-        //timer
-        textSpanTime = new TextSpan(
-            text: 'Time: ${isDone ? '00:00:00': constructTime(second)}',
-            style: TextStyle(color: Colors.red, fontSize: 20));
-        textPainter =
-        new TextPainter(text: textSpanTime, textDirection: TextDirection.ltr);
-        textPainter.layout(minWidth: 50, maxWidth: gameActiveWidth / 2);
-        textPainter.paint(canvas, rectTextMove.topRight);
-
-        //tips
-        Rect rectTipsBtn = Rect.fromLTWH(
-            paddingX * 2 + gameActiveWidth / 3, rectTextMove.bottom, 60, 35);
-        canvas.drawRect(rectTipsBtn, Paint()
-          ..color = Colors.red);
-        // text tips
-        String textHelp = 'Help';
-        if (showHelp) {
-          textHelp = 'Hide';
-        }
-
-        textSpanHelp = new TextSpan(
-            text: textHelp, style: TextStyle(color: Colors.blue, fontSize: 20));
-        textPainter =
-        new TextPainter(text: textSpanHelp, textDirection: TextDirection.ltr);
-        textPainter.layout(minWidth: 0, maxWidth: gameActiveWidth / 2);
-        textPainter.paint(canvas, rectTipsBtn.topLeft);
       }
   }
 

@@ -28,7 +28,6 @@ class _MenuPageState extends State<MenuPage> {
     super.initState();
     bloc = BlocProvider.of<GameBloc>(context);
     imageNameUrls = [];
-
     buildImageUrl();
   }
 
@@ -37,7 +36,6 @@ class _MenuPageState extends State<MenuPage> {
     for (String imgName in ImageLoader.fileNames) {
       getDownloadUrl(ref, imgName);
     }
-//    print (imageUrls);
   }
 
   Future<void> getDownloadUrl(StorageReference ref, String item) async {
@@ -98,7 +96,7 @@ class _MenuPageState extends State<MenuPage> {
 
   void selectItem(String imageUrl, int gameLevelWidth, int gameLevelHeight) {
     Size size = MediaQuery.of(context).size;
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
       return PuzzleGame(imageUrl, size, gameLevelWidth, gameLevelHeight, bloc);
     }));
   }
@@ -127,15 +125,15 @@ class _MenuPageState extends State<MenuPage> {
         color: Colors.red,
       ),
     );
-    String bestEasy = '${GameAchievement.bestEasy.userName} - move: ${GameAchievement.bestEasy.moveStep} - time ${GameAchievement.bestEasy.timePlay}';
+    String bestEasy = '${GameAchievement.bestEasy.userName} - move: ${GameAchievement.bestEasy.moveStep}';
     if (GameAchievement.bestEasy.userName.isEmpty){
       bestEasy = '';
     }
-    String bestMedium = '${GameAchievement.bestMedium.userName} - move: ${GameAchievement.bestMedium.moveStep} - time ${GameAchievement.bestMedium.timePlay}';
+    String bestMedium = '${GameAchievement.bestMedium.userName} - move: ${GameAchievement.bestMedium.moveStep}';
     if (GameAchievement.bestMedium.userName.isEmpty){
       bestMedium = '';
     }
-    String bestHard = '${GameAchievement.bestHard.userName} - move: ${GameAchievement.bestHard.moveStep} - time ${GameAchievement.bestHard.timePlay}';
+    String bestHard = '${GameAchievement.bestHard.userName} - move: ${GameAchievement.bestHard.moveStep}';
     if (GameAchievement.bestHard.userName.isEmpty){
       bestHard = '';
     }
@@ -195,7 +193,7 @@ class _MenuPageState extends State<MenuPage> {
                       levelMedium,
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    onPressed: () => selectItem(imageUrl, 2, 3),
+                    onPressed: () => selectItem(imageUrl, 3, 4),
                     radius: BorderRadius.only(
                       topLeft: Radius.circular(15.0),
                       topRight: Radius.circular(15.0),
@@ -230,7 +228,7 @@ class _MenuPageState extends State<MenuPage> {
                       levelHard,
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    onPressed: () => selectItem(imageUrl, 2, 3),
+                    onPressed: () => selectItem(imageUrl, 4, 5),
                     radius: BorderRadius.only(
                       topLeft: Radius.circular(15.0),
                       topRight: Radius.circular(15.0),

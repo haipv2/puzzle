@@ -9,6 +9,7 @@ import 'package:puzzle/model/puzzle_tile.dart';
 import 'package:puzzle/repos/audio/audio.dart';
 import 'package:puzzle/utils/game_engine.dart';
 
+import 'complete_page.dart';
 import 'pending_page.dart';
 import 'widget/puzzle_painter.dart';
 
@@ -78,7 +79,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     init(widget.imgPath);
-    startTimer();
   }
 
   Future<ui.Image> init(String imgPath) async {
@@ -120,7 +120,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   @override
   void dispose() {
     controller?.dispose();
-    widget.bloc.dispose();
+//    widget.bloc.dispose();
     super.dispose();
   }
 
@@ -132,40 +132,49 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+//    gameState = GameState.done;
     return StreamBuilder<List<PuzzleTile>>(
         stream: widget.bloc.puzzles,
         builder: (context, snapshot) {
           if (snapshot.data == null) {
             return PendingPage();
           }
+          if (gameState == GameState.done) {
+            return CompletePage(widget.imgPath);
+          }
           return StreamBuilder<bool>(
               stream: widget.bloc.reDraw,
               builder: (context, snapshot) {
-                return GestureDetector(
-                  child: CustomPaint(
-                    painter: PuzzlePainter(
-                        paddingX: widget.paddingX,
-                        paddingY: widget.paddingY,
-                        puzzles: puzzles,
-                        puzzleTileEmpty: puzzleEmpty,
-                        gameLevelWidth: widget.gameLevelWidth,
-                        gameLevelHeight: widget.gameLevelHeight,
-                        gameActiveWidth: widget.gameActiveWidth,
-                        rectTemp: rectTemp,
-                        gameState: gameState,
-                        paddingYExt: paddingYExt,
-                        imageScreenWidth: imageScreenWidth,
-                        imageScreenHeight: imageScreenHeight,
-                        orgImage: image)
-                      ..reDraw = snapshot.data ?? false
-                      ..move = move
-                      ..second = second
-                      ..showHelp = showHelp
-                      ..isDone = isDone,
+                if (snapshot.data == null){
+                  widget.bloc.reDrawAdd(true);
+                }
+                return Container(
+                  child: GestureDetector(
+                    child: CustomPaint(
+                      painter: PuzzlePainter(
+                          paddingX: widget.paddingX,
+                          paddingY: widget.paddingY,
+                          puzzles: puzzles,
+                          puzzleTileEmpty: puzzleEmpty,
+                          gameLevelWidth: widget.gameLevelWidth,
+                          gameLevelHeight: widget.gameLevelHeight,
+                          gameActiveWidth: widget.gameActiveWidth,
+                          rectTemp: rectTemp,
+                          gameState: gameState,
+                          paddingYExt: paddingYExt,
+                          imageScreenWidth: imageScreenWidth,
+                          imageScreenHeight: imageScreenHeight,
+                          orgImage: image)
+                        ..reDraw = snapshot.data ?? false
+                        ..move = move
+                        ..second = second
+                        ..showHelp = showHelp
+                        ..isDone = isDone,
+                    ),
+                    onPanDown: onPanDown,
+                    onPanUpdate: onPanUpdate,
+                    onPanEnd: onPanUp,
                   ),
-                  onPanDown: onPanDown,
-                  onPanUpdate: onPanUpdate,
-                  onPanEnd: onPanUp,
                 );
               });
         });
@@ -424,7 +433,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     }
     if (isMove) {
       move++;
-
       playSound(AudioType.swap);
     }
     widget.bloc.reDrawAdd(true);
@@ -441,7 +449,10 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       move = 0;
       second = 0;
       isDone = true;
-      widget.bloc.reDrawAdd(false);
+      gameState = GameState.done;
+      setState(() {
+      });
+//      widget.bloc.reDrawAdd(false);
     } else {
       print('game NOT DONE!');
     }
@@ -625,21 +636,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       ..addAll(resultTmp);
 
     return result;
-  }
-
-  Timer _timer;
-
-  void startTimer() {
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(
-      oneSec,
-      (Timer timer) => setState(
-        () {
-          second++;
-          widget.bloc.reDrawAdd(true);
-        },
-      ),
-    );
   }
 
   Future<List<PuzzleTile>> setPuzzles() async {
