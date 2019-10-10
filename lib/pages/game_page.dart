@@ -78,7 +78,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     init(widget.imgPath);
-//    startTimer();
+    startTimer();
   }
 
   Future<ui.Image> init(String imgPath) async {
@@ -627,20 +627,20 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return result;
   }
 
-//  Timer _timer;
-//
-//  void startTimer() {
-//    const oneSec = const Duration(seconds: 1);
-//    _timer = new Timer.periodic(
-//      oneSec,
-//      (Timer timer) => setState(
-//        () {
-//          second++;
-//          widget.bloc.reDrawAdd(true);
-//        },
-//      ),
-//    );
-//  }
+  Timer _timer;
+
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(
+        () {
+          second++;
+          widget.bloc.reDrawAdd(true);
+        },
+      ),
+    );
+  }
 
   Future<List<PuzzleTile>> setPuzzles() async {
     puzzles = await buildPuzzles();

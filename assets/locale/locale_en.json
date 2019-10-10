@@ -1,5 +1,9 @@
 {
   "txtLevel": "Level",
+  "txtLevelEasy": "Easy",
+  "txtLevelMedium": "Medium",
+  "txtLevelHard": "Hard",
   "txtSelectLevel": "Select a level",
-  "txtTitleGame": "PUZZLE"
+  "txtTitleGame": "PUZZLE",
+  "txtHighest": "Best"
 }

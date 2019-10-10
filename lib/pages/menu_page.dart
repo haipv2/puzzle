@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/bloc_provider.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/bloc/global_bloc.dart';
+import 'package:puzzle/repos/achievement/game_achieve.dart';
 import 'package:puzzle/repos/firebase_database.dart';
 import 'package:puzzle/repos/image/image_loader.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -10,7 +11,6 @@ import 'package:transparent_image/transparent_image.dart';
 
 import 'game_page.dart';
 import 'pending_page.dart';
-
 
 class MenuPage extends StatefulWidget {
   @override
@@ -23,7 +23,6 @@ class _MenuPageState extends State<MenuPage> {
   GameBloc bloc;
   List<String> imageNameUrls;
 
-
   @override
   void initState() {
     super.initState();
@@ -35,12 +34,13 @@ class _MenuPageState extends State<MenuPage> {
 
   void buildImageUrl() async {
     StorageReference ref = FirebaseStorage.instance.ref();
-    for(String imgName in ImageLoader.fileNames){
+    for (String imgName in ImageLoader.fileNames) {
       getDownloadUrl(ref, imgName);
     }
 //    print (imageUrls);
   }
-  Future<void> getDownloadUrl(StorageReference ref, String item)async{
+
+  Future<void> getDownloadUrl(StorageReference ref, String item) async {
     String imgUrl = await ref.child('images/$item').getDownloadURL();
     imageNameUrls.add(imgUrl.toString());
     bloc.imageAddName(imageNameUrls);
@@ -70,7 +70,6 @@ class _MenuPageState extends State<MenuPage> {
                 }),
               );
             }
-
           }),
     );
   }
@@ -81,7 +80,7 @@ class _MenuPageState extends State<MenuPage> {
         children: <Widget>[
           Center(child: CircularProgressIndicator()),
           GestureDetector(
-            onTap: (){
+            onTap: () {
               openDialogLevel(imageUrl);
             },
             child: Center(
@@ -107,6 +106,10 @@ class _MenuPageState extends State<MenuPage> {
   void openDialogLevel(String imageUrl) {
     String level = globalBloc.text('txtLevel');
     String selectLevel = globalBloc.text('txtSelectLevel');
+    String levelEasy = globalBloc.text('txtLevelEasy');
+    String levelMedium = globalBloc.text('txtLevelMedium');
+    String levelHard = globalBloc.text('txtLevelHard');
+    String txtHighest = globalBloc.text('txtHighest');
     // Reusable alert style
     var alertStyle = AlertStyle(
       animationType: AnimationType.fromTop,
@@ -124,7 +127,18 @@ class _MenuPageState extends State<MenuPage> {
         color: Colors.red,
       ),
     );
-
+    String bestEasy = '${GameAchievement.bestEasy.userName} - move: ${GameAchievement.bestEasy.moveStep} - time ${GameAchievement.bestEasy.timePlay}';
+    if (GameAchievement.bestEasy.userName.isEmpty){
+      bestEasy = '';
+    }
+    String bestMedium = '${GameAchievement.bestMedium.userName} - move: ${GameAchievement.bestMedium.moveStep} - time ${GameAchievement.bestMedium.timePlay}';
+    if (GameAchievement.bestMedium.userName.isEmpty){
+      bestMedium = '';
+    }
+    String bestHard = '${GameAchievement.bestHard.userName} - move: ${GameAchievement.bestHard.moveStep} - time ${GameAchievement.bestHard.timePlay}';
+    if (GameAchievement.bestHard.userName.isEmpty){
+      bestHard = '';
+    }
     Alert(
       context: context,
       style: alertStyle,
@@ -135,50 +149,107 @@ class _MenuPageState extends State<MenuPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: DialogButton(
-              child: Text(
-                "Easy",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              child: Column(
+                children: <Widget>[
+                  DialogButton(
+                    child: Text(
+                      levelEasy,
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    onPressed: () => selectItem(imageUrl, 2, 2),
+                    radius: BorderRadius.only(
+                      topLeft: Radius.circular(15.0),
+                      topRight: Radius.circular(15.0),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Align(
+                        child: Text(
+                          bestEasy,
+                          style: TextStyle(fontSize: 10),
+                        ),
+                        alignment: Alignment.center,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              onPressed: () => selectItem(imageUrl,2,3),
-              color: Color.fromRGBO(0, 179, 134, 1.0),
-              radius: BorderRadius.circular(15.0),
-              gradient: LinearGradient(colors: [
-                Color.fromRGBO(116, 116, 191, 1.0),
-                Color.fromRGBO(52, 138, 199, 1.0)
-              ]),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: DialogButton(
-              child: Text(
-                "Medium",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              child: Column(
+                children: <Widget>[
+                  DialogButton(
+                    child: Text(
+                      levelMedium,
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    onPressed: () => selectItem(imageUrl, 2, 3),
+                    radius: BorderRadius.only(
+                      topLeft: Radius.circular(15.0),
+                      topRight: Radius.circular(15.0),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Align(
+                        child: Text(
+                          bestMedium,
+                          style: TextStyle(fontSize: 10),
+                        ),
+                        alignment: Alignment.center,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              onPressed: () => selectItem(imageUrl,3,4),
-              color: Color.fromRGBO(0, 179, 134, 1.0),
-              radius: BorderRadius.circular(15.0),
-              gradient: LinearGradient(colors: [
-                Color.fromRGBO(116, 116, 191, 1.0),
-                Color.fromRGBO(52, 138, 199, 1.0)
-              ]),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: DialogButton(
-              child: Text(
-                "Hard",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              child: Column(
+                children: <Widget>[
+                  DialogButton(
+                    child: Text(
+                      levelHard,
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    onPressed: () => selectItem(imageUrl, 2, 3),
+                    radius: BorderRadius.only(
+                      topLeft: Radius.circular(15.0),
+                      topRight: Radius.circular(15.0),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Align(
+                        child: Text(
+                          bestHard,
+                          style: TextStyle(fontSize: 10),
+                        ),
+                        alignment: Alignment.center,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              onPressed: () => selectItem(imageUrl,4,5),
-              color: Color.fromRGBO(0, 179, 134, 1.0),
-              radius: BorderRadius.circular(15.0),
-              gradient: LinearGradient(colors: [
-                Color.fromRGBO(116, 116, 191, 1.0),
-                Color.fromRGBO(52, 138, 199, 1.0)
-              ]),
             ),
           ),
         ],

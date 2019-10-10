@@ -5,7 +5,6 @@ import '../firebase_storage.dart';
 
 class ImageLoader {
   static List<String> fileNames = List<String>();
-  static List<String> imageUrls = List<String>();
 
   ///
   static Future<List<String>> getImageFileName() async {

@@ -1,5 +1,9 @@
 {
   "txtLevel": "Cấp độ",
+  "txtLevelEasy": "Dê",
+  "txtLevelMedium": "Trung bình",
+  "txtLevelHard": "Khó",
   "txtSelectLevel": "Chọn 1 cấp độ",
-  "txtTitleGame": "Xếp hình"
+  "txtTitleGame": "Xếp hình",
+  "txtHighest": "Kỷ lục"
 }
