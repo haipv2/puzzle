@@ -5,6 +5,8 @@ import 'bloc_helper/bloc_event_state.dart';
 import 'game_event.dart';
 import 'game_state.dart';
 import 'package:rxdart/rxdart.dart';
+import '../model/image_info.dart' as game;
+
 class GameBloc extends BlocEventStateBase<GameEvent, GameState> {
   //controller
   BehaviorSubject<Image> imageController = BehaviorSubject<Image>();
@@ -14,11 +16,11 @@ class GameBloc extends BlocEventStateBase<GameEvent, GameState> {
   Function(Image) get imageAdd => imageController.sink.add;
 
   //controller
-  BehaviorSubject<List<String>> imageControllerURL = BehaviorSubject<List<String>>();
+  BehaviorSubject<List<game.ImageInfo>> imageControllerURL = BehaviorSubject<List<game.ImageInfo>>();
   //stream
-  Observable<List<String>> get imageNames => imageControllerURL.stream;
+  Observable<List<game.ImageInfo>> get imageNames => imageControllerURL.stream;
   //sink
-  Function(List<String>) get imageAddName => imageControllerURL.sink.add;
+  Function(List<game.ImageInfo>) get imageAddName => imageControllerURL.sink.add;
 
   //List puzzle
   BehaviorSubject<List<PuzzleTile>> puzzlesController = BehaviorSubject<List<PuzzleTile>>();

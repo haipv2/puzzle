@@ -35,7 +35,6 @@ flutter:
 
   uses-material-design: true
   assets:
-    - assets/images/level0.jpg
     - assets/audio/swap.wav
     - assets/audio/win.wav
     - assets/locale/locale_en.json

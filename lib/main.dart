@@ -16,9 +16,6 @@ void main() async {
   await Audio.init();
 
   await ImageLoader.getImageFileName();
-  await GameAchievement.getBestScoreEasy();
-  await GameAchievement.getBestScoreMedium();
-  await GameAchievement.getBestScoreHard();
 
   //remove status bar
   SystemChrome.setEnabledSystemUIOverlays([]);

@@ -4,7 +4,9 @@ import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
 import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
+import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/commons/enums.dart';
+import 'package:puzzle/model/achievement.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
 import 'package:puzzle/repos/audio/audio.dart';
 import 'package:puzzle/utils/game_engine.dart';
@@ -22,11 +24,13 @@ class PuzzleGame extends StatefulWidget {
   int gameLevelWidth;
   int gameLevelHeight;
   int totalPuzzleTile;
+  final String gameLevel;
+  final Achievement achievement;
 
   GameBloc bloc;
 
   PuzzleGame(this.imgPath, this.size, this.gameLevelWidth, this.gameLevelHeight,
-      GameBloc bloc) {
+      GameBloc bloc, this.gameLevel, this.achievement) {
     this.bloc = bloc;
     paddingX = paddingY = size.width * 0.05;
     gameActiveWidth = size.width * 0.9;
@@ -129,6 +133,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   int second = 0;
   bool showHelp = false;
   bool isDone = false;
+  int moveTmp = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -140,15 +145,26 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
             return PendingPage();
           }
           if (gameState == GameState.done) {
-            return CompletePage(widget.imgPath);
+            bool isHigherScore =
+                processHighScore(widget.achievement, widget.gameLevel);
+            return CompletePage(
+                size: widget.size,
+                bloc: widget.bloc,
+                gameLevelHeight: widget.gameLevelHeight,
+                gameLevelWidth: widget.gameLevelWidth,
+                imagePath: widget.imgPath,
+                achievement: widget.achievement,
+                gameLevel: widget.gameLevel,
+                isHigherScore: isHigherScore);
           }
           return StreamBuilder<bool>(
               stream: widget.bloc.reDraw,
               builder: (context, snapshot) {
-                if (snapshot.data == null){
+                if (snapshot.data == null) {
                   widget.bloc.reDrawAdd(true);
                 }
                 return Container(
+                  decoration: BoxDecoration(color: Color(0xFFF6DDB1)),
                   child: GestureDetector(
                     child: CustomPaint(
                       painter: PuzzlePainter(
@@ -436,26 +452,25 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       playSound(AudioType.swap);
     }
     widget.bloc.reDrawAdd(true);
-    puzzles;
+
+    if (isCompletedGame()) {
+      print('game done!');
+      moveTmp = move;
+      move = 0;
+      second = 0;
+      isDone = true;
+      gameState = GameState.done;
+      setState(() {});
+//      widget.bloc.reDrawAdd(false);
+    } else {
+      print('game NOT DONE!');
+    }
     movingPuzzleArr = [];
     direction = null;
     distanceTop = 0;
     distanceBottom = 0;
     maxY = minY = maxX = minX = 0;
     movingY = movingX = 0;
-
-    if (isCompletedGame()) {
-      print('game done!');
-      move = 0;
-      second = 0;
-      isDone = true;
-      gameState = GameState.done;
-      setState(() {
-      });
-//      widget.bloc.reDrawAdd(false);
-    } else {
-      print('game NOT DONE!');
-    }
   }
 
   ///
@@ -707,5 +722,25 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   Future<void> playSound(AudioType audioType) async {
     // Play sound
     await Audio.playAsset(audioType);
+  }
+
+  bool processHighScore(Achievement achievement, String gameLevel) {
+    if (gameLevel == GAME_LEVEL_EASY) {
+      if (achievement.moveStepEasy > moveTmp) {
+        achievement.moveStepEasy = moveTmp;
+        return true;
+      }
+    } else if (gameLevel == GAME_LEVEL_MEDIUM) {
+      if (achievement.moveStepMedium > moveTmp) {
+        achievement.moveStepMedium = moveTmp;
+        return true;
+      }
+    } else if (gameLevel == GAME_LEVEL_HARD) {
+      if (achievement.moveStepHard > moveTmp) {
+        achievement.moveStepHard = moveTmp;
+        return true;
+      }
+    }
+    return false;
   }
 }

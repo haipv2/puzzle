@@ -1,8 +1,9 @@
 class Achievement {
   String userName = '';
-  int moveStep = 0;
-  String timePlay = "00:00:00";
+  int moveStepEasy = 0;
+  int moveStepMedium = 0;
+  int moveStepHard = 0;
   String country = '';
   String level = '';
-  int summary=0;
+  String imageName = '';
 }

@@ -20,9 +20,19 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     title = globalBloc.text('txtTitleGame');
+
     return Scaffold(
       appBar: AppBar(
-        actions: <Widget>[InkWell(child: Icon(Icons.settings), onTap: openLangDialog,)],
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.volume_off),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: Icon(Icons.language),
+            onPressed: openLangDialog,
+          ),
+        ],
         centerTitle: true,
         title: Text(title),
       ),
@@ -31,8 +41,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void openLangDialog() {
-    showDialog(context: context, builder: (_){
-      return LanguageSettingWidget();
-    });
+    showDialog(
+        context: context,
+        builder: (_) {
+          return LanguageSettingWidget();
+        });
   }
 }

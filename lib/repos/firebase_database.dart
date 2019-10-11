@@ -25,7 +25,7 @@ class FirebaseDatabaseUtil {
         .collection('images')
         .getDocuments();
     snapshot.documents.forEach((f) {
-      imageNames.add(f.data['file_name']);
+      imageNames.add(f.data['image_name']);
     });
 //    snapshots.documents.map((DocumentSnapshot documentSnapshot) {
 //      imageNames.add(documentSnapshot['file_name']);
@@ -61,7 +61,7 @@ class FirebaseDatabaseUtil {
   String buildImageName(Map<dynamic, dynamic> imageNameMap) {
     String fileName;
     imageNameMap.forEach((key, value) {
-      if (key == 'file_name') {
+      if (key == 'image_name') {
         fileName = value.toString();
       }
     });

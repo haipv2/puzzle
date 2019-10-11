@@ -12,7 +12,7 @@ class ImageLoader {
     QuerySnapshot snapshot =
         await Firestore.instance.collection('images').getDocuments();
     snapshot.documents.forEach((f) {
-      fileNames.add(f.data['file_name']);
+      fileNames.add(f.data['image_name']);
     });
     return fileNames;
   }

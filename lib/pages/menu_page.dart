@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/bloc_provider.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/bloc/global_bloc.dart';
+import 'package:puzzle/commons/const.dart';
+import 'package:puzzle/model/achievement.dart';
 import 'package:puzzle/repos/achievement/game_achieve.dart';
-import 'package:puzzle/repos/firebase_database.dart';
 import 'package:puzzle/repos/image/image_loader.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import 'game_page.dart';
 import 'pending_page.dart';
+import '../model/image_info.dart' as game;
 
 class MenuPage extends StatefulWidget {
   @override
@@ -21,13 +23,13 @@ class _MenuPageState extends State<MenuPage> {
   String imgPath = '';
   Image image;
   GameBloc bloc;
-  List<String> imageNameUrls;
+  List<game.ImageInfo> imageInfos = [];
 
   @override
   void initState() {
     super.initState();
     bloc = BlocProvider.of<GameBloc>(context);
-    imageNameUrls = [];
+    imageInfos = [];
     buildImageUrl();
   }
 
@@ -40,8 +42,10 @@ class _MenuPageState extends State<MenuPage> {
 
   Future<void> getDownloadUrl(StorageReference ref, String item) async {
     String imgUrl = await ref.child('images/$item').getDownloadURL();
-    imageNameUrls.add(imgUrl.toString());
-    bloc.imageAddName(imageNameUrls);
+    imageInfos.add(game.ImageInfo()
+      ..urls = imgUrl
+      ..imageName = item);
+    bloc.imageAddName(imageInfos);
   }
 
   @override
@@ -63,8 +67,8 @@ class _MenuPageState extends State<MenuPage> {
                 primary: true,
                 crossAxisCount: 2,
                 childAspectRatio: 1.0,
-                children: List.generate(imageNameUrls.length, (index) {
-                  return getStructuredGridCell(imageNameUrls[index]);
+                children: List.generate(imageInfos.length, (index) {
+                  return getStructuredGridCell(imageInfos[index]);
                 }),
               );
             }
@@ -72,20 +76,21 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  Card getStructuredGridCell(String imageUrl) {
+  Card getStructuredGridCell(game.ImageInfo imageInfo) {
     return new Card(
       child: Stack(
         children: <Widget>[
           Center(child: CircularProgressIndicator()),
           GestureDetector(
             onTap: () {
-              openDialogLevel(imageUrl);
+              loadImageAchievement(imageInfo.imageName);
+              openDialogLevel(imageInfo.urls, GameAchievement.achievement);
             },
             child: Center(
               child: FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
 //              image: file.picFile,
-                image: imageUrl,
+                image: imageInfo.urls,
               ),
             ),
           ),
@@ -94,14 +99,16 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  void selectItem(String imageUrl, int gameLevelWidth, int gameLevelHeight) {
+  void selectItem(String imageUrl, int gameLevelWidth, int gameLevelHeight,
+      String gameLevel, Achievement achievement) {
     Size size = MediaQuery.of(context).size;
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-      return PuzzleGame(imageUrl, size, gameLevelWidth, gameLevelHeight, bloc);
+      return PuzzleGame(imageUrl, size, gameLevelWidth, gameLevelHeight, bloc,
+          gameLevel, achievement);
     }));
   }
 
-  void openDialogLevel(String imageUrl) {
+  void openDialogLevel(String imageUrl, Achievement achievement) {
     String level = globalBloc.text('txtLevel');
     String selectLevel = globalBloc.text('txtSelectLevel');
     String levelEasy = globalBloc.text('txtLevelEasy');
@@ -111,7 +118,7 @@ class _MenuPageState extends State<MenuPage> {
     // Reusable alert style
     var alertStyle = AlertStyle(
       animationType: AnimationType.fromTop,
-      isCloseButton: false,
+      isCloseButton: true,
       isOverlayTapDismiss: false,
       descStyle: TextStyle(fontWeight: FontWeight.bold),
       animationDuration: Duration(milliseconds: 400),
@@ -125,23 +132,25 @@ class _MenuPageState extends State<MenuPage> {
         color: Colors.red,
       ),
     );
-    String bestEasy = '${GameAchievement.bestEasy.userName} - move: ${GameAchievement.bestEasy.moveStep}';
-    if (GameAchievement.bestEasy.userName.isEmpty){
-      bestEasy = '';
-    }
-    String bestMedium = '${GameAchievement.bestMedium.userName} - move: ${GameAchievement.bestMedium.moveStep}';
-    if (GameAchievement.bestMedium.userName.isEmpty){
-      bestMedium = '';
-    }
-    String bestHard = '${GameAchievement.bestHard.userName} - move: ${GameAchievement.bestHard.moveStep}';
-    if (GameAchievement.bestHard.userName.isEmpty){
+    String bestEasy =
+        '${achievement.userName} - move: ${achievement.moveStepEasy}';
+    String bestMedium =
+        '${achievement.userName} - move: ${achievement.moveStepMedium}';
+    String bestHard =
+        '${achievement.userName} - move: ${achievement.moveStepHard}';
+    if (achievement.userName == null || achievement.userName.isEmpty) {
       bestHard = '';
+      bestMedium = '';
+      bestEasy = '';
     }
     Alert(
       context: context,
       style: alertStyle,
       title: level,
       desc: selectLevel,
+      buttons: [
+      ],
+      closeFunction: (){},
       content: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -158,7 +167,8 @@ class _MenuPageState extends State<MenuPage> {
                       levelEasy,
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    onPressed: () => selectItem(imageUrl, 2, 2),
+                    onPressed: () => selectItem(
+                        imageUrl, 2, 2, GAME_LEVEL_EASY, achievement),
                     radius: BorderRadius.only(
                       topLeft: Radius.circular(15.0),
                       topRight: Radius.circular(15.0),
@@ -193,7 +203,8 @@ class _MenuPageState extends State<MenuPage> {
                       levelMedium,
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    onPressed: () => selectItem(imageUrl, 3, 4),
+                    onPressed: () => selectItem(
+                        imageUrl, 3, 4, GAME_LEVEL_MEDIUM, achievement),
                     radius: BorderRadius.only(
                       topLeft: Radius.circular(15.0),
                       topRight: Radius.circular(15.0),
@@ -228,7 +239,8 @@ class _MenuPageState extends State<MenuPage> {
                       levelHard,
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    onPressed: () => selectItem(imageUrl, 4, 5),
+                    onPressed: () => selectItem(
+                        imageUrl, 4, 5, GAME_LEVEL_HARD, achievement),
                     radius: BorderRadius.only(
                       topLeft: Radius.circular(15.0),
                       topRight: Radius.circular(15.0),
@@ -253,5 +265,10 @@ class _MenuPageState extends State<MenuPage> {
         ],
       ),
     ).show();
+  }
+
+  Future<Achievement> loadImageAchievement(String imageName) async {
+    Achievement result = await GameAchievement.getBestScore(imageName);
+    return result;
   }
 }
