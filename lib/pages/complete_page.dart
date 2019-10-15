@@ -3,6 +3,7 @@ import 'package:country_pickers/country_pickers.dart';
 import 'package:flutter/material.dart';
 import 'package:fireworks/fireworks.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
+import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/model/achievement.dart';
 import 'package:puzzle/repos/achievement/game_achieve.dart';
 import 'package:puzzle/repos/audio/audio.dart';
@@ -17,7 +18,7 @@ class CompletePage extends StatefulWidget {
   final Achievement achievement;
   final String gameLevel;
   final String imagePath;
-  final bool isHigherScore;
+  bool isHigherScore;
   final Size size;
   final GameBloc bloc;
   final int gameLevelWidth;
@@ -48,57 +49,71 @@ class _CompletePageState extends State<CompletePage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     if (widget.isHigherScore) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => showNewHigherUser());
+    WidgetsBinding.instance.addPostFrameCallback((_) => showNewHigherUser());
+//      Future.delayed(Duration.zero, () => showDialog(context));
     }
 
-    return Container(
-      decoration: BoxDecoration(
-          color: Color.fromRGBO(250, 0, 250, 100),
-          image: DecorationImage(
-              image: NetworkImage(widget.imagePath), fit: BoxFit.cover)),
+
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            color: Color.fromRGBO(250, 0, 250, 100),
+            image: DecorationImage(
+                image: NetworkImage(widget.imagePath), fit: BoxFit.cover)),
 //      decoration: BoxDecoration(color: Colors.red),
-      child: Center(
-        child: Stack(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: size.height * 0.75),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  GameButton(
-                    onPress: () {
+        child: Center(
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: size.height * 0.75),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    GameButton(
+                      onPress: () {
 //                      Navigator.of(context).pop();
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) {
-                        return PuzzleGame(
-                            widget.imagePath,
-                            widget.size,
-                            widget.gameLevelWidth,
-                            widget.gameLevelHeight,
-                            widget.bloc,
-                            widget.gameLevel,
-                            widget.achievement);
-                      }));
-                    },
-                    label: 'PLAY AGAIN',
-                  ),
-                  GameButton(
-                    onPress: () {
-                      Navigator.of(context).pop();
-                    },
-                    label: 'MENU',
-                  ),
-                ],
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) {
+                          return PuzzleGame(
+                              widget.imagePath,
+                              widget.size,
+                              widget.gameLevelWidth,
+                              widget.gameLevelHeight,
+                              widget.bloc,
+                              widget.gameLevel,
+                              widget.achievement);
+                        }));
+                      },
+                      label: 'PLAY AGAIN',
+                    ),
+                    GameButton(
+                      onPress: () {
+                        Navigator.of(context).pop();
+                      },
+                      label: 'MENU',
+                    ),
+                  ],
+                ),
               ),
-            ),
 //            Fireworks(),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   Future<void> updateHigherScore(Achievement achievement) async {
+    if (widget.gameLevel == GAME_LEVEL_EASY) {
+      achievement.userNameEasy = userNameController.text;
+    } else if (widget.gameLevel == GAME_LEVEL_MEDIUM) {
+      achievement.userNameMedium = userNameController.text;
+    } else if (widget.gameLevel == GAME_LEVEL_HARD) {
+      achievement.userNameHard = userNameController.text;
+    }
     await GameAchievement.updateNewScore(achievement);
   }
 
@@ -150,23 +165,24 @@ class _CompletePageState extends State<CompletePage> {
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     borderSide: BorderSide(color: Colors.grey, width: 1))),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CountryPickerDropdown(
-              initialValue: 'vn',
-              itemBuilder: _buildDropdownItem,
-              onValuePicked: (Country country) {
-                print('${country.name}');
-              },
+          Wrap(direction: Axis.vertical, children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CountryPickerDropdown(
+                initialValue: 'vn',
+                itemBuilder: _buildDropdownItem,
+                onValuePicked: (Country country) {
+                  print('${country.name}');
+                },
+              ),
             ),
-          ),
+          ]),
           DialogButton(
             child: Text('Save'),
             onPressed: () {
               if (validateData()) updateHigherScore(widget.achievement);
-              setState(() {
-
-              });
+              widget.isHigherScore = false;
+              setState(() {});
             },
           )
         ],

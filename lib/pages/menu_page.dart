@@ -115,6 +115,7 @@ class _MenuPageState extends State<MenuPage> {
     String levelMedium = globalBloc.text('txtLevelMedium');
     String levelHard = globalBloc.text('txtLevelHard');
     String txtHighest = globalBloc.text('txtHighest');
+    String txtNobody = globalBloc.text('txtNobody');
     // Reusable alert style
     var alertStyle = AlertStyle(
       animationType: AnimationType.fromTop,
@@ -133,24 +134,27 @@ class _MenuPageState extends State<MenuPage> {
       ),
     );
     String bestEasy =
-        '${achievement.userName} - move: ${achievement.moveStepEasy}';
+        '${achievement.userNameEasy} - move: ${achievement.moveStepEasy}';
     String bestMedium =
-        '${achievement.userName} - move: ${achievement.moveStepMedium}';
+        '${achievement.userNameMedium} - move: ${achievement.moveStepMedium}';
     String bestHard =
-        '${achievement.userName} - move: ${achievement.moveStepHard}';
-    if (achievement.userName == null || achievement.userName.isEmpty) {
-      bestHard = '';
-      bestMedium = '';
-      bestEasy = '';
+        '${achievement.userNameHard} - move: ${achievement.moveStepHard}';
+    if (achievement.userNameEasy == null || achievement.userNameEasy.isEmpty) {
+      bestEasy = txtNobody;
+    }
+    if (achievement.userNameMedium == null || achievement.userNameMedium.isEmpty) {
+      bestMedium = txtNobody;
+    }
+    if (achievement.userNameHard == null || achievement.userNameHard.isEmpty) {
+      bestHard = txtNobody;
     }
     Alert(
       context: context,
       style: alertStyle,
       title: level,
       desc: selectLevel,
-      buttons: [
-      ],
-      closeFunction: (){},
+      buttons: [],
+      closeFunction: () {},
       content: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[

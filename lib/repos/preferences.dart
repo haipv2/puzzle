@@ -32,6 +32,19 @@ class Preferences {
     return result;
   }
 
+  // save/restore the preferred language
+  Future<String> getSoundSetting() async {
+    final SharedPreferences prefs = await _prefs;
+    return prefs.getString('sound') ?? '';
+  }
+
+  setSoundSetting(String value) async {
+    final SharedPreferences prefs = await _prefs;
+    var result = prefs.setString('sound', value);
+    return result;
+  }
+
+
   //get seen
   Future<bool> getBool(String seen) async{
     final SharedPreferences prefs = await _prefs;

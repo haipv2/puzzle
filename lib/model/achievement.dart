@@ -1,5 +1,7 @@
 class Achievement {
-  String userName = '';
+  String userNameEasy = '';
+  String userNameMedium = '';
+  String userNameHard = '';
   int moveStepEasy = 0;
   int moveStepMedium = 0;
   int moveStepHard = 0;
