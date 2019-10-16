@@ -6,9 +6,10 @@ class GameAchievement {
 //  static Achievement bestEasy = new Achievement();
 //  static Achievement bestMedium = new Achievement();
 //  static Achievement bestHard = new Achievement();
-  static Achievement achievement = Achievement();
+
 
   static Future<Achievement> getBestScore(String imageName,{List<String> imageNames}) async {
+    Achievement achievement = Achievement();
     try {
       Firestore.instance
           .collection('images')
@@ -16,7 +17,7 @@ class GameAchievement {
           .snapshots()
           .listen((data) {
         if (data.documents.isEmpty) {
-          return null;
+          return achievement;
         } else {
           data.documents.forEach((item) {
             achievement.userNameEasy = item['user_name_easy'];
