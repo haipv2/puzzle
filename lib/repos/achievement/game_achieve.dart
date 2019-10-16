@@ -8,7 +8,7 @@ class GameAchievement {
 //  static Achievement bestHard = new Achievement();
   static Achievement achievement = Achievement();
 
-  static Future<Achievement> getBestScore(String imageName) async {
+  static Future<Achievement> getBestScore(String imageName,{List<String> imageNames}) async {
     try {
       Firestore.instance
           .collection('images')
@@ -16,14 +16,9 @@ class GameAchievement {
           .snapshots()
           .listen((data) {
         if (data.documents.isEmpty) {
-          return Achievement();
+          return null;
         } else {
           data.documents.forEach((item) {
-//            if (item['user_name_easy'] == null &&
-//                item['user_name_medium'] == null &&
-//                item['user_name_hard'] == null) {
-//              return;
-//            }
             achievement.userNameEasy = item['user_name_easy'];
             achievement.userNameMedium = item['user_name_medium'];
             achievement.userNameHard = item['user_name_hard'];
@@ -31,7 +26,10 @@ class GameAchievement {
             achievement.imageName = item['image_name'];
             achievement.moveStepMedium = item['move_step_medium'];
             achievement.moveStepHard = item['move_step_hard'];
-            achievement.country = item['country'];
+            achievement.userNameEasyCountry = item['user_name_easy_country'];
+            achievement.userNameMediumCountry =
+                item['user_name_medium_country'];
+            achievement.userNameHardCountry = item['user_name_hard_country'];
           });
         }
         return achievement;
@@ -50,7 +48,9 @@ class GameAchievement {
       'user_name_easy': achievement.userNameEasy,
       'user_name_medium': achievement.userNameMedium,
       'user_name_hard': achievement.userNameHard,
-      'country': achievement.country,
+      'user_name_easy_country': achievement.userNameEasyCountry,
+      'user_name_medium_country': achievement.userNameMediumCountry,
+      'user_name_hard_country': achievement.userNameHardCountry,
       'move_step_easy': achievement.moveStepEasy,
       'move_step_medium': achievement.moveStepMedium,
       'move_step_hard': achievement.moveStepHard

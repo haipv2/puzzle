@@ -43,19 +43,17 @@ class _CompletePageState extends State<CompletePage> {
   void initState() {
     super.initState();
     Audio.playAsset(AudioType.win);
+    //    if (widget.isHigherScore) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => showNewHigherUser());
+//    }
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    if (widget.isHigherScore) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => showNewHigherUser());
-//      Future.delayed(Duration.zero, () => showDialog(context));
-    }
-
 
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Container(
@@ -109,24 +107,29 @@ class _CompletePageState extends State<CompletePage> {
   Future<void> updateHigherScore(Achievement achievement) async {
     if (widget.gameLevel == GAME_LEVEL_EASY) {
       achievement.userNameEasy = userNameController.text;
+      achievement.userNameEasyCountry = countryCode;
     } else if (widget.gameLevel == GAME_LEVEL_MEDIUM) {
       achievement.userNameMedium = userNameController.text;
+      achievement.userNameMediumCountry = countryCode;
     } else if (widget.gameLevel == GAME_LEVEL_HARD) {
       achievement.userNameHard = userNameController.text;
+      achievement.userNameHardCountry = countryCode;
     }
+
     await GameAchievement.updateNewScore(achievement);
   }
 
   TextEditingController userNameController = new TextEditingController();
   bool _validate = false;
   String errorText;
+  String countryCode = 'vn';
 
   Widget showNewHigherUser() {
     // Reusable alert style
     var alertStyle = AlertStyle(
       animationType: AnimationType.fromTop,
-      isCloseButton: false,
-      isOverlayTapDismiss: false,
+      isCloseButton: true,
+      isOverlayTapDismiss: true,
       descStyle: TextStyle(fontWeight: FontWeight.bold),
       animationDuration: Duration(milliseconds: 400),
       alertBorder: RoundedRectangleBorder(
@@ -169,9 +172,10 @@ class _CompletePageState extends State<CompletePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CountryPickerDropdown(
-                initialValue: 'vn',
+                initialValue: countryCode,
                 itemBuilder: _buildDropdownItem,
                 onValuePicked: (Country country) {
+                  countryCode = country.isoCode;
                   print('${country.name}');
                 },
               ),
@@ -182,7 +186,8 @@ class _CompletePageState extends State<CompletePage> {
             onPressed: () {
               if (validateData()) updateHigherScore(widget.achievement);
               widget.isHigherScore = false;
-              setState(() {});
+//              setState(() {});
+              Navigator.of(context).pop();
             },
           )
         ],

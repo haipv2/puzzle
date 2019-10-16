@@ -147,6 +147,17 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
           if (gameState == GameState.done) {
             bool isHigherScore =
                 processHighScore(widget.achievement, widget.gameLevel);
+//            Navigator.of(context).push(MaterialPageRoute(builder: (context){
+//              return CompletePage(
+//                  size: widget.size,
+//                  bloc: widget.bloc,
+//                  gameLevelHeight: widget.gameLevelHeight,
+//                  gameLevelWidth: widget.gameLevelWidth,
+//                  imagePath: widget.imgPath,
+//                  achievement: widget.achievement,
+//                  gameLevel: widget.gameLevel,
+//                  isHigherScore: isHigherScore);
+//            }));
             return CompletePage(
                 size: widget.size,
                 bloc: widget.bloc,
@@ -156,6 +167,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                 achievement: widget.achievement,
                 gameLevel: widget.gameLevel,
                 isHigherScore: isHigherScore);
+
           }
           return StreamBuilder<bool>(
               stream: widget.bloc.reDraw,

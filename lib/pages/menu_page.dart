@@ -13,6 +13,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'game_page.dart';
 import 'pending_page.dart';
 import '../model/image_info.dart' as game;
+import 'package:country_pickers/country_pickers.dart';
 
 class MenuPage extends StatefulWidget {
   @override
@@ -83,8 +84,11 @@ class _MenuPageState extends State<MenuPage> {
           Center(child: CircularProgressIndicator()),
           GestureDetector(
             onTap: () {
-              loadImageAchievement(imageInfo.imageName);
-              openDialogLevel(imageInfo.urls, GameAchievement.achievement);
+              loadImageAchievement(imageInfo.imageName).then((achievement) {
+                if (achievement != null) {
+                  openDialogLevel(imageInfo.urls, achievement);
+                }
+              });
             },
             child: Center(
               child: FadeInImage.memoryNetwork(
@@ -135,14 +139,18 @@ class _MenuPageState extends State<MenuPage> {
     );
     String bestEasy =
         '${achievement.userNameEasy} - move: ${achievement.moveStepEasy}';
+    String bestEasyCountry = achievement.userNameEasyCountry;
     String bestMedium =
         '${achievement.userNameMedium} - move: ${achievement.moveStepMedium}';
+    String bestMediumCountry = achievement.userNameMediumCountry;
     String bestHard =
         '${achievement.userNameHard} - move: ${achievement.moveStepHard}';
+    String bestHardCountry = achievement.userNameHardCountry;
     if (achievement.userNameEasy == null || achievement.userNameEasy.isEmpty) {
       bestEasy = txtNobody;
     }
-    if (achievement.userNameMedium == null || achievement.userNameMedium.isEmpty) {
+    if (achievement.userNameMedium == null ||
+        achievement.userNameMedium.isEmpty) {
       bestMedium = txtNobody;
     }
     if (achievement.userNameHard == null || achievement.userNameHard.isEmpty) {
@@ -179,14 +187,20 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Align(
-                        child: Text(
-                          bestEasy,
-                          style: TextStyle(fontSize: 10),
-                        ),
-                        alignment: Alignment.center,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0.0, 3.0, 10.0, 3.0),
+                        child:
+                            (bestEasyCountry != null || bestEasyCountry == '')
+                                ? CountryPickerUtils.getDefaultFlagImage(
+                                    CountryPickerUtils.getCountryByIsoCode(
+                                        bestEasyCountry))
+                                : Container(),
+                      ),
+                      Text(
+                        bestEasy,
+                        style: TextStyle(fontSize: 10),
                       ),
                     ],
                   ),
@@ -215,14 +229,20 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Align(
-                        child: Text(
-                          bestMedium,
-                          style: TextStyle(fontSize: 10),
-                        ),
-                        alignment: Alignment.center,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0.0, 3.0, 10.0, 3.0),
+                        child: (bestMediumCountry != null ||
+                                bestMediumCountry == '')
+                            ? CountryPickerUtils.getDefaultFlagImage(
+                                CountryPickerUtils.getCountryByIsoCode(
+                                    bestMediumCountry))
+                            : Container(),
+                      ),
+                      Text(
+                        bestMedium,
+                        style: TextStyle(fontSize: 10),
                       ),
                     ],
                   ),
@@ -251,14 +271,20 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Align(
-                        child: Text(
-                          bestHard,
-                          style: TextStyle(fontSize: 10),
-                        ),
-                        alignment: Alignment.center,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0.0, 3.0, 10.0, 3.0),
+                        child:
+                            (bestHardCountry != null || bestHardCountry == '')
+                                ? CountryPickerUtils.getDefaultFlagImage(
+                                    CountryPickerUtils.getCountryByIsoCode(
+                                        bestHardCountry))
+                                : Container(),
+                      ),
+                      Text(
+                        bestHard,
+                        style: TextStyle(fontSize: 10),
                       ),
                     ],
                   ),
