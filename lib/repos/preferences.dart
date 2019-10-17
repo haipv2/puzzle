@@ -33,24 +33,23 @@ class Preferences {
   }
 
   // save/restore the preferred language
-  Future<String> getSoundSetting() async {
+  Future<bool> getSoundSetting() async {
     final SharedPreferences prefs = await _prefs;
-    return prefs.getString('sound') ?? '';
+    bool value = prefs.getBool('sound') ?? true;
+    return value;
   }
 
-  setSoundSetting(String value) async {
+  setSoundSetting(bool value) async {
     final SharedPreferences prefs = await _prefs;
-    var result = prefs.setString('sound', value);
+    var result = prefs.setBool('sound', value);
     return result;
   }
-
 
   //get seen
-  Future<bool> getBool(String seen) async{
+  Future<bool> getBool(String seen) async {
     final SharedPreferences prefs = await _prefs;
-    bool result =  prefs.getBool(IS_FIRST_TIME);
+    bool result = prefs.getBool(IS_FIRST_TIME);
     return result;
-
   }
 
   Future<bool> setPreferredBool(String key, bool value) async {
@@ -68,5 +67,4 @@ class Preferences {
   }
 
   Preferences._internal();
-
 }

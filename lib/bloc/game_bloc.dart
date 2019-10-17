@@ -32,6 +32,11 @@ class GameBloc extends BlocEventStateBase<GameEvent, GameState> {
   Observable<bool> get reDraw => painterController.stream;
   Function(bool) get reDrawAdd => painterController.sink.add;
 
+  //game setting stream
+  BehaviorSubject<bool> gameSettingController = BehaviorSubject<bool>();
+  Observable<bool> get gameSettingStream => gameSettingController.stream;
+  Function(bool) get gameSettingAdd => gameSettingController.sink.add;
+
 
   GameBloc() : super(initState: GameState.loading());
 
@@ -49,6 +54,8 @@ class GameBloc extends BlocEventStateBase<GameEvent, GameState> {
     imageController?.close();
     puzzlesController?.close();
     painterController?.close();
+    gameSettingController?.close();
+    imageControllerURL?.close();
     super.dispose();
   }
 }

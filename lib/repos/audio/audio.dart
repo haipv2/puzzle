@@ -2,6 +2,8 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 
+import '../game_setting.dart';
+
 class Audio {
   static AudioCache player = AudioCache();
 
@@ -20,6 +22,7 @@ class Audio {
   }
 
   static playAsset(AudioType audioType) {
+    if (GameSetting.soundOn)
     player.play('audio/${describeEnum(audioType)}.wav');
   }
 }
