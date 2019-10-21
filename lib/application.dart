@@ -6,6 +6,7 @@ import 'bloc/game_bloc.dart';
 import 'bloc/language/translations_bloc.dart';
 import 'commons/const.dart';
 import 'pages/home_page.dart';
+import 'pages/init_page.dart';
 import 'pages/pending_page.dart';
 import 'pages/tips_page.dart';
 
@@ -29,30 +30,10 @@ class Application extends StatelessWidget {
                   primaryColorDark: const Color(0xFF167F67),
                   accentColor: const Color(0xFF167F67),
                 ),
-                home: processInitPage(context),
+                home: InitPage(),
               );
             }),
       ),
     );
-  }
-
- Widget processInitPage(BuildContext context) {
-
-    var isFirstTime = preferences.getBool(IS_FIRST_TIME).then((data){
-      print('abcd');
-    });
-    if (isFirstTime == null) {
-//      Navigator.of(context)
-//          .pushReplacement(MaterialPageRoute(builder: (context) {
-        return TipsPage();
-//      }));
-    } else {
-//      Navigator.of(context)
-//          .pushReplacement(MaterialPageRoute(builder: (context) {
-        return HomePage();
-//      }));
-    }
-
-//    return PendingPage();
   }
 }

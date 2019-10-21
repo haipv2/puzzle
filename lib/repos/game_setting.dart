@@ -1,4 +1,5 @@
 import 'package:puzzle/bloc/global_bloc.dart';
+import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/repos/preferences.dart';
 
 class GameSetting {
@@ -13,4 +14,5 @@ class GameSetting {
   static initLang() async {
     await globalBloc.init();
   }
+
 }
