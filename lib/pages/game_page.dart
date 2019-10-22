@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/commons/enums.dart';
@@ -51,7 +52,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
 
   double distanceEmptyTopY, distanceEmptyTopX;
   List<PuzzleTile> puzzles;
-  ui.Image image;
+  ui.Image image, imageTips;
   int imageSizeWidth;
   int imageSizeHeight;
   double imageScreenWidth;
@@ -74,7 +75,9 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   Offset offsetMainLeft;
   Offset offsetDisableTop, offsetDisableBottom;
   Offset offsetMove;
-  Offset offsetHelp;
+  Rect rectHelp;
+  Rect rectOrgImg;
+  Rect rectTextMove;
 
   AnimationController controller;
   Animation<int> animation;
@@ -83,10 +86,11 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     init(widget.imgPath);
+    loadTipsImage('assets/images/tips.png');
   }
 
   Future<ui.Image> init(String imgPath) async {
-    image = await getImage(imgPath);
+    image = await getImageNetwork(imgPath);
     imageSizeWidth = image.width;
     imageSizeHeight = image.height;
     imageScreenWidth = widget.gameActiveWidth / widget.gameLevelWidth;
@@ -113,6 +117,18 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         Offset(widget.paddingX + imageScreenWidth, widget.paddingY);
     offsetDisableBottom = Offset(widget.paddingX + widget.gameActiveWidth,
         paddingYExt + imageScreenHeight);
+    rectTextMove = Rect.fromLTWH(
+        widget.paddingX,
+        paddingYExt + (widget.gameLevelWidth + 1) * imageScreenHeight,
+        widget.gameActiveWidth / 2,
+        30);
+    rectHelp = Rect.fromLTWH(
+        widget.paddingX + widget.gameActiveWidth - imageScreenWidth,
+        paddingYExt + (widget.gameLevelWidth + 1) * imageScreenHeight,
+        widget.gameActiveWidth / 2,
+        30);
+    rectHelp = Rect.fromLTWH(rectHelp.left + rectHelp.width / 2,
+        rectHelp.top + 5, rectHelp.width / 2, rectHelp.height);
 
     await setPuzzles();
     offsetMove = Offset(widget.paddingX,
@@ -146,18 +162,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
           }
           if (gameState == GameState.done) {
             bool isHigherScore =
-                processHighScore(widget.achievement, widget.gameLevel);
-//            Navigator.of(context).push(MaterialPageRoute(builder: (context){
-//              return CompletePage(
-//                  size: widget.size,
-//                  bloc: widget.bloc,
-//                  gameLevelHeight: widget.gameLevelHeight,
-//                  gameLevelWidth: widget.gameLevelWidth,
-//                  imagePath: widget.imgPath,
-//                  achievement: widget.achievement,
-//                  gameLevel: widget.gameLevel,
-//                  isHigherScore: isHigherScore);
-//            }));
+            processHighScore(widget.achievement, widget.gameLevel);
             return CompletePage(
                 size: widget.size,
                 bloc: widget.bloc,
@@ -167,7 +172,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                 achievement: widget.achievement,
                 gameLevel: widget.gameLevel,
                 isHigherScore: isHigherScore);
-
           }
           return StreamBuilder<bool>(
               stream: widget.bloc.reDraw,
@@ -192,7 +196,10 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                           paddingYExt: paddingYExt,
                           imageScreenWidth: imageScreenWidth,
                           imageScreenHeight: imageScreenHeight,
+                          tipsImage: imageTips,
                           orgImage: image)
+                        ..rectTextMove = rectTextMove
+                        ..rectHelp = rectHelp
                         ..reDraw = snapshot.data ?? false
                         ..move = move
                         ..second = second
@@ -219,7 +226,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     if (clickOutSideActiveScreen(details)) {
       return;
     }
-//    showHelp = !showHelp;
     RenderBox referenceBox = context.findRenderObject();
     Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
     newX = selectedItemX = localPosition.dx;
@@ -233,7 +239,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     selectedTopY = selectedPuzzle.rectPaint.top;
     emptyTopY = puzzleEmpty.rectPaint.top;
     emptyTopX = puzzleEmpty.rectPaint.left;
-//    indexOnScreen = getActualIndexOnScreen(selectedItemX, selectedItemY);
     direction = defectDirection(selectedItemX, selectedItemY);
 
     if (direction == Direction.top || direction == Direction.bottom) {
@@ -495,7 +500,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     int emptyIndexY = (paddingYTmp / imageScreenHeight).floor();
 
     int currentIndexX =
-        ((selectedPuzzle.rectPaint.left) / imageScreenWidth).floor();
+    ((selectedPuzzle.rectPaint.left) / imageScreenWidth).floor();
     var currentItemYTmp = (selectedPuzzle.rectPaint.top);
 
     var temp = currentItemYTmp / imageScreenHeight;
@@ -522,7 +527,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     PuzzleTile result;
     try {
       result = puzzles.firstWhere(
-          (item) => (item.rectPaint.left < currentItemX &&
+              (item) =>
+          (item.rectPaint.left < currentItemX &&
               item.rectPaint.right > currentItemX &&
               item.rectPaint.top < currentItemY &&
               item.rectPaint.bottom > currentItemY),
@@ -534,7 +540,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   }
 
   int getActualIndexOnScreen(double dX, double dY, int index) {
-    print('dx--${dX}. dy-- ${dY}--index ${index}');
     var x = (dX - widget.paddingX);
     var y = (dY - paddingYExt - imageScreenHeight);
     var result = (x ~/ imageScreenWidth) + (y ~/ imageScreenHeight);
@@ -544,15 +549,13 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   bool clickOutSideActiveScreen(DragDownDetails details) {
     RenderBox referenceBox = context.findRenderObject();
     Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
+
     if (localPosition.dx < widget.paddingX ||
         localPosition.dx > widget.paddingX + widget.gameActiveWidth ||
         localPosition.dy < paddingYExt ||
         localPosition.dy > offsetBottomRight.dy ||
         (localPosition.dy < offsetDisableBottom.dy &&
             localPosition.dx > offsetDisableTop.dx)) {
-//      if (clickShowHelp(details)) {
-//        showHelp = !showHelp;
-//      }
       return true;
     }
     return false;
@@ -672,7 +675,10 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
 
   Completer<ImageInfo> completer = Completer();
 
-  Future<ui.Image> getImage(String path) async {
+  ///
+  /// get ui.Image from network
+  ///
+  Future<ui.Image> getImageNetwork(String path) async {
     var img = new NetworkImage(path);
     img
         .resolve(ImageConfiguration())
@@ -681,6 +687,17 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     }));
     ImageInfo imageInfo = await completer.future;
     return imageInfo.image;
+  }
+
+  ///
+  /// get ui.Image from assets
+  ///
+  Future<ui.Image> getImageLocal(String path) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+    FrameInfo frameInfo = await codec.getNextFrame();
+    imageTips = frameInfo.image;
+    return imageTips;
   }
 
   bool isCompletedGame() {
@@ -703,7 +720,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     PuzzleTile puzzleTile = puzzles[i];
     if (puzzleTile.index < widget.gameLevelWidth) {
       if (puzzleTile.rectPaint.left ==
-              imageScreenWidth * puzzleTile.index + widget.paddingX &&
+          imageScreenWidth * puzzleTile.index + widget.paddingX &&
           puzzleTile.rectPaint.top == imageScreenHeight + paddingYExt) {
         return true;
       } else {
@@ -711,8 +728,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       }
     } else {
       if (puzzleTile.rectPaint.left ==
-              imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
-                  widget.paddingX &&
+          imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
+              widget.paddingX &&
           puzzleTile.rectPaint.top ==
               imageScreenHeight * (puzzleTile.index ~/ widget.gameLevelWidth) +
                   paddingYExt +
@@ -754,5 +771,10 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       }
     }
     return false;
+  }
+
+  Future<ui.Image> loadTipsImage(String imgPath) async {
+    imageTips = await getImageLocal(imgPath);
+    return imageTips;
   }
 }

@@ -40,4 +40,5 @@ flutter:
     - assets/audio/win.wav
     - assets/locale/locale_en.json
     - assets/locale/locale_vi.json
+    - assets/images/tips.png
 

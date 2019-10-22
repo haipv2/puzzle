@@ -3,6 +3,7 @@ import 'dart:ui' as ui show Image;
 import 'package:flutter/material.dart';
 import 'package:puzzle/commons/enums.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
+import 'dart:math' as math;
 
 class PuzzlePainter extends CustomPainter {
   final double paddingX, paddingY, paddingYExt;
@@ -17,14 +18,15 @@ class PuzzlePainter extends CustomPainter {
   bool reDraw;
   int gameLevelWidth, gameLevelHeight;
   GameState gameState;
-  ui.Image orgImage;
+  ui.Image orgImage, tipsImage;
   double imageScreenWidth, imageScreenHeight;
   int move, second;
   double gameActiveWidth;
   String timeStr;
   bool showHelp, isDone;
   Offset offsetMove;
-  Offset offsetHelp;
+  Rect rectTextMove;
+  Rect rectHelp;
 
   PuzzlePainter(
       {this.paddingX,
@@ -37,8 +39,8 @@ class PuzzlePainter extends CustomPainter {
       this.gameState,
       this.paddingYExt,
       this.offsetMove,
-      this.offsetHelp,
       this.orgImage,
+      this.tipsImage,
       this.imageScreenWidth,
       this.gameActiveWidth,
       this.imageScreenHeight});
@@ -59,12 +61,12 @@ class PuzzlePainter extends CustomPainter {
     if (puzzleTileEmpty.image == null) {
       canvas.drawRect(puzzleTileEmpty.rectPaint, Paint()..color = Colors.white);
     }
+
     if (puzzles != null) {
       for (int i = 0; i < puzzles.length; i++) {
         PuzzleTile item = puzzles[i];
         if (item.isEmpty) {
-          canvas.drawRect(item.rectPaint, Paint()
-            ..color = Colors.white);
+          canvas.drawRect(item.rectPaint, Paint()..color = Color(0xFFF6DDB1));
           continue;
         }
         Rect rect = Rect.fromLTWH(
@@ -109,15 +111,18 @@ class PuzzlePainter extends CustomPainter {
           text: 'Move: ${move}',
           style: TextStyle(color: Colors.red, fontSize: 20));
       textPainter =
-      new TextPainter(text: textSpanMove, textDirection: TextDirection.ltr);
+          new TextPainter(text: textSpanMove, textDirection: TextDirection.ltr);
       textPainter.layout(minWidth: 50, maxWidth: gameActiveWidth / 2);
-      Rect rectTextMove = Rect.fromLTWH(
-          paddingX,
-          paddingYExt + (gameLevelHeight + 1) * imageScreenHeight,
-          gameActiveWidth / 2,
-          30);
       textPainter.paint(canvas, rectTextMove.topLeft);
-      }
+    }
+
+    //draw tips image
+    canvas.drawImageRect(
+        tipsImage,
+        Rect.fromLTWH(
+            0, 0, tipsImage.width.toDouble(), tipsImage.height.toDouble()),
+        rectHelp,
+        Paint());
   }
 
   // Time formatting, converted to the corresponding hh:mm:ss format according to the total number of seconds
