@@ -131,7 +131,7 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
                       style: commonStyleM,
                     ),
                     onPressed: () => selectItem(
-                        imageUrl, 2, 2, GAME_LEVEL_EASY, achievement),
+                        imageUrl, 2, 3, GAME_LEVEL_EASY, achievement),
                     radius: BorderRadius.only(
                       topLeft: Radius.circular(15.0),
                       topRight: Radius.circular(15.0),

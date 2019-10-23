@@ -112,8 +112,7 @@ class PuzzlePainter extends CustomPainter {
       }
 
       // show move
-      globalBloc.text('txtMove');
-      textSpanMove = new TextSpan(text: 'Move: ${move}', style: commonStyleM);
+      textSpanMove = new TextSpan(text: '${globalBloc.text('txtMove')}: ${move}', style: commonStyleM);
       textPainter =
           new TextPainter(text: textSpanMove, textDirection: TextDirection.ltr);
       textPainter.layout(minWidth: 50, maxWidth: gameActiveWidth / 2);
