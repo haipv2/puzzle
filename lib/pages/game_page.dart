@@ -79,6 +79,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   Rect rectHelp;
   Rect rectOrgImg;
   Rect rectTextMove;
+  Rect orgImgRect;
 
   AnimationController controller;
   Animation<int> animation;
@@ -131,9 +132,22 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     rectHelp = Rect.fromLTWH(rectHelp.left + imageScreenWidth / 2,
         rectHelp.top + 5, imageScreenWidth / 2, rectHelp.height);
 
-    await setPuzzles();
     offsetMove = Offset(widget.paddingX,
         paddingYExt + (widget.gameLevelHeight + 1) * imageScreenHeight);
+    double paddingXTmp = widget.paddingX + imageScreenHeight   * 1.25;
+    double remainActiveScreen  = 0.75;
+    if (widget.gameLevelWidth > 2) {
+      paddingXTmp = (widget.gameLevelWidth - 1)/ 2;
+      remainActiveScreen *= 1.5;
+    }
+    orgImgRect = Rect.fromLTWH(
+        widget.paddingX + imageScreenWidth * (1 + paddingXTmp - 0.5),
+        paddingYExt,
+        imageScreenWidth * remainActiveScreen,
+        imageScreenHeight * .9);
+
+    // add Sink to re-build Widget.
+    await setPuzzles();
     widget.bloc.puzzlesAdd(puzzles);
     return image;
   }
@@ -199,6 +213,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                           imageScreenWidth: imageScreenWidth,
                           imageScreenHeight: imageScreenHeight,
                           tipsImage: imageTips,
+                          orgImgRect: orgImgRect,
                           orgImage: image)
                         ..rectTextMove = rectTextMove
                         ..rectHelp = rectHelp

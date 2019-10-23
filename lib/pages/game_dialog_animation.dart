@@ -13,7 +13,6 @@ class GameDialogAnimate extends StatelessWidget {
       child: AnimatedBuilder(
         animation: animation,
         builder: (context, child) {
-          print(animation.value);
           return Transform(
             transform:
                 Matrix4.translationValues(0.0, animation.value * height, 0.0),

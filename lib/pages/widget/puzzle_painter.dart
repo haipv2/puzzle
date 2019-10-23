@@ -29,10 +29,12 @@ class PuzzlePainter extends CustomPainter {
   Offset offsetMove;
   Rect rectTextMove;
   Rect rectHelp;
+  Rect orgImgRect;
 
   PuzzlePainter(
       {this.paddingX,
       this.paddingY,
+      this.orgImgRect,
       this.puzzles,
       this.puzzleTileEmpty,
       this.gameLevelWidth,
@@ -55,8 +57,9 @@ class PuzzlePainter extends CustomPainter {
         orgImage,
         Rect.fromLTWH(
             0, 0, orgImage.width.toDouble(), orgImage.height.toDouble()),
-        Rect.fromLTWH(orgImgX + imageScreenWidth / 4, paddingYExt,
-            imageScreenWidth * .75, imageScreenHeight * .75),
+        orgImgRect,
+        /* Rect.fromLTWH(orgImgX + imageScreenWidth / 4, paddingYExt,
+            imageScreenWidth * .75, imageScreenHeight * .75),*/
         Paint());
 
     // paint image
