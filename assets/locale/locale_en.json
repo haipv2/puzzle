@@ -12,6 +12,11 @@
   "txtYes": "Yes",
   "txtNo": "No",
   "txtMove": "Move",
-  "txtQuitGameConfirm": "Do you want to quit the game ?"
+  "txtQuitGameConfirm": "Do you want to quit the game ?",
+  "txtTips0Welcome":"Welcome to the puzzle league",
+  "txtTips0Title":"PUZZLE LEAGUE",
+  "txtTips1Desc": "Quickly arrange puzzle tile to complete the sample image. ",
+  "txtTips1Rule": "Rule's game",
+  "txtTips2Play":"PLAY"
 
 }

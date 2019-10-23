@@ -12,5 +12,10 @@
   "txtYes": "Yes",
   "txtNo": "No",
   "txtMove": "Di chuyển",
-  "txtQuitGameConfirm": "Bạn chắc chắn muốn thoát game ?"
+  "txtQuitGameConfirm": "Bạn chắc chắn muốn thoát game ?",
+  "txtTips0Welcome":"Xin chào",
+  "txtTips0Title":"VÔ ĐỊCH XẾP HÌNH",
+  "txtTips1Desc": "Hãy nhanh chóng sắp xếp hoàn thiện bức hình theo mẫu.",
+  "txtTips1Rule": "LUẬT CHƠI",
+  "txtTips2Play":"PLAY"
 }

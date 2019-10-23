@@ -73,9 +73,32 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
         child: ListView(children: <Widget>[
           Column(
             children: <Widget>[
+              SizedBox(
+                height: 20,
+              ),
               Center(
                 child: Text(
-                  globalBloc.text('pages.tips.0.title'),
+                  globalBloc.text('txtTips0Title'),
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                  style: tipsPageTitleStyle,
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              LanguageSettingWidget(),
+            ],
+          )
+        ])));
+    result.add(Container(
+        color: Colors.lime,
+        child: ListView(children: <Widget>[
+          Column(
+            children: <Widget>[
+              Center(
+                child: Text(
+                  globalBloc.text('txtTips1Rule'),
                   softWrap: true,
                   textAlign: TextAlign.center,
                   style: tipsPageTitleStyle,
@@ -87,14 +110,12 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
               Align(
                 child: RichText(
                     text: TextSpan(
-                        text: globalBloc.text('pages.tips.0.desc'),
+                        text: globalBloc.text('txtTips1Desc'),
                         style: tipsPageDescStyle)),
               ),
-              LanguageSettingWidget(),
             ],
           )
         ])));
-
     result.add(Container(
       color: Colors.lime,
       child: Center(
@@ -106,7 +127,7 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
               padding:
                   const EdgeInsets.only(top: 50.0, right: 15.0, left: 15.0),
               child: CustomFlatButton(
-                  title: globalBloc.text('pages.tips.0.desc'),
+                  title: globalBloc.text('txtTips2Play'),
                   fontSize: 30,
                   fontWeight: FontWeight.w700,
                   textColor: Colors.black87,
