@@ -162,8 +162,9 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
           }
           if (gameState == GameState.done) {
             bool isHigherScore =
-            processHighScore(widget.achievement, widget.gameLevel);
+                processHighScore(widget.achievement, widget.gameLevel);
             return CompletePage(
+                useHelp: useHelp,
                 size: widget.size,
                 bloc: widget.bloc,
                 gameLevelHeight: widget.gameLevelHeight,
@@ -221,8 +222,15 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   List<PuzzleTile> movingPuzzleArr = [];
   double movingY;
   double movingX;
+  bool useHelp = false;
+  bool onShowHelpBtn = false;
 
   void onPanDown(DragDownDetails details) {
+    if (clickShowHelp(details)) {
+      useHelp = true;
+      onShowHelpBtn = true;
+      showHelp = !showHelp;
+    }
     if (clickOutSideActiveScreen(details)) {
       return;
     }
@@ -343,10 +351,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   /// process touch up
   ///
   void onPanUp(DragEndDetails details) {
-    if (showHelp) {
-      widget.bloc.reDrawAdd(true);
-      return;
-    }
     if (direction == Direction.top) {
       movingPuzzleArr
           .sort((a, b) => a.rectPaint.top.compareTo(b.rectPaint.top));
@@ -464,10 +468,12 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         isMove = false;
       }
     }
-    if (isMove) {
+
+    if (isMove && !onShowHelpBtn) {
       move++;
       playSound(AudioType.swap);
     }
+    onShowHelpBtn = false;
     widget.bloc.reDrawAdd(true);
 
     if (isCompletedGame()) {
@@ -478,7 +484,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       isDone = true;
       gameState = GameState.done;
       setState(() {});
-//      widget.bloc.reDrawAdd(false);
     } else {
       print('game NOT DONE!');
     }
@@ -500,7 +505,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     int emptyIndexY = (paddingYTmp / imageScreenHeight).floor();
 
     int currentIndexX =
-    ((selectedPuzzle.rectPaint.left) / imageScreenWidth).floor();
+        ((selectedPuzzle.rectPaint.left) / imageScreenWidth).floor();
     var currentItemYTmp = (selectedPuzzle.rectPaint.top);
 
     var temp = currentItemYTmp / imageScreenHeight;
@@ -527,8 +532,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     PuzzleTile result;
     try {
       result = puzzles.firstWhere(
-              (item) =>
-          (item.rectPaint.left < currentItemX &&
+          (item) => (item.rectPaint.left < currentItemX &&
               item.rectPaint.right > currentItemX &&
               item.rectPaint.top < currentItemY &&
               item.rectPaint.bottom > currentItemY),
@@ -720,7 +724,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     PuzzleTile puzzleTile = puzzles[i];
     if (puzzleTile.index < widget.gameLevelWidth) {
       if (puzzleTile.rectPaint.left ==
-          imageScreenWidth * puzzleTile.index + widget.paddingX &&
+              imageScreenWidth * puzzleTile.index + widget.paddingX &&
           puzzleTile.rectPaint.top == imageScreenHeight + paddingYExt) {
         return true;
       } else {
@@ -728,8 +732,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       }
     } else {
       if (puzzleTile.rectPaint.left ==
-          imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
-              widget.paddingX &&
+              imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
+                  widget.paddingX &&
           puzzleTile.rectPaint.top ==
               imageScreenHeight * (puzzleTile.index ~/ widget.gameLevelWidth) +
                   paddingYExt +
@@ -744,8 +748,14 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   bool clickShowHelp(DragDownDetails details) {
     RenderBox referenceBox = context.findRenderObject();
     Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
+    if (localPosition.dx >= rectHelp.left &&
+        localPosition.dx <= rectHelp.right &&
+        localPosition.dy >= rectHelp.top &&
+        localPosition.dy <= rectHelp.bottom) {
+      return true;
+    }
 
-    return true;
+    return false;
   }
 
   Future<void> playSound(AudioType audioType) async {

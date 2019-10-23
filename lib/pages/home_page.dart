@@ -50,52 +50,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
 
-//    Widget quit() => Transform(
-//        transform: Matrix4.translationValues(
-//            _lateAnimationMenu.value * width, 0.0, 0.0),
-//        child: ButtonTheme(
-//          minWidth: 200.0,
-//          child: Padding(
-//            padding: EdgeInsets.symmetric(vertical: 16.0),
-//            child: RaisedButton(
-//              shape: RoundedRectangleBorder(
-//                borderRadius: BorderRadius.circular(24),
-//              ),
-//              onPressed: () {
-//                _dialogController.forward();
-//                showDialog(
-//                    context: context,
-//                    builder: (_) {
-//                      return GameDialogAnimate(
-//                        animation: _quitAnimation,
-//                        child: AlertDialog(
-//                          title: Text('Quit Game'),
-//                          content: Text('Do you want to quit the game ?'),
-//                          actions: <Widget>[
-//                            FlatButton(
-//                              child: new Text('Cancel'),
-//                              onPressed: () {
-//                                Navigator.pop(context);
-//                              },
-//                            ),
-//                            FlatButton(
-//                              child: new Text('Yes'),
-//                              onPressed: () {
-//                                exit(0);
-//                              },
-//                            )
-//                          ],
-//                        ),
-//                      );
-//                    });
-//              },
-//              padding: EdgeInsets.all(12),
-//              color: Colors.lightBlueAccent,
-//              child: Text('Quit', style: TextStyle(color: Colors.white)),
-//            ),
-//          ),
-//        ));
-
     title = globalBloc.text('txtTitleGame');
     var buildLangBtn = IconButton(
       icon: Icon(Icons.language),
@@ -152,7 +106,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
   }
 
+
+
   void quit() {
+
     _dialogController.forward();
     showDialog(
         context: context,
@@ -160,17 +117,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           return GameDialogAnimate(
             animation: _quitAnimation,
             child: AlertDialog(
-              title: Text('Quit Game'),
-              content: Text('Do you want to quit the game ?'),
+              title: Text(globalBloc.text('txtQuitGame')),
+              content: Text(globalBloc.text('txtQuitGameConfirm')),
               actions: <Widget>[
                 FlatButton(
-                  child: new Text('Cancel'),
+                  child: new Text(globalBloc.text('txtNo')),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
                 FlatButton(
-                  child: new Text('Yes'),
+                  child: new Text(globalBloc.text('txtYes')),
                   onPressed: () {
                     exit(0);
                   },

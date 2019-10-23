@@ -32,6 +32,13 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
   @override
   Widget build(BuildContext context) {
     return new Card(
+      semanticContainer: true,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      elevation: 5,
+      margin: EdgeInsets.all(10),
       child: Stack(
         children: <Widget>[
           Center(child: CircularProgressIndicator()),
@@ -42,7 +49,6 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
             child: Center(
               child: FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
-//              image: file.picFile,
                 image: widget.imageInfo.urls,
               ),
             ),

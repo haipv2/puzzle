@@ -6,5 +6,10 @@
   "txtSelectLevel": "Chọn 1 cấp độ",
   "txtTitleGame": "Xếp hình",
   "txtHighest": "Kỷ lục",
-  "txtNobody": "Chưa có ai"
+  "txtNobody": "Chưa có ai",
+  "txtQuitGame": "Thoát Game",
+  "txtCancel": "Bỏ",
+  "txtYes": "Yes",
+  "txtNo": "No",
+  "txtQuitGameConfirm": "Bạn chắc chắn muốn thoát game ?"
 }

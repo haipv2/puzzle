@@ -23,9 +23,11 @@ class CompletePage extends StatefulWidget {
   final GameBloc bloc;
   final int gameLevelWidth;
   final int gameLevelHeight;
+  final bool useHelp;
 
   CompletePage(
       {this.achievement,
+      this.useHelp,
       this.size,
       this.gameLevel,
       this.bloc,
@@ -43,9 +45,11 @@ class _CompletePageState extends State<CompletePage> {
   void initState() {
     super.initState();
     Audio.playAsset(AudioType.win);
-    //    if (widget.isHigherScore) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => showNewHigherUser());
-//    }
+    if (!widget.useHelp) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        return showNewHigherUser();
+      });
+    }
   }
 
   @override

@@ -6,5 +6,11 @@
   "txtSelectLevel": "Select a level",
   "txtTitleGame": "PUZZLE",
   "txtHighest": "Best",
-  "txtNobody": "Nobody"
+  "txtNobody": "Nobody",
+  "txtQuitGame": "Quit Game",
+  "txtCancel": "Cancel",
+  "txtYes": "Yes",
+  "txtNo": "No",
+  "txtQuitGameConfirm": "Do you want to quit the game ?"
+
 }
