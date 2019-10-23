@@ -10,3 +10,5 @@ const APP_VIEW_MENU_TYPE = 'fltRest_view_menu';
 const GAME_LEVEL_EASY = 'Easy';
 const GAME_LEVEL_MEDIUM = 'Medium';
 const GAME_LEVEL_HARD = 'Hard';
+const adsAppId = "ca-app-pub-1526795059370873~5167780592";
+const adsAppUnit = "ca-app-pub-1526795059370873/7382880393";

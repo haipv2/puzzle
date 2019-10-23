@@ -1,7 +1,9 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/bloc_provider.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
+import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/repos/image/image_loader.dart';
 
 import 'game_page.dart';
@@ -26,6 +28,7 @@ class _MenuPageState extends State<MenuPage> {
     bloc = BlocProvider.of<GameBloc>(context);
     imageInfos = [];
     buildImageUrl();
+    initAds();
   }
 
   void buildImageUrl() async {
@@ -73,5 +76,37 @@ class _MenuPageState extends State<MenuPage> {
             }
           }),
     );
+  }
+
+  void initAds() {
+    FirebaseAdMob.instance.initialize(appId: adsAppId).then((_) {
+      MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+        keywords: <String>['flutterio', 'P-WORLD CUP'],
+        contentUrl: 'https://flutter.io',
+        childDirected: false,
+        testDevices: <String>[
+        ], // Android emulators are considered test devices
+      );
+
+      BannerAd myBanner = BannerAd(
+        adUnitId: adsAppUnit,
+        size: AdSize.smartBanner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("BannerAd event is $event");
+        },
+      );
+      myBanner
+      // typically this happens well before the ad is shown
+        ..load()
+        ..show(
+          // Positions the banner ad 0 pixels from the bottom of the screen
+          anchorOffset: 0.0,
+          // Positions the banner ad 10 pixels from the center of the screen to the right
+          horizontalCenterOffset: 0.0,
+          // Banner Position
+          anchorType: AnchorType.bottom,
+        );
+    });
   }
 }

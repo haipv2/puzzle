@@ -26,6 +26,7 @@ dependencies:
   fireworks: ^0.9.3
   button3d: ^0.1.0
   flutter_swiper: ^1.1.6
+  firebase_admob: ^0.9.0+7
 
 dev_dependencies:
   flutter_test:

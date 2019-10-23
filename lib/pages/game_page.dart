@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
@@ -134,10 +135,10 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
 
     offsetMove = Offset(widget.paddingX,
         paddingYExt + (widget.gameLevelHeight + 1) * imageScreenHeight);
-    double paddingXTmp = widget.paddingX + imageScreenHeight   * 1.25;
-    double remainActiveScreen  = 0.75;
+    double paddingXTmp = widget.paddingX + imageScreenHeight * 1.25;
+    double remainActiveScreen = 0.75;
     if (widget.gameLevelWidth > 2) {
-      paddingXTmp = (widget.gameLevelWidth - 1)/ 2;
+      paddingXTmp = (widget.gameLevelWidth - 1) / 2;
       remainActiveScreen *= 1.5;
     }
     orgImgRect = Rect.fromLTWH(
@@ -809,4 +810,5 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     imageTips = await getImageLocal(imgPath);
     return imageTips;
   }
+
 }
