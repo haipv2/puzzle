@@ -58,17 +58,20 @@ class _MenuPageState extends State<MenuPage> {
             if (snapshot.data == null) {
               return PendingPage();
             } else {
-              return GridView.count(
-                primary: true,
-                crossAxisCount: 2,
-                childAspectRatio: 1.0,
-                children: List.generate(imageInfos.length, (index) {
-                  return ImageItemWidget(imageInfos[index]);
-                }),
+              return Container(
+                decoration:
+                    BoxDecoration(color: Color(0xFFFCF2C7)),
+                child: GridView.count(
+                  primary: true,
+                  crossAxisCount: 2,
+                  childAspectRatio: 1.0,
+                  children: List.generate(imageInfos.length, (index) {
+                    return ImageItemWidget(imageInfos[index]);
+                  }),
+                ),
               );
             }
           }),
     );
   }
-
 }

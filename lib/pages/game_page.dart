@@ -5,6 +5,7 @@ import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
+import 'package:puzzle/commons/app_style.dart';
 import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/commons/enums.dart';
 import 'package:puzzle/model/achievement.dart';
@@ -119,16 +120,16 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         paddingYExt + imageScreenHeight);
     rectTextMove = Rect.fromLTWH(
         widget.paddingX,
-        paddingYExt + (widget.gameLevelWidth + 1) * imageScreenHeight,
+        paddingYExt + (widget.gameLevelHeight + 1) * imageScreenHeight,
         widget.gameActiveWidth / 2,
         30);
     rectHelp = Rect.fromLTWH(
         widget.paddingX + widget.gameActiveWidth - imageScreenWidth,
-        paddingYExt + (widget.gameLevelWidth + 1) * imageScreenHeight,
+        paddingYExt + (widget.gameLevelHeight + 1) * imageScreenHeight,
         widget.gameActiveWidth / 2,
         30);
-    rectHelp = Rect.fromLTWH(rectHelp.left + rectHelp.width / 2,
-        rectHelp.top + 5, rectHelp.width / 2, rectHelp.height);
+    rectHelp = Rect.fromLTWH(rectHelp.left + imageScreenWidth / 2,
+        rectHelp.top + 5, imageScreenWidth / 2, rectHelp.height);
 
     await setPuzzles();
     offsetMove = Offset(widget.paddingX,
@@ -181,7 +182,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                   widget.bloc.reDrawAdd(true);
                 }
                 return Container(
-                  decoration: BoxDecoration(color: Color(0xFFF6DDB1)),
+                  decoration: BoxDecoration(color: colorApp),
                   child: GestureDetector(
                     child: CustomPaint(
                       painter: PuzzlePainter(
@@ -224,6 +225,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   double movingX;
   bool useHelp = false;
   bool onShowHelpBtn = false;
+  bool onOutSideGameArea = false;
 
   void onPanDown(DragDownDetails details) {
     if (clickShowHelp(details)) {
@@ -232,6 +234,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       showHelp = !showHelp;
     }
     if (clickOutSideActiveScreen(details)) {
+      onOutSideGameArea = true;
       return;
     }
     RenderBox referenceBox = context.findRenderObject();
@@ -557,7 +560,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     if (localPosition.dx < widget.paddingX ||
         localPosition.dx > widget.paddingX + widget.gameActiveWidth ||
         localPosition.dy < paddingYExt ||
-        localPosition.dy > offsetBottomRight.dy ||
+        localPosition.dy > widget.paddingY + widget.gameActiveHeight ||
         (localPosition.dy < offsetDisableBottom.dy &&
             localPosition.dx > offsetDisableTop.dx)) {
       return true;
@@ -705,6 +708,10 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   }
 
   bool isCompletedGame() {
+    if (onOutSideGameArea) {
+      onOutSideGameArea = false;
+      return false;
+    }
     if (puzzles[0].rectPaint.top == paddingYExt) {
       return false;
     }

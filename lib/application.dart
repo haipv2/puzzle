@@ -25,6 +25,7 @@ class Application extends StatelessWidget {
                 title: 'Puzzle',
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData(
+                  fontFamily: 'starcraft',
                   primarySwatch: Colors.blue,
                   primaryColor: const Color(0xFF02BB9F),
                   primaryColorDark: const Color(0xFF167F67),

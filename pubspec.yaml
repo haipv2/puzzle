@@ -33,7 +33,6 @@ dev_dependencies:
 
 
 flutter:
-
   uses-material-design: true
   assets:
     - assets/audio/swap.wav
@@ -41,4 +40,9 @@ flutter:
     - assets/locale/locale_en.json
     - assets/locale/locale_vi.json
     - assets/images/tips.png
+  fonts:
+    - family: vt323
+      fonts:
+        - asset: assets/fonts/VT323-Regular.ttf
+          style: italic
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/bloc_provider.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/bloc/global_bloc.dart';
+import 'package:puzzle/commons/app_style.dart';
 import 'package:puzzle/repos/game_setting.dart';
 import 'package:puzzle/repos/preferences.dart';
 
@@ -66,13 +67,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 },
                 child: Icon(Icons.arrow_back),
               ),
-              backgroundColor: Color(0xFFF6DDB1),
+              backgroundColor: colorApp,
               actions: <Widget>[
                 buildSoundButton(snapshot),
                 buildLangBtn,
               ],
               centerTitle: true,
-              title: Text(title),
+              title: Text(title, style: commonStyleL),
             ),
             body: MenuPage(),
           );
@@ -106,10 +107,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
   }
 
-
-
   void quit() {
-
     _dialogController.forward();
     showDialog(
         context: context,
@@ -117,6 +115,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           return GameDialogAnimate(
             animation: _quitAnimation,
             child: AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+              backgroundColor: colorApp,
               title: Text(globalBloc.text('txtQuitGame')),
               content: Text(globalBloc.text('txtQuitGameConfirm')),
               actions: <Widget>[

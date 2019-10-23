@@ -1,6 +1,8 @@
 import 'dart:ui' as ui show Image;
 
 import 'package:flutter/material.dart';
+import 'package:puzzle/bloc/global_bloc.dart';
+import 'package:puzzle/commons/app_style.dart';
 import 'package:puzzle/commons/enums.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
 import 'dart:math' as math;
@@ -66,7 +68,7 @@ class PuzzlePainter extends CustomPainter {
       for (int i = 0; i < puzzles.length; i++) {
         PuzzleTile item = puzzles[i];
         if (item.isEmpty) {
-          canvas.drawRect(item.rectPaint, Paint()..color = Color(0xFFF6DDB1));
+          canvas.drawRect(item.rectPaint, Paint()..color = colorApp);
           continue;
         }
         Rect rect = Rect.fromLTWH(
@@ -107,9 +109,8 @@ class PuzzlePainter extends CustomPainter {
       }
 
       // show move
-      textSpanMove = new TextSpan(
-          text: 'Move: ${move}',
-          style: TextStyle(color: Colors.red, fontSize: 20));
+      globalBloc.text('txtMove');
+      textSpanMove = new TextSpan(text: 'Move: ${move}', style: commonStyleM);
       textPainter =
           new TextPainter(text: textSpanMove, textDirection: TextDirection.ltr);
       textPainter.layout(minWidth: 50, maxWidth: gameActiveWidth / 2);
@@ -117,12 +118,13 @@ class PuzzlePainter extends CustomPainter {
     }
 
     //draw tips image
-    canvas.drawImageRect(
-        tipsImage,
-        Rect.fromLTWH(
-            0, 0, tipsImage.width.toDouble(), tipsImage.height.toDouble()),
-        rectHelp,
-        Paint());
+    if (tipsImage != null)
+      canvas.drawImageRect(
+          tipsImage,
+          Rect.fromLTWH(
+              0, 0, tipsImage.width.toDouble(), tipsImage.height.toDouble()),
+          rectHelp,
+          Paint());
   }
 
   // Time formatting, converted to the corresponding hh:mm:ss format according to the total number of seconds

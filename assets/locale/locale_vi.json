@@ -1,6 +1,6 @@
 {
   "txtLevel": "Cấp độ",
-  "txtLevelEasy": "Dê",
+  "txtLevelEasy": "Dễ",
   "txtLevelMedium": "Trung bình",
   "txtLevelHard": "Khó",
   "txtSelectLevel": "Chọn 1 cấp độ",
@@ -11,5 +11,6 @@
   "txtCancel": "Bỏ",
   "txtYes": "Yes",
   "txtNo": "No",
+  "txtMove": "Di chuyển",
   "txtQuitGameConfirm": "Bạn chắc chắn muốn thoát game ?"
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/bloc_provider.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/bloc/global_bloc.dart';
+import 'package:puzzle/commons/app_style.dart';
 import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/model/achievement.dart';
 import 'package:puzzle/repos/achievement/game_achieve.dart';
@@ -60,11 +61,9 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
 
   void openDialogLevel(String imageUrl, Achievement achievement) {
     String level = globalBloc.text('txtLevel');
-    String selectLevel = globalBloc.text('txtSelectLevel');
     String levelEasy = globalBloc.text('txtLevelEasy');
     String levelMedium = globalBloc.text('txtLevelMedium');
     String levelHard = globalBloc.text('txtLevelHard');
-    String txtHighest = globalBloc.text('txtHighest');
     String txtNobody = globalBloc.text('txtNobody');
     // Reusable alert style
     var alertStyle = AlertStyle(
@@ -73,15 +72,14 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
       isOverlayTapDismiss: false,
       descStyle: TextStyle(fontWeight: FontWeight.bold),
       animationDuration: Duration(milliseconds: 400),
+      backgroundColor: colorApp,
       alertBorder: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0.0),
+        borderRadius: BorderRadius.circular(20.0),
         side: BorderSide(
           color: Colors.grey,
         ),
       ),
-      titleStyle: TextStyle(
-        color: Colors.red,
-      ),
+      titleStyle: commonStyleL,
     );
     String bestEasy =
         '${achievement.userNameEasy} - move: ${achievement.moveStepEasy}';
@@ -112,7 +110,7 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
       context: context,
       style: alertStyle,
       title: level,
-      desc: selectLevel,
+      desc: '',
       buttons: [],
       closeFunction: () {},
       content: Column(
@@ -127,9 +125,10 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
               child: Column(
                 children: <Widget>[
                   DialogButton(
+                    color: Colors.amber,
                     child: Text(
                       levelEasy,
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: commonStyleM,
                     ),
                     onPressed: () => selectItem(
                         imageUrl, 2, 2, GAME_LEVEL_EASY, achievement),
@@ -152,7 +151,7 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
                       ),
                       Text(
                         bestEasy,
-                        style: TextStyle(fontSize: 10),
+                        style: commonStyleS,
                       ),
                     ],
                   ),
@@ -169,9 +168,10 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
               child: Column(
                 children: <Widget>[
                   DialogButton(
+                    color: Colors.amber,
                     child: Text(
                       levelMedium,
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: commonStyleM,
                     ),
                     onPressed: () => selectItem(
                         imageUrl, 3, 4, GAME_LEVEL_MEDIUM, achievement),
@@ -194,7 +194,7 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
                       ),
                       Text(
                         bestMedium,
-                        style: TextStyle(fontSize: 10),
+                        style: commonStyleS,
                       ),
                     ],
                   ),
@@ -211,9 +211,10 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
               child: Column(
                 children: <Widget>[
                   DialogButton(
+                    color: Colors.amber,
                     child: Text(
                       levelHard,
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: commonStyleM,
                     ),
                     onPressed: () => selectItem(
                         imageUrl, 4, 5, GAME_LEVEL_HARD, achievement),
@@ -236,7 +237,7 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
                       ),
                       Text(
                         bestHard,
-                        style: TextStyle(fontSize: 10),
+                        style: commonStyleS,
                       ),
                     ],
                   ),
