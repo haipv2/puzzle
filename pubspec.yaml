@@ -41,6 +41,7 @@ flutter:
     - assets/locale/locale_en.json
     - assets/locale/locale_vi.json
     - assets/images/tips.png
+    - assets/images/guide.png
   fonts:
     - family: vt323
       fonts:

@@ -120,6 +120,12 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
           )
         ])));
     result.add(Container(
+      child: Image.asset(
+        'assets/images/guide.png',
+        fit: BoxFit.fill,
+      ),
+    ));
+    result.add(Container(
       color: colorApp,
       child: Center(
         child: Column(
@@ -131,7 +137,7 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
                   const EdgeInsets.only(top: 50.0, right: 15.0, left: 15.0),
               child: CustomFlatButton(
                   title: globalBloc.text('txtTips2Play'),
-                  fontSize: 30,
+                  fontSize: 50,
                   fontWeight: FontWeight.w700,
                   textColor: Colors.black87,
                   onPressed: () {
@@ -139,7 +145,8 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
                       // retrieve bloc
                       transBloc.setSeeTips();
                     });
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context){
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (BuildContext context) {
                       return HomePage();
                     }));
                   },
