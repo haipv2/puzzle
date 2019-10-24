@@ -27,36 +27,9 @@ class FirebaseDatabaseUtil {
     snapshot.documents.forEach((f) {
       imageNames.add(f.data['image_name']);
     });
-//    snapshots.documents.map((DocumentSnapshot documentSnapshot) {
-//      imageNames.add(documentSnapshot['file_name']);
-//    });
-//    values.forEach((item) {
-//      if (item != null) {
-//        imageNames.add(item.toString());
-//      }
-//    });
-
-//    List<String> result = [];
-//    images.forEach((key, value) {
-//      result.ad d(buildImageName(value));
-//    });
     return imageNames;
   }
 
-//  getData() async {
-//    return await FirebaseDatabase.instance
-//        .reference()
-//        .child('images')
-//        .limitToFirst(10);
-//  }
-//
-//  DatabaseError getError() {
-//    return error;
-//  }
-//
-//  DatabaseReference imageRef() {
-//    return _imageRef;
-//  }
 
   String buildImageName(Map<dynamic, dynamic> imageNameMap) {
     String fileName;

@@ -44,7 +44,7 @@ class GameBloc extends BlocEventStateBase<GameEvent, GameState> {
   Stream<GameState> eventHandler(
       GameEvent event, GameState currentState) async* {
     if (currentState.loading) {
-      await Future.delayed(const Duration(milliseconds: 1500));
+      await Future.delayed(const Duration(milliseconds: 1000));
       yield GameState.done();
     }
   }

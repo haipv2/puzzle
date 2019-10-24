@@ -1,7 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import '../firebase_database.dart';
-import '../firebase_storage.dart';
 
 class ImageLoader {
   static List<String> fileNames = List<String>();

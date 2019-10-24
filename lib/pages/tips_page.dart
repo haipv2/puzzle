@@ -50,7 +50,7 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
                   pagination: SwiperPagination(
                     margin: const EdgeInsets.fromLTRB(0, 0, 0, 40),
                     builder: DotSwiperPaginationBuilder(
-                        color: Colors.white30,
+                        color: Colors.black,
                         activeColor: Colors.blueAccent,
                         size: 6.5,
                         activeSize: 8.0),
@@ -69,7 +69,7 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
       BuildContext context, TransBloc transBloc, String newLanguage) {
     List<Widget> result = [];
     result.add(Container(
-        color: Colors.lime,
+        color: colorApp,
         child: ListView(children: <Widget>[
           Column(
             children: <Widget>[
@@ -92,7 +92,7 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
           )
         ])));
     result.add(Container(
-        color: Colors.lime,
+        color: colorApp,
         child: ListView(children: <Widget>[
           Column(
             children: <Widget>[
@@ -101,23 +101,26 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
                   globalBloc.text('txtTips1Rule'),
                   softWrap: true,
                   textAlign: TextAlign.center,
-                  style: tipsPageTitleStyle,
+                  style: tipsPageTitleStyleM,
                 ),
               ),
               SizedBox(
                 height: 20,
               ),
-              Align(
-                child: RichText(
-                    text: TextSpan(
-                        text: globalBloc.text('txtTips1Desc'),
-                        style: tipsPageDescStyle)),
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: Align(
+                  child: RichText(
+                      text: TextSpan(
+                          text: globalBloc.text('txtTips1Desc'),
+                          style: tipsPageDescStyle)),
+                ),
               ),
             ],
           )
         ])));
     result.add(Container(
-      color: Colors.lime,
+      color: colorApp,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -141,7 +144,7 @@ class _TipsPageState extends State<TipsPage> with AppUtils {
                     }));
                   },
                   splashColor: Colors.black12,
-                  borderColor: Colors.white,
+                  borderColor: Colors.black,
                   borderWidth: 2,
                   color: Colors.orangeAccent),
             )

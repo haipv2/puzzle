@@ -31,19 +31,23 @@ class _MenuPageState extends State<MenuPage> {
     initAds();
   }
 
-  void buildImageUrl() async {
-    StorageReference ref = FirebaseStorage.instance.ref();
+  Future<void> buildImageUrl() async {
+    StorageReference ref = await FirebaseStorage.instance.ref();
     for (String imgName in ImageLoader.fileNames) {
       getDownloadUrl(ref, imgName);
     }
   }
 
   Future<void> getDownloadUrl(StorageReference ref, String item) async {
-    String imgUrl = await ref.child('images/$item').getDownloadURL();
-    imageInfos.add(game.ImageInfo()
-      ..urls = imgUrl
-      ..imageName = item);
-    bloc.imageAddName(imageInfos);
+      try {
+        String imgUrl = await ref.child('images/$item').getDownloadURL();
+        imageInfos.add(game.ImageInfo()
+                ..urls = imgUrl
+                ..imageName = item);
+        bloc.imageAddName(imageInfos);
+      } catch (e) {
+        print(e);
+      }
   }
 
   @override
@@ -62,8 +66,7 @@ class _MenuPageState extends State<MenuPage> {
               return PendingPage();
             } else {
               return Container(
-                decoration:
-                    BoxDecoration(color: Color(0xFFFCF2C7)),
+                decoration: BoxDecoration(color: Color(0xFFFCF2C7)),
                 child: GridView.count(
                   primary: true,
                   crossAxisCount: 2,
@@ -84,8 +87,8 @@ class _MenuPageState extends State<MenuPage> {
         keywords: <String>['flutterio', 'P-WORLD CUP'],
         contentUrl: 'https://flutter.io',
         childDirected: false,
-        testDevices: <String>[
-        ], // Android emulators are considered test devices
+        testDevices: <
+            String>[], // Android emulators are considered test devices
       );
 
       BannerAd myBanner = BannerAd(
@@ -97,7 +100,7 @@ class _MenuPageState extends State<MenuPage> {
         },
       );
       myBanner
-      // typically this happens well before the ad is shown
+        // typically this happens well before the ad is shown
         ..load()
         ..show(
           // Positions the banner ad 0 pixels from the bottom of the screen

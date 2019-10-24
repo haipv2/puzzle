@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:puzzle/bloc/bloc_provider.dart';
-import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/repos/preferences.dart';
 

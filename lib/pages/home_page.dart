@@ -115,19 +115,32 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           return GameDialogAnimate(
             animation: _quitAnimation,
             child: AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
               backgroundColor: colorApp,
-              title: Text(globalBloc.text('txtQuitGame')),
-              content: Text(globalBloc.text('txtQuitGameConfirm')),
+              title: Text(
+                globalBloc.text('txtQuitGame'),
+                style: commonStyleM,
+              ),
+              content: Text(
+                globalBloc.text('txtQuitGameConfirm'),
+                style: commonStyleM,
+              ),
               actions: <Widget>[
                 FlatButton(
-                  child: new Text(globalBloc.text('txtNo')),
+                  child: new Text(
+                    globalBloc.text('txtNo'),
+                    style: commonStyleM,
+                  ),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
                 FlatButton(
-                  child: new Text(globalBloc.text('txtYes')),
+                  child: new Text(
+                    globalBloc.text('txtYes'),
+                    style: commonStyleM,
+                  ),
                   onPressed: () {
                     exit(0);
                   },
