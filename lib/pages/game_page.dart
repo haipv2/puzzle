@@ -36,6 +36,7 @@ class PuzzleGame extends StatefulWidget {
       GameBloc bloc, this.gameLevel, this.achievement) {
     this.bloc = bloc;
     paddingX = paddingY = size.width * 0.05;
+//    paddingY = paddingX-10;
     gameActiveWidth = size.width * 0.9;
     gameActiveHeight = size.height - paddingY * 4;
     totalPuzzleTile = gameLevelWidth * gameLevelHeight;
@@ -135,11 +136,13 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
 
     offsetMove = Offset(widget.paddingX,
         paddingYExt + (widget.gameLevelHeight + 1) * imageScreenHeight);
-    double paddingXTmp = widget.paddingX + imageScreenHeight * 1.25;
+    double paddingXTmp = 1;
     double remainActiveScreen = 0.75;
     if (widget.gameLevelWidth > 2) {
       paddingXTmp = (widget.gameLevelWidth - 1) / 2;
       remainActiveScreen *= 1.5;
+    }else {
+      paddingXTmp = 0.75;
     }
     orgImgRect = Rect.fromLTWH(
         widget.paddingX + imageScreenWidth * (1 + paddingXTmp - 0.5),

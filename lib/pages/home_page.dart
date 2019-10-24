@@ -7,6 +7,7 @@ import 'package:puzzle/bloc/global_bloc.dart';
 import 'package:puzzle/commons/app_style.dart';
 import 'package:puzzle/repos/game_setting.dart';
 import 'package:puzzle/repos/preferences.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'game_dialog_animation.dart';
 import 'menu_page.dart';
@@ -76,6 +77,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               title: Text(title, style: commonStyleL),
             ),
             body: MenuPage(),
+            floatingActionButton: buildFloatBtn(),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
           );
         });
   }
@@ -149,5 +152,59 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           );
         });
+  }
+
+  Widget buildFloatBtn() {
+    return FloatingActionButton(
+      backgroundColor: colorApp,
+      child: Icon(Icons.info),
+      onPressed: (){
+        String txtInfo = globalBloc.text('txtInfo');
+        String txtInfoDesc = globalBloc.text('txtInfoDesc');
+
+        // Reusable alert style
+        var alertStyle = AlertStyle(
+          animationType: AnimationType.fromTop,
+          isCloseButton: true,
+          isOverlayTapDismiss: false,
+          descStyle: TextStyle(fontWeight: FontWeight.bold),
+          animationDuration: Duration(milliseconds: 400),
+          backgroundColor: colorApp,
+          alertBorder: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            side: BorderSide(
+              color: Colors.grey,
+            ),
+          ),
+          titleStyle: commonStyleL,
+        );
+        Alert(
+          context: context,
+          style: alertStyle,
+          title: txtInfo,
+          desc: '',
+          buttons: [],
+          closeFunction: () {},
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.yellow,
+                      borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                  child: Center(
+                    child:Text(
+                      txtInfoDesc, style: commonStyleM,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ).show();
+      },
+    );
   }
 }
