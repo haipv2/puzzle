@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:puzzle/commons/const.dart';
+import 'package:puzzle/repos/audio/audio.dart';
 import 'package:puzzle/repos/preferences.dart';
 
 import 'home_page.dart';
@@ -15,6 +16,7 @@ class _InitPageState extends State<InitPage> {
   @override
   void initState() {
     super.initState();
+    Audio.playAsset(AudioType.start);
   }
 
   @override

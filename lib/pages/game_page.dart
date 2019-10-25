@@ -493,7 +493,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
 
     if (isMove && !onShowHelpBtn) {
       move++;
-      playSound(AudioType.swap);
+      Audio.playAsset(AudioType.swap);
     }
     onShowHelpBtn = false;
     widget.bloc.reDrawAdd(true);
@@ -782,11 +782,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     }
 
     return false;
-  }
-
-  Future<void> playSound(AudioType audioType) async {
-    // Play sound
-    await Audio.playAsset(audioType);
   }
 
   bool processHighScore(Achievement achievement, String gameLevel) {

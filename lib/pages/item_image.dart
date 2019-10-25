@@ -7,8 +7,10 @@ import 'package:puzzle/commons/app_style.dart';
 import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/model/achievement.dart';
 import 'package:puzzle/repos/achievement/game_achieve.dart';
+import 'package:puzzle/repos/audio/audio.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:transparent_image/transparent_image.dart';
+
 import '../model/image_info.dart' as game;
 import 'game_page.dart';
 
@@ -60,6 +62,7 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
   }
 
   void openDialogLevel(String imageUrl, Achievement achievement) {
+    Audio.playAsset(AudioType.press);
     String level = globalBloc.text('txtLevel');
     String levelEasy = globalBloc.text('txtLevelEasy');
     String levelMedium = globalBloc.text('txtLevelMedium');
@@ -263,5 +266,6 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
       return PuzzleGame(imageUrl, size, gameLevelWidth, gameLevelHeight, bloc,
           gameLevel, achievement);
     }));
+    Audio.playAsset(AudioType.press);
   }
 }

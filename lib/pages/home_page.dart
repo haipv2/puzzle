@@ -5,6 +5,7 @@ import 'package:puzzle/bloc/bloc_provider.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/bloc/global_bloc.dart';
 import 'package:puzzle/commons/app_style.dart';
+import 'package:puzzle/repos/audio/audio.dart';
 import 'package:puzzle/repos/game_setting.dart';
 import 'package:puzzle/repos/preferences.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    Audio.playAsset(AudioType.start);
     bloc = BlocProvider.of<GameBloc>(context);
     _dialogController = AnimationController(
         vsync: this, duration: Duration(milliseconds: 1500));
@@ -92,6 +94,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       icon: Icon(iconData),
       onPressed: () async {
         if (GameSetting.soundOn) {
+          Audio.playAsset(AudioType.press);
           GameSetting.soundOn = false;
         } else {
           GameSetting.soundOn = true;
@@ -103,6 +106,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void openLangDialog() {
+    Audio.playAsset(AudioType.press);
     showDialog(
         context: context,
         builder: (_) {
@@ -136,6 +140,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     style: commonStyleM,
                   ),
                   onPressed: () {
+                    Audio.playAsset(AudioType.press);
                     Navigator.pop(context);
                   },
                 ),
@@ -145,6 +150,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     style: commonStyleM,
                   ),
                   onPressed: () {
+                    Audio.playAsset(AudioType.press);
                     exit(0);
                   },
                 )

@@ -3,6 +3,7 @@ import 'package:country_pickers/country_pickers.dart';
 import 'package:flutter/material.dart';
 import 'package:fireworks/fireworks.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
+import 'package:puzzle/bloc/global_bloc.dart';
 import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/model/achievement.dart';
 import 'package:puzzle/repos/achievement/game_achieve.dart';
@@ -41,6 +42,8 @@ class CompletePage extends StatefulWidget {
 }
 
 class _CompletePageState extends State<CompletePage> {
+  String txtPlayAgain = globalBloc.text('txtPlayAgain');
+  String txtMenu = globalBloc.text('txtMenu');
   @override
   void initState() {
     super.initState();
@@ -55,7 +58,6 @@ class _CompletePageState extends State<CompletePage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
@@ -76,6 +78,7 @@ class _CompletePageState extends State<CompletePage> {
                   children: <Widget>[
                     GameButton(
                       onPress: () {
+                        Audio.playAsset(AudioType.press);
 //                      Navigator.of(context).pop();
                         Navigator.of(context).pushReplacement(
                             MaterialPageRoute(builder: (context) {
@@ -89,18 +92,19 @@ class _CompletePageState extends State<CompletePage> {
                               widget.achievement);
                         }));
                       },
-                      label: 'PLAY AGAIN',
+                      label: txtPlayAgain,
                     ),
                     GameButton(
                       onPress: () {
+                        Audio.playAsset(AudioType.press);
                         Navigator.of(context).pop();
                       },
-                      label: 'MENU',
+                      label: txtMenu,
                     ),
                   ],
                 ),
               ),
-//            Fireworks(),
+            Fireworks(),
             ],
           ),
         ),

@@ -31,13 +31,19 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_launcher_icons: ^0.7.3
+flutter_icons:
+  image_path: "assets/icons/icon.png"
+  android: true
+  ios: true
 
 flutter:
   uses-material-design: true
   assets:
     - assets/audio/swap.wav
     - assets/audio/win.wav
+    - assets/audio/press.wav
+    - assets/audio/start.wav
     - assets/locale/locale_en.json
     - assets/locale/locale_vi.json
     - assets/images/tips.png
