@@ -13,6 +13,8 @@ class Audio {
     await player.loadAll([
       'audio/win.wav',
       'audio/swap.wav',
+      'audio/press.wav',
+      'audio/start.wav',
     ]);
   }
 
@@ -21,13 +23,15 @@ class Audio {
     await player.play('assets/audio/swap.wav', isLocal: true);
   }
 
-  static playAsset(AudioType audioType) {
+  static playAsset(AudioType audioType) async {
     if (GameSetting.soundOn)
-    player.play('audio/${describeEnum(audioType)}.wav');
+    await player.play('audio/${describeEnum(audioType)}.wav');
   }
 }
 
 enum AudioType {
+  press,
+  start,
   swap,
   win,
 }

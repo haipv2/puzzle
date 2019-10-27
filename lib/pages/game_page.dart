@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ui';
 import 'dart:ui' as ui show Image, Codec, instantiateImageCodec;
 
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
@@ -12,7 +11,6 @@ import 'package:puzzle/commons/enums.dart';
 import 'package:puzzle/model/achievement.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
 import 'package:puzzle/repos/audio/audio.dart';
-import 'package:puzzle/utils/game_engine.dart';
 
 import 'complete_page.dart';
 import 'pending_page.dart';
@@ -141,7 +139,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     if (widget.gameLevelWidth > 2) {
       paddingXTmp = (widget.gameLevelWidth - 1) / 2;
       remainActiveScreen *= 1.5;
-    }else {
+    } else {
       paddingXTmp = 0.75;
     }
     orgImgRect = Rect.fromLTWH(
@@ -686,7 +684,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     orgList
       ..add(firstPuzzle)
       ..addAll(resultTmp);
-    GameEngine.shufflePuzzleTile(resultTmp);
+//    GameEngine.shufflePuzzleTile(resultTmp);
     List<PuzzleTile> result = []
       ..add(firstPuzzle)
       ..addAll(resultTmp);
@@ -735,8 +733,6 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
       return false;
     }
     for (int i = 0; i < puzzles.length; i++) {
-      print('i= ${i}. ${puzzles[i]}');
-
       if (isCorrectPos(i)) {
         continue;
       } else {
@@ -746,24 +742,30 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     return true;
   }
 
+  ///
+  /// return true if the image is correct position, else return false
+  ///
   bool isCorrectPos(int i) {
     PuzzleTile puzzleTile = puzzles[i];
+    String puzzleDx = puzzleTile.rectPaint.left.toStringAsFixed(3);
+    String puzzleDy = puzzleTile.rectPaint.top.toStringAsFixed(3);
     if (puzzleTile.index < widget.gameLevelWidth) {
-      if (puzzleTile.rectPaint.left ==
-              imageScreenWidth * puzzleTile.index + widget.paddingX &&
-          puzzleTile.rectPaint.top == imageScreenHeight + paddingYExt) {
+      String dx = (imageScreenWidth * puzzleTile.index + widget.paddingX).toStringAsFixed(3);
+      String dy = (imageScreenHeight + paddingYExt).toStringAsFixed(3);
+      if (puzzleDx ==
+              dx &&
+          puzzleDy == dy) {
         return true;
       } else {
         return false;
       }
     } else {
-      if (puzzleTile.rectPaint.left ==
-              imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
-                  widget.paddingX &&
-          puzzleTile.rectPaint.top ==
-              imageScreenHeight * (puzzleTile.index ~/ widget.gameLevelWidth) +
-                  paddingYExt +
-                  imageScreenHeight) {
+      var dx = (imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
+          widget.paddingX).toStringAsFixed(3);
+      var dy = (imageScreenHeight * (puzzleTile.index ~/ widget.gameLevelWidth) +
+          paddingYExt +
+          imageScreenHeight).toStringAsFixed(3);
+      if (puzzleDx == dx && puzzleDy == dy) {
         return true;
       } else {
         return false;
@@ -808,5 +810,4 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     imageTips = await getImageLocal(imgPath);
     return imageTips;
   }
-
 }
