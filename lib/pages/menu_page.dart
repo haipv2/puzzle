@@ -6,7 +6,6 @@ import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/commons/const.dart';
 import 'package:puzzle/repos/image/image_loader.dart';
 
-import 'game_page.dart';
 import 'item_image.dart';
 import 'pending_page.dart';
 import '../model/image_info.dart' as game;
@@ -39,15 +38,15 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Future<void> getDownloadUrl(StorageReference ref, String item) async {
-      try {
-        String imgUrl = await ref.child('images/$item').getDownloadURL();
-        imageInfos.add(game.ImageInfo()
-                ..urls = imgUrl
-                ..imageName = item);
-        bloc.imageAddName(imageInfos);
-      } catch (e) {
-        print(e);
-      }
+    try {
+      String imgUrl = await ref.child('images/$item').getDownloadURL();
+      imageInfos.add(game.ImageInfo()
+        ..urls = imgUrl
+        ..imageName = item);
+      bloc.imageAddName(imageInfos);
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -112,4 +111,5 @@ class _MenuPageState extends State<MenuPage> {
         );
     });
   }
+
 }
