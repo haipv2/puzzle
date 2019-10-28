@@ -52,14 +52,11 @@ class PuzzlePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     //paint original pic
-    var orgImgX = paddingX + (gameLevelWidth - 1) * imageScreenWidth;
     canvas.drawImageRect(
         orgImage,
         Rect.fromLTWH(
             0, 0, orgImage.width.toDouble(), orgImage.height.toDouble()),
         orgImgRect,
-        /* Rect.fromLTWH(orgImgX + imageScreenWidth / 4, paddingYExt,
-            imageScreenWidth * .75, imageScreenHeight * .75),*/
         Paint());
 
     // paint image

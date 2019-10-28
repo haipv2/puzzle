@@ -66,7 +66,7 @@ class _CompletePageState extends State<CompletePage> {
         decoration: BoxDecoration(
             color: Color.fromRGBO(250, 0, 250, 100),
             image: DecorationImage(
-                image: NetworkImage(widget.imagePath), fit: BoxFit.cover)),
+                image: NetworkImage(widget.imagePath), fit: BoxFit.fill)),
 //      decoration: BoxDecoration(color: Colors.red),
         child: Center(
           child: Stack(
@@ -76,24 +76,6 @@ class _CompletePageState extends State<CompletePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    GameButton(
-                      onPress: () {
-                        Audio.playAsset(AudioType.press);
-//                      Navigator.of(context).pop();
-                        Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) {
-                          return PuzzleGame(
-                              widget.imagePath,
-                              widget.size,
-                              widget.gameLevelWidth,
-                              widget.gameLevelHeight,
-                              widget.bloc,
-                              widget.gameLevel,
-                              widget.achievement);
-                        }));
-                      },
-                      label: txtPlayAgain,
-                    ),
                     GameButton(
                       onPress: () {
                         Audio.playAsset(AudioType.press);

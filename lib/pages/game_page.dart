@@ -197,11 +197,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                 if (snapshot.data == null) {
                   widget.bloc.reDrawAdd(true);
                 }
-                return Container(
-                  decoration: BoxDecoration(color: colorApp),
-                  child: GestureDetector(
-                    child: CustomPaint(
-                      painter: PuzzlePainter(
+                var puzzlePainter = PuzzlePainter(
                           paddingX: widget.paddingX,
                           paddingY: widget.paddingY,
                           puzzles: puzzles,
@@ -216,7 +212,12 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                           imageScreenHeight: imageScreenHeight,
                           tipsImage: imageTips,
                           orgImgRect: orgImgRect,
-                          orgImage: image)
+                          orgImage: image);
+                return Container(
+                  decoration: BoxDecoration(color: colorApp),
+                  child: GestureDetector(
+                    child: CustomPaint(
+                      painter: puzzlePainter
                         ..rectTextMove = rectTextMove
                         ..rectHelp = rectHelp
                         ..reDraw = snapshot.data ?? false
@@ -760,11 +761,13 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         return false;
       }
     } else {
-      var dx = (imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
-          widget.paddingX).toStringAsFixed(3);
-      var dy = (imageScreenHeight * (puzzleTile.index ~/ widget.gameLevelWidth) +
+      var rawDx = imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
+          widget.paddingX;
+      var dx = (rawDx).toStringAsFixed(3);
+      var rawDy = imageScreenHeight * (puzzleTile.index ~/ widget.gameLevelWidth) +
           paddingYExt +
-          imageScreenHeight).toStringAsFixed(3);
+          imageScreenHeight;
+      var dy = (rawDy).toStringAsFixed(3);
       if (puzzleDx == dx && puzzleDy == dy) {
         return true;
       } else {
