@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               title: Text(title, style: commonStyleL),
             ),
             body: MenuPage(),
-            floatingActionButton: buildFloatBtn(),
+            floatingActionButton: buildGameInfoBtn(),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
           );
@@ -180,12 +180,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
   }
 
-  Widget buildFloatBtn() {
+  Widget buildGameInfoBtn() {
     return FloatingActionButton(
       backgroundColor: colorApp,
       child: Icon(Icons.info),
       onPressed: () {
-        String txtInfo = globalBloc.text('txtInfo');
+        String txtInfo = globalBloc.text('txtSupport');
         String txtInfoDesc = globalBloc.text('txtInfoDesc');
 
         // Reusable alert style
@@ -193,7 +193,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           animationType: AnimationType.fromTop,
           isCloseButton: true,
           isOverlayTapDismiss: false,
-          descStyle: TextStyle(fontWeight: FontWeight.bold),
           animationDuration: Duration(milliseconds: 400),
           backgroundColor: colorApp,
           alertBorder: RoundedRectangleBorder(
@@ -203,6 +202,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           titleStyle: commonStyleL,
+          descStyle: TextStyle(fontSize: 0 ),
         );
         Alert(
           context: context,
@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.yellow,
+                      color: colorApp,
                       borderRadius: BorderRadius.all(Radius.circular(15.0))),
                   child: Center(
                     child: Text(
