@@ -20,11 +20,13 @@ const tipsPageTitleStyleM = TextStyle(
     fontFamily: "vt323");
 const btnEnableStyle = TextStyle(backgroundColor: Colors.blueAccent);
 const txtDisableStyle =
-    TextStyle(color: Colors.grey, fontFamily: 'vt323', fontSize: 25);
+    TextStyle(color: Colors.black45, fontFamily: 'vt323', fontSize: 25);
 const txtEnableStyle =
-    TextStyle(color: Colors.black, fontFamily: 'vt323', fontSize: 25);
+    TextStyle(color: Colors.blue, fontFamily: 'vt323', fontSize: 25);
 const commonStyleL =
     TextStyle(color: Colors.black, fontFamily: 'vt323', fontSize: 40);
+const commonStyleOnlyFontSize0 =
+TextStyle(color: Colors.black, fontFamily: 'vt323', fontSize: 0);
 const commonStyleM =
     TextStyle(fontFamily: 'vt323', fontSize: 25, color: Colors.black);
 

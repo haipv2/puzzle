@@ -52,8 +52,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-
     title = globalBloc.text('txtTitleGame');
     var buildLangBtn = IconButton(
       icon: Icon(Icons.language),
@@ -80,7 +78,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             body: MenuPage(),
             floatingActionButton: buildFloatBtn(),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
           );
         });
   }
@@ -107,11 +106,32 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   void openLangDialog() {
     Audio.playAsset(AudioType.press);
-    showDialog(
-        context: context,
-        builder: (_) {
-          return LanguageSettingWidget();
-        });
+
+    // Reusable alert style
+    var alertStyle = AlertStyle(
+        animationType: AnimationType.fromTop,
+        isCloseButton: true,
+        isOverlayTapDismiss: false,
+        animationDuration: Duration(milliseconds: 400),
+        backgroundColor: colorApp,
+        alertBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          side: BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        titleStyle: commonStyleOnlyFontSize0,
+        descStyle: commonStyleOnlyFontSize0);
+    Alert(
+      context: context,
+      style: alertStyle,
+      title: '',
+      desc: '',
+      buttons: [],
+      closeFunction: () {},
+      content: Container(height: 160, child: LanguageSettingWidget()),
+    ).show();
+
   }
 
   void quit() {
@@ -164,7 +184,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return FloatingActionButton(
       backgroundColor: colorApp,
       child: Icon(Icons.info),
-      onPressed: (){
+      onPressed: () {
         String txtInfo = globalBloc.text('txtInfo');
         String txtInfoDesc = globalBloc.text('txtInfoDesc');
 
@@ -201,8 +221,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       color: Colors.yellow,
                       borderRadius: BorderRadius.all(Radius.circular(15.0))),
                   child: Center(
-                    child:Text(
-                      txtInfoDesc, style: commonStyleM,
+                    child: Text(
+                      txtInfoDesc,
+                      style: commonStyleM,
                     ),
                   ),
                 ),

@@ -28,12 +28,18 @@ class _LanguageBtnState extends State<LanguageBtn> {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      child: Text(
-        widget.langTxt,
-        style: widget.isSelected ? txtEnableStyle : txtDisableStyle,
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      width: size.width/2,
+
+      child: RaisedButton(
+        color: widget.isSelected  ? Colors.orange : Colors.transparent,
+        child: Text(
+          widget.langTxt,
+          style: widget.isSelected ? txtEnableStyle : txtDisableStyle,
+        ),
+        onPressed: widget.onPressed,
       ),
-      onPressed: widget.onPressed,
     );
   }
 }
