@@ -185,7 +185,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
             return CompletePage(
                 useHelp: useHelp,
                 size: widget.size,
-                bloc: widget.bloc,
+                bloc: widget.bloc,newMove: moveTmp,
                 gameLevelHeight: widget.gameLevelHeight,
                 gameLevelWidth: widget.gameLevelWidth,
                 imagePath: widget.imgPath,
@@ -794,17 +794,17 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   bool processHighScore(Achievement achievement, String gameLevel) {
     if (gameLevel == GAME_LEVEL_EASY) {
       if (achievement.moveStepEasy > moveTmp) {
-        achievement.moveStepEasy = moveTmp;
+//        achievement.moveStepEasy = moveTmp;
         return true;
       }
     } else if (gameLevel == GAME_LEVEL_MEDIUM) {
       if (achievement.moveStepMedium > moveTmp) {
-        achievement.moveStepMedium = moveTmp;
+//        achievement.moveStepMedium = moveTmp;
         return true;
       }
     } else if (gameLevel == GAME_LEVEL_HARD) {
       if (achievement.moveStepHard > moveTmp) {
-        achievement.moveStepHard = moveTmp;
+//        achievement.moveStepHard = moveTmp;
         return true;
       }
     }

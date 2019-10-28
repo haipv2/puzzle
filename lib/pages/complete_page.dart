@@ -1,7 +1,7 @@
 import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_pickers.dart';
-import 'package:flutter/material.dart';
 import 'package:fireworks/fireworks.dart';
+import 'package:flutter/material.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/bloc/global_bloc.dart';
 import 'package:puzzle/commons/const.dart';
@@ -9,10 +9,7 @@ import 'package:puzzle/model/achievement.dart';
 import 'package:puzzle/repos/achievement/game_achieve.dart';
 import 'package:puzzle/repos/audio/audio.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'dart:ui' as ui show Image;
 
-import 'game_page.dart';
-import 'menu_page.dart';
 import 'widget/game_button.dart';
 
 class CompletePage extends StatefulWidget {
@@ -25,17 +22,18 @@ class CompletePage extends StatefulWidget {
   final int gameLevelWidth;
   final int gameLevelHeight;
   final bool useHelp;
+  final int newMove;
 
-  CompletePage(
-      {this.achievement,
-      this.useHelp,
-      this.size,
-      this.gameLevel,
-      this.bloc,
-      this.imagePath,
-      this.gameLevelWidth,
-      this.gameLevelHeight,
-      this.isHigherScore});
+  CompletePage({this.achievement,
+    this.newMove,
+    this.useHelp,
+    this.size,
+    this.gameLevel,
+    this.bloc,
+    this.imagePath,
+    this.gameLevelWidth,
+    this.gameLevelHeight,
+    this.isHigherScore});
 
   @override
   _CompletePageState createState() => _CompletePageState();
@@ -44,11 +42,12 @@ class CompletePage extends StatefulWidget {
 class _CompletePageState extends State<CompletePage> {
   String txtPlayAgain = globalBloc.text('txtPlayAgain');
   String txtMenu = globalBloc.text('txtMenu');
+
   @override
   void initState() {
     super.initState();
     Audio.playAsset(AudioType.win);
-    if (!widget.useHelp) {
+    if (!widget.useHelp && widget.isHigherScore) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         return showNewHigherUser();
       });
@@ -57,7 +56,9 @@ class _CompletePageState extends State<CompletePage> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
@@ -86,7 +87,7 @@ class _CompletePageState extends State<CompletePage> {
                   ],
                 ),
               ),
-            Fireworks(),
+              Fireworks(),
             ],
           ),
         ),
@@ -98,12 +99,15 @@ class _CompletePageState extends State<CompletePage> {
     if (widget.gameLevel == GAME_LEVEL_EASY) {
       achievement.userNameEasy = userNameController.text;
       achievement.userNameEasyCountry = countryCode;
+      achievement.moveStepEasy = widget.newMove;
     } else if (widget.gameLevel == GAME_LEVEL_MEDIUM) {
       achievement.userNameMedium = userNameController.text;
       achievement.userNameMediumCountry = countryCode;
+      achievement.moveStepMedium = widget.newMove;
     } else if (widget.gameLevel == GAME_LEVEL_HARD) {
       achievement.userNameHard = userNameController.text;
       achievement.userNameHardCountry = countryCode;
+      achievement.moveStepHard = widget.newMove;
     }
 
     await GameAchievement.updateNewScore(achievement);
