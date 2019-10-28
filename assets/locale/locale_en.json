@@ -22,5 +22,10 @@
   "txtInfoDesc": "You can send the images you like very much to my email: haipv2@gmail.com. The images will be used in the game soon. \nYou are always welcome ^_^ ",
   "txtPlayAgain": "PLAY AGAIN",
   "txtMenu": "MENU",
-  "txtLanguages": "LANGUAGES"
+  "txtLanguages": "LANGUAGES",
+  "txtSave": "Save",
+  "txtChampion": "WINNER",
+  "txtUserName": "User name",
+  "txtValidLength":"The length is from 3-20."
+
 }

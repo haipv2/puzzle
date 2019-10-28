@@ -113,6 +113,10 @@ class _CompletePageState extends State<CompletePage> {
   bool _validate = false;
   String errorText;
   String countryCode = 'vn';
+  String txtSave = globalBloc.text('txtSave');
+  String txtChampion = globalBloc.text('txtChampion');
+  String txtUserName = globalBloc.text('txtUserName');
+  String txtValidLength = globalBloc.text('txtValidLength');
 
   Widget showNewHigherUser() {
     // Reusable alert style
@@ -120,7 +124,7 @@ class _CompletePageState extends State<CompletePage> {
       animationType: AnimationType.fromTop,
       isCloseButton: true,
       isOverlayTapDismiss: true,
-      descStyle: TextStyle(fontWeight: FontWeight.bold),
+      descStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 0),
       animationDuration: Duration(milliseconds: 400),
       alertBorder: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(0.0),
@@ -135,8 +139,7 @@ class _CompletePageState extends State<CompletePage> {
     Alert(
       context: context,
       style: alertStyle,
-      title: 'The Champion',
-//      desc: 'Input your information',
+      title: txtChampion,
       buttons: [],
       content: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -152,8 +155,8 @@ class _CompletePageState extends State<CompletePage> {
             obscureText: false,
             controller: userNameController,
             decoration: InputDecoration(
-                labelText: 'User Name',
-                errorText: _validate ? 'The length is from 3-20.' : null,
+                labelText: txtUserName,
+                errorText: _validate ? txtValidLength : null,
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     borderSide: BorderSide(color: Colors.grey, width: 1))),
@@ -172,11 +175,10 @@ class _CompletePageState extends State<CompletePage> {
             ),
           ]),
           DialogButton(
-            child: Text('Save'),
+            child: Text(txtSave),
             onPressed: () {
               if (validateData()) updateHigherScore(widget.achievement);
               widget.isHigherScore = false;
-//              setState(() {});
               Navigator.of(context).pop();
             },
           )

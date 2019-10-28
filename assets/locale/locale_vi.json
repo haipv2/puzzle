@@ -22,5 +22,9 @@
   "txtInfoDesc": "Hãy gửi những bức ảnh đẹp mà bạn thích của bạn qua email: haipv2@gmail.com. Chắc chăn bức ảnh của bạn sẽ được sử dụng trong trò chơi. \nXin cảm ơn ^_^",
   "txtPlayAgain": "CHƠI LẠI",
   "txtMenu": "CHỌN ẢNH",
-  "txtLanguages": "NGÔN NGỮ"
+  "txtLanguages": "NGÔN NGỮ",
+  "txtSave": "Lưu",
+  "txtChampion": "NHÀ VÔ ĐỊCH",
+  "txtUserName": "Họ tên",
+  "txtValidLength":"Độ dài chỉ từ: 3-20."
 }
