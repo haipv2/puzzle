@@ -11,6 +11,7 @@ import 'package:puzzle/commons/enums.dart';
 import 'package:puzzle/model/achievement.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
 import 'package:puzzle/repos/audio/audio.dart';
+import 'package:puzzle/utils/game_engine.dart';
 
 import 'complete_page.dart';
 import 'pending_page.dart';
@@ -685,7 +686,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     orgList
       ..add(firstPuzzle)
       ..addAll(resultTmp);
-//    GameEngine.shufflePuzzleTile(resultTmp);
+    GameEngine.shufflePuzzleTile(resultTmp);
     List<PuzzleTile> result = []
       ..add(firstPuzzle)
       ..addAll(resultTmp);
