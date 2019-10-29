@@ -90,7 +90,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     init(widget.imgPath);
-    loadTipsImage('assets/images/tips.png');
+    loadTipsImage('assets/images/tips.jpg');
   }
 
   Future<ui.Image> init(String imgPath) async {

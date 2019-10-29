@@ -2,7 +2,7 @@ name: puzzle
 description: A new Flutter application.
 
 # The following defines the version and build number for your application.
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -46,7 +46,7 @@ flutter:
     - assets/audio/start.wav
     - assets/locale/locale_en.json
     - assets/locale/locale_vi.json
-    - assets/images/tips.png
+    - assets/images/tips.jpg
     - assets/images/guide.png
   fonts:
     - family: vt323
