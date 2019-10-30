@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:puzzle/repos/preferences.dart';
 
 import 'bloc/bloc_provider.dart';
 import 'bloc/game_bloc.dart';
 import 'bloc/language/translations_bloc.dart';
-import 'commons/const.dart';
-import 'pages/home_page.dart';
 import 'pages/init_page.dart';
-import 'pages/pending_page.dart';
-import 'pages/tips_page.dart';
 
 class Application extends StatelessWidget {
   @override

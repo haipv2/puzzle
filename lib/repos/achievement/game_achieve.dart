@@ -1,12 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:puzzle/commons/enums.dart';
 import 'package:puzzle/model/achievement.dart';
 
 class GameAchievement {
-//  static Achievement bestEasy = new Achievement();
-//  static Achievement bestMedium = new Achievement();
-//  static Achievement bestHard = new Achievement();
-
 
   static Future<Achievement> getBestScore(String imageName,{List<String> imageNames}) async {
     Achievement achievement = Achievement();
@@ -36,7 +31,7 @@ class GameAchievement {
         return achievement;
       });
     } catch (e) {
-      print('ERROR: ${e}');
+      print('ERROR: $e');
     }
     return achievement;
   }
@@ -56,7 +51,7 @@ class GameAchievement {
       'move_step_medium': achievement.moveStepMedium,
       'move_step_hard': achievement.moveStepHard
     }).catchError((e) {
-      print('ERROR: ${e}');
+      print('ERROR: $e');
     });
   }
 }

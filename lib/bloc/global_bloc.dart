@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:puzzle/repos/preferences.dart';
 
 const List<String> _supportedLang = ['en', 'vi'];
-const String _defaultLang = 'vi';
 
 class GlobalTrans {
   Locale _locale;

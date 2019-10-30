@@ -5,7 +5,6 @@ import 'package:puzzle/bloc/global_bloc.dart';
 import 'package:puzzle/commons/app_style.dart';
 import 'package:puzzle/commons/enums.dart';
 import 'package:puzzle/model/puzzle_tile.dart';
-import 'dart:math' as math;
 
 class PuzzlePainter extends CustomPainter {
   final double paddingX, paddingY, paddingYExt;
@@ -109,7 +108,7 @@ class PuzzlePainter extends CustomPainter {
       }
 
       // show move
-      textSpanMove = new TextSpan(text: '${globalBloc.text('txtMove')}: ${move}', style: commonStyleM);
+      textSpanMove = new TextSpan(text: '${globalBloc.text('txtMove')}: $move', style: commonStyleM);
       textPainter =
           new TextPainter(text: textSpanMove, textDirection: TextDirection.ltr);
       textPainter.layout(minWidth: 50, maxWidth: gameActiveWidth / 2);

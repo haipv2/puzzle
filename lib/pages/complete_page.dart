@@ -32,8 +32,7 @@ class CompletePage extends StatefulWidget {
     this.bloc,
     this.imagePath,
     this.gameLevelWidth,
-    this.gameLevelHeight,
-    this.isHigherScore});
+    this.gameLevelHeight});
 
   @override
   _CompletePageState createState() => _CompletePageState();
@@ -49,7 +48,7 @@ class _CompletePageState extends State<CompletePage> {
     Audio.playAsset(AudioType.win);
     if (!widget.useHelp && widget.isHigherScore) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        return showNewHigherUser();
+        showNewHigherUser();
       });
     }
   }
@@ -122,7 +121,7 @@ class _CompletePageState extends State<CompletePage> {
   String txtUserName = globalBloc.text('txtUserName');
   String txtValidLength = globalBloc.text('txtValidLength');
 
-  Widget showNewHigherUser() {
+  void showNewHigherUser() {
     // Reusable alert style
     var alertStyle = AlertStyle(
       animationType: AnimationType.fromTop,

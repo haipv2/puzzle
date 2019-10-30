@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:puzzle/bloc/bloc_provider.dart';
 import 'package:puzzle/bloc/global_bloc.dart';
-import 'package:puzzle/bloc/language/translations_bloc.dart';
 
 import '../home_page.dart';
 import 'language_widget.dart';
 
-class ShopDrawer extends StatelessWidget {
-  String txtSetting = globalBloc.text('txtSetting');
-  String txtLanguage = globalBloc.text('txtLanguage');
+class GameDrawer extends StatelessWidget {
+  final String txtSetting = globalBloc.text('txtSetting');
+  final String txtLanguage = globalBloc.text('txtLanguage');
   @override
   Widget build(BuildContext context) {
-    TransBloc _transBloc = BlocProvider.of<TransBloc>(context);
     Size size = MediaQuery.of(context).size;
       return SizedBox(
         width: size.width * 3 / 4,

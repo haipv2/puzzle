@@ -23,10 +23,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   String title = '';
   bool soundOn = true;
   GameBloc bloc;
-  Animation _lateAnimationMenu;
   AnimationController _dialogController;
   Animation<double> _quitAnimation;
-  AnimationController _controller;
 
   @override
   void initState() {
@@ -37,11 +35,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         vsync: this, duration: Duration(milliseconds: 1500));
     _quitAnimation = Tween(begin: -1.0, end: 0.0).animate(
         CurvedAnimation(parent: _dialogController, curve: Curves.elasticOut));
-    _controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 2));
-    _lateAnimationMenu = Tween(begin: -1.0, end: 0).animate(CurvedAnimation(
-        parent: _controller,
-        curve: Interval(0.3, 1.0, curve: Curves.fastOutSlowIn)));
   }
 
   @override

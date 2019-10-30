@@ -11,7 +11,7 @@ class AppUtils {
         Scaffold.of(context).showSnackBar(SnackBar(content: Text('dataSet')));
       } catch (e) {
         print(e);
-      };
+      }
       return;
     }
     transBloc.setNewLanguage(langCode);

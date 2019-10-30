@@ -7,7 +7,7 @@ class LanguageBtn extends StatefulWidget {
   final String langCode;
   final TextStyle textStyle;
   final bool isSelected;
-  VoidCallback onPressed;
+  final VoidCallback onPressed;
 
   LanguageBtn(
       {@required this.onPressed,

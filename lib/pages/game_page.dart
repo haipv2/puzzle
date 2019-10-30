@@ -23,8 +23,8 @@ class PuzzleGame extends StatefulWidget {
   double gameActiveWidth;
   double gameActiveHeight;
   double paddingX, paddingY;
-  int gameLevelWidth;
-  int gameLevelHeight;
+  final int gameLevelWidth;
+  final int gameLevelHeight;
   int totalPuzzleTile;
   final String gameLevel;
   final Achievement achievement;
@@ -35,8 +35,6 @@ class PuzzleGame extends StatefulWidget {
       GameBloc bloc, this.gameLevel, this.achievement) {
     this.bloc = bloc;
     paddingX = paddingY = size.width * 0.05;
-//    paddingX = size.width * 0.05;
-//    paddingY = 5;
     gameActiveWidth = size.width * 0.9;
     gameActiveHeight = size.height - paddingY * 4;
     totalPuzzleTile = gameLevelWidth * gameLevelHeight;
@@ -122,17 +120,14 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     offsetDisableBottom = Offset(widget.paddingX + widget.gameActiveWidth,
         paddingYExt + imageScreenHeight);
     rectTextMove = Rect.fromLTWH(
-        widget.paddingX,
-        paddingYExt/2,
-        widget.gameActiveWidth / 2,
-        30);
+        widget.paddingX, paddingYExt / 2, widget.gameActiveWidth / 2, 30);
     rectHelp = Rect.fromLTWH(
         widget.paddingX + widget.gameActiveWidth - imageScreenWidth,
-        paddingYExt/3,
+        paddingYExt / 3,
         widget.gameActiveWidth / 2,
         30);
-    rectHelp = Rect.fromLTWH(rectHelp.left + imageScreenWidth / 2,
-        rectHelp.top, imageScreenWidth / 2, rectHelp.height);
+    rectHelp = Rect.fromLTWH(rectHelp.left + imageScreenWidth / 2, rectHelp.top,
+        imageScreenWidth / 2, rectHelp.height);
 
     offsetMove = Offset(widget.paddingX,
         paddingYExt + (widget.gameLevelHeight + 1) * imageScreenHeight);
@@ -151,7 +146,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
         imageScreenHeight * .9);
 
     // add Sink to re-build Widget.
-    await setPuzzles();
+    await buildPuzzles();
     widget.bloc.puzzlesAdd(puzzles);
     return image;
   }
@@ -185,13 +180,14 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
             return CompletePage(
                 useHelp: useHelp,
                 size: widget.size,
-                bloc: widget.bloc,newMove: moveTmp,
+                bloc: widget.bloc,
+                newMove: moveTmp,
                 gameLevelHeight: widget.gameLevelHeight,
                 gameLevelWidth: widget.gameLevelWidth,
                 imagePath: widget.imgPath,
                 achievement: widget.achievement,
-                gameLevel: widget.gameLevel,
-                isHigherScore: isHigherScore);
+                gameLevel: widget.gameLevel)
+              ..isHigherScore = isHigherScore;
           }
           return StreamBuilder<bool>(
               stream: widget.bloc.reDraw,
@@ -200,21 +196,21 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                   widget.bloc.reDrawAdd(true);
                 }
                 var puzzlePainter = PuzzlePainter(
-                          paddingX: widget.paddingX,
-                          paddingY: widget.paddingY,
-                          puzzles: puzzles,
-                          puzzleTileEmpty: puzzleEmpty,
-                          gameLevelWidth: widget.gameLevelWidth,
-                          gameLevelHeight: widget.gameLevelHeight,
-                          gameActiveWidth: widget.gameActiveWidth,
-                          rectTemp: rectTemp,
-                          gameState: gameState,
-                          paddingYExt: paddingYExt,
-                          imageScreenWidth: imageScreenWidth,
-                          imageScreenHeight: imageScreenHeight,
-                          tipsImage: imageTips,
-                          orgImgRect: orgImgRect,
-                          orgImage: image);
+                    paddingX: widget.paddingX,
+                    paddingY: widget.paddingY,
+                    puzzles: puzzles,
+                    puzzleTileEmpty: puzzleEmpty,
+                    gameLevelWidth: widget.gameLevelWidth,
+                    gameLevelHeight: widget.gameLevelHeight,
+                    gameActiveWidth: widget.gameActiveWidth,
+                    rectTemp: rectTemp,
+                    gameState: gameState,
+                    paddingYExt: paddingYExt,
+                    imageScreenWidth: imageScreenWidth,
+                    imageScreenHeight: imageScreenHeight,
+                    tipsImage: imageTips,
+                    orgImgRect: orgImgRect,
+                    orgImage: image);
                 return Container(
                   decoration: BoxDecoration(color: colorApp),
                   child: GestureDetector(
@@ -691,14 +687,14 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     List<PuzzleTile> result = []
       ..add(firstPuzzle)
       ..addAll(resultTmp);
-
+    puzzles = result;
     return result;
   }
 
-  Future<List<PuzzleTile>> setPuzzles() async {
-    puzzles = await buildPuzzles();
-    return puzzles;
-  }
+//  Future<List<PuzzleTile>> setPuzzles() async {
+//    puzzles = await buildPuzzles();
+//    return puzzles;
+//  }
 
   Completer<ImageInfo> completer = Completer();
 
@@ -753,22 +749,23 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     String puzzleDx = puzzleTile.rectPaint.left.toStringAsFixed(3);
     String puzzleDy = puzzleTile.rectPaint.top.toStringAsFixed(3);
     if (puzzleTile.index < widget.gameLevelWidth) {
-      String dx = (imageScreenWidth * puzzleTile.index + widget.paddingX).toStringAsFixed(3);
+      String dx = (imageScreenWidth * puzzleTile.index + widget.paddingX)
+          .toStringAsFixed(3);
       String dy = (imageScreenHeight + paddingYExt).toStringAsFixed(3);
-      if (puzzleDx ==
-              dx &&
-          puzzleDy == dy) {
+      if (puzzleDx == dx && puzzleDy == dy) {
         return true;
       } else {
         return false;
       }
     } else {
-      var rawDx = imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
-          widget.paddingX;
+      var rawDx =
+          imageScreenWidth * (puzzleTile.index % widget.gameLevelWidth) +
+              widget.paddingX;
       var dx = (rawDx).toStringAsFixed(3);
-      var rawDy = imageScreenHeight * (puzzleTile.index ~/ widget.gameLevelWidth) +
-          paddingYExt +
-          imageScreenHeight;
+      var rawDy =
+          imageScreenHeight * (puzzleTile.index ~/ widget.gameLevelWidth) +
+              paddingYExt +
+              imageScreenHeight;
       var dy = (rawDy).toStringAsFixed(3);
       if (puzzleDx == dx && puzzleDy == dy) {
         return true;

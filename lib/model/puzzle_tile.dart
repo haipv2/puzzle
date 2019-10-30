@@ -22,6 +22,6 @@ class PuzzleTile {
 
   @override
   String toString() {
-    return 'index:${index}. RectPaint: L-${rectPaint.left}. T-${rectPaint.top}';
+    return 'index:$index. RectPaint: L-${rectPaint.left}. T-${rectPaint.top}';
   }
 }

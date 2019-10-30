@@ -31,7 +31,7 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Future<void> buildImageUrl() async {
-    StorageReference ref = await FirebaseStorage.instance.ref();
+    StorageReference ref = FirebaseStorage.instance.ref();
     for (String imgName in ImageLoader.fileNames) {
       getDownloadUrl(ref, imgName);
     }

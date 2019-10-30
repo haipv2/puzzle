@@ -2,8 +2,8 @@ import 'package:button3d/button3d.dart';
 import 'package:flutter/material.dart';
 
 class GameButton extends StatelessWidget {
-  VoidCallback onPress;
-  String label;
+  final VoidCallback onPress;
+  final String label;
 
   GameButton({@required this.onPress, this.label});
 
