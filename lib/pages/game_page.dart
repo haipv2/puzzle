@@ -14,6 +14,7 @@ import 'package:puzzle/repos/audio/audio.dart';
 import 'package:puzzle/utils/game_engine.dart';
 
 import 'complete_page.dart';
+import 'home_page.dart';
 import 'pending_page.dart';
 import 'widget/puzzle_painter.dart';
 
@@ -44,7 +45,7 @@ class PuzzleGame extends StatefulWidget {
   _PuzzleGameState createState() => _PuzzleGameState();
 }
 
-class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
+class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin, WidgetsBindingObserver {
   Direction direction;
   double selectedItemX;
   double selectedItemY;
@@ -87,6 +88,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     init(widget.imgPath);
     loadTipsImage('assets/images/tips.jpg');
   }
@@ -154,8 +156,17 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   @override
   void dispose() {
     controller?.dispose();
-//    widget.bloc.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(state == AppLifecycleState.resumed){
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context){
+        return HomePage();
+      }));
+    }
   }
 
   int move = 0;
@@ -164,6 +175,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   bool showHelp = false;
   bool isDone = false;
   int moveTmp = 0;
+
 
   @override
   Widget build(BuildContext context) {
@@ -215,6 +227,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                   decoration: BoxDecoration(color: colorApp),
                   child: GestureDetector(
                     child: CustomPaint(
+                      isComplex: true,
+                      willChange: false,
                       painter: puzzlePainter
                         ..rectTextMove = rectTextMove
                         ..rectHelp = rectHelp
