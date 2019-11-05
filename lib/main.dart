@@ -15,6 +15,7 @@ void main() async {
   await Audio.init();
 
   await ImageLoader.getImageFileName();
+  await ImageLoader.downloadImages();
 
   //remove status bar
   SystemChrome.setEnabledSystemUIOverlays([]);

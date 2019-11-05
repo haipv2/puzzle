@@ -180,71 +180,79 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin, 
   @override
   Widget build(BuildContext context) {
 //    gameState = GameState.done;
-    return StreamBuilder<List<PuzzleTile>>(
-        stream: widget.bloc.puzzles,
-        builder: (context, snapshot) {
-          if (snapshot.data == null) {
-            return PendingPage();
-          }
-          if (gameState == GameState.done) {
-            bool isHigherScore =
-                processHighScore(widget.achievement, widget.gameLevel);
-            return CompletePage(
-                useHelp: useHelp,
-                size: widget.size,
-                bloc: widget.bloc,
-                newMove: moveTmp,
-                gameLevelHeight: widget.gameLevelHeight,
-                gameLevelWidth: widget.gameLevelWidth,
-                imagePath: widget.imgPath,
-                achievement: widget.achievement,
-                gameLevel: widget.gameLevel)
-              ..isHigherScore = isHigherScore;
-          }
-          return StreamBuilder<bool>(
-              stream: widget.bloc.reDraw,
-              builder: (context, snapshot) {
-                if (snapshot.data == null) {
-                  widget.bloc.reDrawAdd(true);
-                }
-                var puzzlePainter = PuzzlePainter(
-                    paddingX: widget.paddingX,
-                    paddingY: widget.paddingY,
-                    puzzles: puzzles,
-                    puzzleTileEmpty: puzzleEmpty,
-                    gameLevelWidth: widget.gameLevelWidth,
-                    gameLevelHeight: widget.gameLevelHeight,
-                    gameActiveWidth: widget.gameActiveWidth,
-                    rectTemp: rectTemp,
-                    gameState: gameState,
-                    paddingYExt: paddingYExt,
-                    imageScreenWidth: imageScreenWidth,
-                    imageScreenHeight: imageScreenHeight,
-                    tipsImage: imageTips,
-                    orgImgRect: orgImgRect,
-                    orgImage: image);
-                return Container(
-                  decoration: BoxDecoration(color: colorApp),
-                  child: GestureDetector(
-                    child: CustomPaint(
-                      isComplex: true,
-                      willChange: false,
-                      painter: puzzlePainter
-                        ..rectTextMove = rectTextMove
-                        ..rectHelp = rectHelp
-                        ..reDraw = snapshot.data ?? false
-                        ..move = move
-                        ..second = second
-                        ..showHelp = showHelp
-                        ..isDone = isDone,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
+          return HomePage();
+        }));
+        return true;
+      },
+      child: StreamBuilder<List<PuzzleTile>>(
+          stream: widget.bloc.puzzles,
+          builder: (context, snapshot) {
+            if (snapshot.data == null) {
+              return PendingPage();
+            }
+            if (gameState == GameState.done) {
+              bool isHigherScore =
+                  processHighScore(widget.achievement, widget.gameLevel);
+              return CompletePage(
+                  useHelp: useHelp,
+                  size: widget.size,
+                  bloc: widget.bloc,
+                  newMove: moveTmp,
+                  gameLevelHeight: widget.gameLevelHeight,
+                  gameLevelWidth: widget.gameLevelWidth,
+                  imagePath: widget.imgPath,
+                  achievement: widget.achievement,
+                  gameLevel: widget.gameLevel)
+                ..isHigherScore = isHigherScore;
+            }
+            return StreamBuilder<bool>(
+                stream: widget.bloc.reDraw,
+                builder: (context, snapshot) {
+                  if (snapshot.data == null) {
+                    widget.bloc.reDrawAdd(true);
+                  }
+                  var puzzlePainter = PuzzlePainter(
+                      paddingX: widget.paddingX,
+                      paddingY: widget.paddingY,
+                      puzzles: puzzles,
+                      puzzleTileEmpty: puzzleEmpty,
+                      gameLevelWidth: widget.gameLevelWidth,
+                      gameLevelHeight: widget.gameLevelHeight,
+                      gameActiveWidth: widget.gameActiveWidth,
+                      rectTemp: rectTemp,
+                      gameState: gameState,
+                      paddingYExt: paddingYExt,
+                      imageScreenWidth: imageScreenWidth,
+                      imageScreenHeight: imageScreenHeight,
+                      tipsImage: imageTips,
+                      orgImgRect: orgImgRect,
+                      orgImage: image);
+                  return Container(
+                    decoration: BoxDecoration(color: colorApp),
+                    child: GestureDetector(
+                      child: CustomPaint(
+                        isComplex: true,
+                        willChange: false,
+                        painter: puzzlePainter
+                          ..rectTextMove = rectTextMove
+                          ..rectHelp = rectHelp
+                          ..reDraw = snapshot.data ?? false
+                          ..move = move
+                          ..second = second
+                          ..showHelp = showHelp
+                          ..isDone = isDone,
+                      ),
+                      onPanDown: onPanDown,
+                      onPanUpdate: onPanUpdate,
+                      onPanEnd: onPanUp,
                     ),
-                    onPanDown: onPanDown,
-                    onPanUpdate: onPanUpdate,
-                    onPanEnd: onPanUp,
-                  ),
-                );
-              });
-        });
+                  );
+                });
+          }),
+    );
   }
 
   double distanceTop, distanceBottom, distanceLeft, distanceRight;
