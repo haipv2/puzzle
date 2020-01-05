@@ -5,10 +5,10 @@ import '../bloc/language/translations_bloc.dart';
 
 class AppUtils {
   void changeLanguage(String langCode, TransBloc transBloc, BlocEvent event,
-      BuildContext context) {
+      BuildContext context, String txtLanguageSet) {
     if (langCode == globalBloc.currentLanguage) {
       try {
-        Scaffold.of(context).showSnackBar(SnackBar(content: Text('dataSet')));
+        Scaffold.of(context).showSnackBar(SnackBar(content: Text(txtLanguageSet)));
       } catch (e) {
         print(e);
       }

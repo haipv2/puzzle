@@ -26,5 +26,6 @@
   "txtSave": "Lưu",
   "txtChampion": "NHÀ VÔ ĐỊCH",
   "txtUserName": "Họ tên",
-  "txtValidLength":"Độ dài chỉ từ: 3-20."
+  "txtValidLength":"Độ dài chỉ từ: 3-20.",
+  "txtLanguageSet":"Bạn đã chọn ngôn ngữ này rồi."
 }
