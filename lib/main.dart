@@ -9,7 +9,7 @@ import 'repos/image/image_loader.dart';
 
 void main() async {
 
-  await WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize the translations module
   await GameSetting.init();

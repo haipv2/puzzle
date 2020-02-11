@@ -19,6 +19,7 @@ class LanguageSettingWidget extends StatelessWidget with AppUtils {
   Widget build(BuildContext context) {
     TransBloc transBloc = BlocProvider.of<TransBloc>(context);
     String txtLanguages = globalBloc.text('txtLanguages');
+    String txtLanguageSet = globalBloc.text('txtLanguageSet');
 
     return Container(
         child: BlocEventStateBuilder<TransState>(
@@ -43,7 +44,7 @@ class LanguageSettingWidget extends StatelessWidget with AppUtils {
                           : false,
                       onPressed: () {
                         changeLanguage(
-                            ENGLISH_CODE, transBloc, TransEvent(), context);
+                            ENGLISH_CODE, transBloc, TransEvent(), context, txtLanguageSet);
                       },
                     ),
                     LanguageBtn(
@@ -54,7 +55,7 @@ class LanguageSettingWidget extends StatelessWidget with AppUtils {
                           : false,
                       onPressed: () {
                         changeLanguage(
-                            VIETNAM_CODE, transBloc, TransEvent(), context);
+                            VIETNAM_CODE, transBloc, TransEvent(), context, txtLanguageSet);
                       },
                     ),
                   ],

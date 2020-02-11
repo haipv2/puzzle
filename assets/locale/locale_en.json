@@ -26,6 +26,7 @@
   "txtSave": "Save",
   "txtChampion": "WINNER",
   "txtUserName": "User name",
-  "txtValidLength":"The length is from 3-20."
+  "txtValidLength":"The length is from 3-20.",
+  "txtLanguageSet":"The language was changed already."
 
 }
