@@ -92,7 +92,7 @@ class _MenuPageState extends State<MenuPage> {
 
       BannerAd myBanner = BannerAd(
         adUnitId: adsAppUnit,
-        size: AdSize.smartBanner,
+        size: AdSize.banner,
         targetingInfo: targetingInfo,
         listener: (MobileAdEvent event) {
           print("BannerAd event is $event");

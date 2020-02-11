@@ -45,7 +45,8 @@ class PuzzleGame extends StatefulWidget {
   _PuzzleGameState createState() => _PuzzleGameState();
 }
 
-class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin, WidgetsBindingObserver {
+class _PuzzleGameState extends State<PuzzleGame>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   Direction direction;
   double selectedItemX;
   double selectedItemY;
@@ -162,8 +163,9 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin, 
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if(state == AppLifecycleState.resumed){
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context){
+    if (state == AppLifecycleState.resumed) {
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
         return HomePage();
       }));
     }
@@ -176,13 +178,12 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin, 
   bool isDone = false;
   int moveTmp = 0;
 
-
   @override
   Widget build(BuildContext context) {
-//    gameState = GameState.done;
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (context) {
           return HomePage();
         }));
         return true;
@@ -812,19 +813,28 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin, 
 
   bool processHighScore(Achievement achievement, String gameLevel) {
     if (gameLevel == GAME_LEVEL_EASY) {
-      if (achievement.moveStepEasy > moveTmp) {
-//        achievement.moveStepEasy = moveTmp;
+      if (achievement.userNameEasy.isEmpty) {
         return true;
+      } else {
+        if (achievement.moveStepEasy > moveTmp) {
+          return true;
+        }
       }
     } else if (gameLevel == GAME_LEVEL_MEDIUM) {
-      if (achievement.moveStepMedium > moveTmp) {
-//        achievement.moveStepMedium = moveTmp;
+      if (achievement.userNameMedium.isEmpty) {
         return true;
+      } else {
+        if (achievement.moveStepMedium > moveTmp) {
+          return true;
+        }
       }
     } else if (gameLevel == GAME_LEVEL_HARD) {
-      if (achievement.moveStepHard > moveTmp) {
-//        achievement.moveStepHard = moveTmp;
+      if (achievement.userNameHard.isEmpty) {
         return true;
+      } else {
+        if (achievement.moveStepHard > moveTmp) {
+          return true;
+        }
       }
     }
     return false;

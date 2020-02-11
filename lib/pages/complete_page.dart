@@ -67,7 +67,6 @@ class _CompletePageState extends State<CompletePage> {
             color: Color.fromRGBO(250, 0, 250, 100),
             image: DecorationImage(
                 image: NetworkImage(widget.imagePath), fit: BoxFit.fill)),
-//      decoration: BoxDecoration(color: Colors.red),
         child: Center(
           child: Stack(
             children: <Widget>[
