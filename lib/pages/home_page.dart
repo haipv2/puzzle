@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:puzzle/bloc/bloc_provider.dart';
 import 'package:puzzle/bloc/game_bloc.dart';
 import 'package:puzzle/bloc/global_bloc.dart';
@@ -9,10 +12,12 @@ import 'package:puzzle/repos/audio/audio.dart';
 import 'package:puzzle/repos/game_setting.dart';
 import 'package:puzzle/repos/preferences.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'game_dialog_animation.dart';
 import 'menu_page.dart';
 import 'widget/language_widget.dart';
+import '../commons/const.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -29,6 +34,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    try {
+      versionCheck(context);
+    } catch (e) {
+      print(e);
+    }
+
     Audio.playAsset(AudioType.start);
     bloc = BlocProvider.of<GameBloc>(context);
     _dialogController = AnimationController(
@@ -124,7 +136,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       closeFunction: () {},
       content: Container(height: 160, child: LanguageSettingWidget()),
     ).show();
-
   }
 
   void quit() {
@@ -195,7 +206,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           titleStyle: commonStyleL,
-          descStyle: TextStyle(fontSize: 0 ),
+          descStyle: TextStyle(fontSize: 0),
         );
         Alert(
           context: context,
@@ -226,5 +237,94 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ).show();
       },
     );
+  }
+
+  void versionCheck(BuildContext context) async {
+    //Get Current installed version of app
+    final PackageInfo info = await PackageInfo.fromPlatform();
+    String newVerStr = info.version.trim();
+    double newVersionNo = double.parse(newVerStr.replaceAll(".", ""));
+
+    //Get Latest version info from firebase config
+    final RemoteConfig remoteConfig = await RemoteConfig.instance;
+
+    try {
+      // Using default duration to force fetching from remote server.
+      await remoteConfig.fetch(expiration: const Duration(seconds: 0));
+      await remoteConfig.activateFetched();
+      String currentVersion = remoteConfig.getString('currentVersion');
+      double currentVersionNo =
+          double.parse(currentVersion.trim().replaceAll(".", ""));
+      if (newVersionNo > currentVersionNo) {
+        _showVersionDialog(context, newVerStr);
+      }
+    } on FetchThrottledException catch (exception) {
+      // Fetch throttled.
+      print(exception);
+    } catch (exception) {
+      print('Unable to fetch remote config. Cached or default values will be '
+          'used');
+    }
+  }
+
+  void _showVersionDialog(BuildContext context, String newVersion) async {
+    await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        String title = globalBloc.text('updateAppTitle');
+        String message = globalBloc.text('updateAppContent');
+        String btnLabel = globalBloc.text('updateBtn');
+        String btnLabelCancel = globalBloc.text('quitBtn');
+        return Platform.isIOS
+            ? new CupertinoAlertDialog(
+                title: Text(title),
+                content: Text(message),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(btnLabel),
+                    onPressed: () => _launchURL(APP_STORE_URL, newVersion),
+                  ),
+                  FlatButton(
+                    child: Text(btnLabelCancel),
+                    onPressed: () {
+                      exit(0);
+                    },
+                  ),
+                ],
+              )
+            : new AlertDialog(
+                title: Text(title),
+                content: Text(message),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(btnLabel),
+                    onPressed: () => _launchURL(PLAY_STORE_URL, newVersion),
+                  ),
+                  FlatButton(
+                    child: Text(btnLabelCancel),
+                    onPressed: () {
+                      exit(0);
+                    },
+                  ),
+                ],
+              );
+      },
+    );
+  }
+
+  _launchURL(String url, String newVersion) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+      await changeCurrentVersionRemote(newVersion);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  changeCurrentVersionRemote(newVersion) async {
+    //Get Latest version info from firebase config
+    final RemoteConfig remoteConfig = await RemoteConfig.instance;
+    remoteConfig.setDefaults(<String, String>{"currentVersion": newVersion});
   }
 }

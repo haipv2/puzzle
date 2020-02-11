@@ -27,6 +27,10 @@
   "txtChampion": "WINNER",
   "txtUserName": "User name",
   "txtValidLength":"The length is from 3-20.",
-  "txtLanguageSet":"The language was changed already."
+  "txtLanguageSet":"The language was changed already.",
+  "updateAppTitle": "NEW VERSION",
+  "updateAppContent": "The game need to be updated",
+  "updateBtn": "Update",
+  "quitBtn":"Quit"
 
 }

@@ -2,7 +2,7 @@ name: puzzle
 description: A new Flutter application.
 
 # The following defines the version and build number for your application.
-version: 1.0.0+12
+version: 1.0.1+15
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -28,6 +28,9 @@ dependencies:
   flutter_swiper: ^1.1.6
   firebase_admob: ^0.9.0+10
   http: ^0.12.0+2
+  package_info: ^0.4.0+13
+  url_launcher: ^5.4.1
+  firebase_remote_config: ^0.3.0+1
 
 dev_dependencies:
   flutter_test:

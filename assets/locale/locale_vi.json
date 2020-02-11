@@ -27,5 +27,9 @@
   "txtChampion": "NHÀ VÔ ĐỊCH",
   "txtUserName": "Họ tên",
   "txtValidLength":"Độ dài chỉ từ: 3-20.",
-  "txtLanguageSet":"Bạn đã chọn ngôn ngữ này rồi."
+  "txtLanguageSet":"Bạn đã chọn ngôn ngữ này rồi.",
+  "updateAppTitle": "CẬP NHẬT",
+  "updateAppContent": "Trò chơi cần được cập nhật phiên bản mới",
+  "updateBtn": "Cập nhật",
+  "quitBtn":"Thoát"
 }

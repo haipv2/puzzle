@@ -12,3 +12,7 @@ const GAME_LEVEL_MEDIUM = 'Medium';
 const GAME_LEVEL_HARD = 'Hard';
 const adsAppId = "ca-app-pub-1526795059370873~5167780592";
 const adsAppUnit = "ca-app-pub-1526795059370873/7382880393";
+const APP_STORE_URL =
+    'https://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=com.haipv.puzzle&mt=8';
+const PLAY_STORE_URL =
+    'https://play.google.com/store/apps/details?id=5732857856003627642';

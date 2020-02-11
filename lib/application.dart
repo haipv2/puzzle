@@ -1,11 +1,23 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'bloc/bloc_provider.dart';
 import 'bloc/game_bloc.dart';
 import 'bloc/language/translations_bloc.dart';
 import 'pages/init_page.dart';
 
-class Application extends StatelessWidget {
+class Application extends StatefulWidget {
+  @override
+  _ApplicationState createState() => _ApplicationState();
+}
+
+class _ApplicationState extends State<Application> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     TransBloc transBloc = TransBloc();
@@ -32,4 +44,5 @@ class Application extends StatelessWidget {
       ),
     );
   }
+
 }
