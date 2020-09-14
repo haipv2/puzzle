@@ -115,7 +115,9 @@ class _ImageItemWidgetState extends State<ImageItemWidget> {
       title: level,
       desc: '',
       buttons: [],
-      closeFunction: () {},
+      closeFunction: () {
+        Navigator.pop(context);
+      },
       content: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[

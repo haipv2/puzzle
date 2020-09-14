@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
 
     try {
-      versionCheck(context);
+//      versionCheck(context);
     } catch (e) {
       print(e);
     }
@@ -116,13 +116,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     var alertStyle = AlertStyle(
         animationType: AnimationType.fromTop,
         isCloseButton: true,
-        isOverlayTapDismiss: false,
+        isOverlayTapDismiss: true,
         animationDuration: Duration(milliseconds: 400),
         backgroundColor: colorApp,
         alertBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
           side: BorderSide(
-            color: Colors.grey,
+            color: Colors.black,
           ),
         ),
         titleStyle: commonStyleOnlyFontSize0,
@@ -133,7 +133,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       title: '',
       desc: '',
       buttons: [],
-      closeFunction: () {},
+      closeFunction: () {
+        Navigator.pop(context);
+      },
       content: Container(height: 160, child: LanguageSettingWidget()),
     ).show();
   }
@@ -214,7 +216,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           title: txtInfo,
           desc: '',
           buttons: [],
-          closeFunction: () {},
+          closeFunction: () {
+            Navigator.pop(context);
+          },
           content: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -288,7 +292,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   FlatButton(
                     child: Text(btnLabelCancel),
                     onPressed: () {
-                      exit(0);
+//                      exit(0);
+                    Navigator.pop(context);
                     },
                   ),
                 ],
@@ -304,7 +309,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   FlatButton(
                     child: Text(btnLabelCancel),
                     onPressed: () {
-                      exit(0);
+//                      exit(0);
+                      Navigator.pop(context);
                     },
                   ),
                 ],
